@@ -1,266 +1,89 @@
 # BlueMoon BFMS
 
-**Phần mềm Quản lý Thu phí Chung cư BlueMoon** (BlueMoon Facility Management System — **BFMS**) là ứng dụng web hỗ trợ Ban quản trị, bộ phận Kế toán và cư dân thực hiện các nghiệp vụ quản lý chung cư trên một hệ thống tập trung.
+**BlueMoon BFMS** (BlueMoon Facility Management System) là phần mềm web hỗ trợ quản lý thu phí và vận hành chung cư, phục vụ Ban quản trị, bộ phận Kế toán và cư dân.
 
-> **Phiên bản khởi động:** Java Spring Boot, Spring MVC, Thymeleaf và SQLite. Database phát triển local được lưu tại `database/bluemoon.db`. Cấu trúc trong tài liệu là cấu trúc Maven đề xuất để các thành viên và AI Agent cùng phát triển nhất quán.
+> **Giai đoạn hiện tại:** khởi động dự án và thống nhất kiến trúc. Tài liệu đã được chuẩn bị; mã nguồn ứng dụng và Maven build scaffold chưa được thêm vào repository.
 
-## 1. Tổng quan
+## Mục tiêu
 
-- **Trang Quản trị (Admin Panel):** dành cho Kế toán/Ban quản trị đăng nhập, quản lý nhân khẩu và căn hộ, thiết lập/tính phí, theo dõi hóa đơn và xuất báo cáo PDF.
-- **Cổng Cư dân (Web Portal):** cư dân tra cứu công nợ, hóa đơn và gửi phản ánh (ticket) qua trình duyệt.
-- **Backend:** Spring Boot và Spring MVC tiếp nhận request, kiểm tra quyền, điều phối nghiệp vụ và render trang Thymeleaf.
-- **Database:** SQLite lưu trong một file local; ứng dụng truy cập qua JDBC và Spring Data JPA/Hibernate.
+- Cung cấp **Trang Quản trị** để quản lý căn hộ, cư dân, khoản phí, hóa đơn và báo cáo.
+- Cung cấp **Cổng Cư dân** để tra cứu công nợ/hóa đơn và gửi phản ánh (ticket).
+- Tập trung nghiệp vụ và dữ liệu trong một ứng dụng web có phân tầng rõ ràng.
 
-Đây là **Pure Web Architecture**: trình duyệt chỉ giao tiếp với ứng dụng web qua HTTP/HTTPS, không kết nối trực tiếp tới database.
+## Công nghệ dự kiến
 
-## 2. Kiến trúc phân tầng và luồng dữ liệu
-
-```text
-┌─────────────────────────┐       HTTP/HTTPS       ┌─────────────────────────────┐
-│ Admin Panel             │ ─────────────────────► │ Spring Boot / Spring MVC    │
-│ Browser + Thymeleaf HTML │                        │                             │
-└─────────────────────────┘                        │ Controller → Service →      │
-                                                   │ Repository → Entity         │
-┌─────────────────────────┐       HTTP/HTTPS       │                             │
-│ Cổng Cư dân             │ ─────────────────────► │ Thymeleaf + Static assets   │
-│ Browser + HTML/CSS/JS   │                        └──────────────┬──────────────┘
-└─────────────────────────┘                                       │ JDBC/JPA
-                                                                  ▼
-                                                   ┌─────────────────────────────┐
-                                                   │ SQLite                      │
-                                                   │ database/bluemoon.db        │
-                                                   └─────────────────────────────┘
-```
-
-1. Người dùng gửi request từ trình duyệt đến ứng dụng Spring Boot.
-2. Controller nhận request, xác thực dữ liệu đầu vào và gọi service phù hợp.
-3. Service thực thi quy tắc nghiệp vụ, sau đó dùng repository để đọc/ghi entity trong SQLite.
-4. Controller trả về view Thymeleaf hoặc chuyển hướng; tài nguyên CSS/JS/ảnh được phục vụ từ `static/`.
-
-**Trách nhiệm từng tầng:** Controller không chứa nghiệp vụ phức tạp; Service không phụ thuộc vào giao diện web; Repository đóng gói truy cập dữ liệu; Entity ánh xạ bảng; DTO là dữ liệu trao đổi giữa các tầng/giao diện khi cần.
-
-## 3. Cây thư mục Maven Standard Structure
-
-Ví dụ dùng package gốc `com.bluemoon.bfms`:
-
-```text
-bluemoon-bfms/
-├── pom.xml
-├── mvnw
-├── mvnw.cmd
-├── .mvn/
-│   └── wrapper/
-├── .gitignore
-├── README.md
-├── database/
-│   ├── .gitkeep                 # Giữ thư mục trong Git khi chưa có database
-│   └── bluemoon.db              # SQLite local; không commit database có dữ liệu thật
-├── docs/
-│   ├── requirements/
-│   │   └── SRS.md               # Đặc tả yêu cầu phần mềm
-│   ├── design/
-│   │   ├── architecture.md      # Kiến trúc và quyết định thiết kế
-│   │   ├── erd.md               # Mô hình dữ liệu/ERD
-│   │   └── workflows.md         # Luồng nghiệp vụ
-│   └── operations/
-│       └── local-development.md # Hướng dẫn chạy và sao lưu local
-└── src/
-    ├── main/
-    │   ├── java/
-    │   │   └── com/
-    │   │       └── bluemoon/
-    │   │           └── bfms/
-    │   │               ├── BlueMoonBfmsApplication.java
-    │   │               ├── config/         # Cấu hình MVC, bảo mật, beans
-    │   │               ├── controller/
-    │   │               │   ├── AdminController.java
-    │   │               │   ├── PortalController.java
-    │   │               │   └── AuthController.java
-    │   │               ├── service/        # Quy tắc và điều phối nghiệp vụ
-    │   │               ├── repository/     # Spring Data JPA repositories/DAO
-    │   │               ├── model/          # JPA entities ánh xạ bảng
-    │   │               ├── dto/            # Request/response/view data objects
-    │   │               ├── exception/      # Exception miền và xử lý lỗi chung
-    │   │               └── util/           # Tiện ích dùng chung, không chứa nghiệp vụ
-    │   └── resources/
-    │       ├── application.yml             # Cấu hình Spring và SQLite
-    │       ├── templates/
-    │       │   ├── admin/                  # Trang Thymeleaf cho quản trị
-    │       │   ├── portal/                 # Trang Thymeleaf cho cư dân
-    │       │   ├── auth/                   # Đăng nhập/đăng xuất
-    │       │   └── fragments/              # Layout, navigation, component dùng chung
-    │       └── static/
-    │           ├── css/
-    │           ├── js/
-    │           └── images/
-    └── test/
-        └── java/
-            └── com/
-                └── bluemoon/
-                    └── bfms/
-                        ├── controller/
-                        ├── service/
-                        └── repository/
-```
-
-### Ý nghĩa các thành phần chính
-
-| Thành phần | Trách nhiệm |
+| Thành phần | Công nghệ |
 |---|---|
-| `controller/` | Tiếp nhận HTTP request, kiểm tra dữ liệu web, gọi service và chọn view/redirect. |
-| `service/` | Chứa nghiệp vụ như tính phí, lập hóa đơn, kiểm tra quyền truy cập và xử lý ticket. |
-| `repository/` | Truy vấn và lưu entity bằng Spring Data JPA/DAO; không chứa quy tắc nghiệp vụ. |
-| `model/` | JPA entities và mapping quan hệ giữa entity với bảng SQLite. |
-| `dto/` | Đối tượng dữ liệu dùng cho request/response hoặc truyền dữ liệu lên view; tránh đưa entity trực tiếp ra ngoài khi không phù hợp. |
-| `templates/` | Template Thymeleaf được chia theo Admin, Portal, Auth và fragments dùng chung. |
-| `static/` | CSS, JavaScript và hình ảnh tĩnh; không đặt dữ liệu bí mật tại đây. |
-| `database/` | Chứa file SQLite local. File database có dữ liệu thật/nhạy cảm phải được loại khỏi Git. |
-| `docs/` | SRS, kiến trúc, ERD, quy trình nghiệp vụ và tài liệu vận hành. |
-| `src/test/` | Unit và integration tests, theo package tương ứng với mã nguồn chính. |
-| `pom.xml` | Khai báo phiên bản Java, dependencies, plugins và cấu hình build Maven. |
-| `application.yml` | Cấu hình ứng dụng; thông tin thay đổi theo môi trường nên được đưa ra environment variables khi cần. |
+| Ngôn ngữ | Java |
+| Backend/Web | Spring Boot, Spring MVC |
+| Giao diện máy chủ | Thymeleaf |
+| Persistence | Spring Data JPA / Hibernate, JDBC |
+| Database giai đoạn đầu | SQLite (`database/bluemoon.db`) |
+| Build và quản lý thư viện | Maven |
 
-Không bắt buộc tạo mọi thư mục rỗng ngay từ đầu. Chỉ thêm package/file khi có chức năng thực sự cần đến.
+## Kiến trúc
 
-## 4. Yêu cầu môi trường
+```text
+Admin Panel ───────┐
+                   ├── HTTP ──► Spring MVC Controller
+Cổng Cư dân ───────┘                    │
+                                        ▼
+                                  Service (nghiệp vụ)
+                                        │
+                                        ▼
+                                Repository / JPA
+                                        │
+                                        ▼
+                             SQLite: database/bluemoon.db
+```
 
-- **JDK 17 trở lên** (khuyến nghị JDK 21 LTS nếu cả nhóm thống nhất).
-- **Apache Maven 3.9 trở lên**, hoặc dùng Maven Wrapper (`mvnw`/`mvnw.cmd`) để chuẩn hóa phiên bản Maven trong nhóm.
-- Git và terminal.
-- Không cần cài SQLite server: SQLite chạy trực tiếp trên file database. SQLite JDBC driver được Maven tải theo dependency khai báo trong `pom.xml`.
+Ứng dụng theo **Pure Web Architecture** và **Layered Architecture**. Trình duyệt chỉ giao tiếp với Spring Boot; không truy cập database trực tiếp. Chi tiết kiến trúc và cấu trúc thư mục xem trong [BLUEMOON.md](./BLUEMOON.md).
 
-Kiểm tra cài đặt:
+## Trạng thái khởi động
+
+- [x] Thống nhất công nghệ nền tảng và database phát triển.
+- [x] Đề xuất cấu trúc Maven và phân chia các tầng.
+- [ ] Tạo Maven Wrapper, `pom.xml` và Spring Boot application scaffold.
+- [ ] Cấu hình SQLite JDBC/JPA và kiểm tra kết nối database.
+- [ ] Phát triển các luồng nghiệp vụ Admin và Cổng Cư dân.
+- [ ] Bổ sung kiểm thử và hướng dẫn vận hành.
+
+Các mục trạng thái phản ánh giai đoạn hiện tại và cần được cập nhật khi dự án có tiến triển.
+
+## Bắt đầu phát triển
+
+### Yêu cầu
+
+- JDK 17 trở lên (khuyến nghị JDK 21 LTS).
+- Maven 3.9 trở lên hoặc Maven Wrapper khi được thêm vào repository.
+- Không cần cài SQLite server; SQLite sử dụng file local.
+
+### Chạy ứng dụng
+
+Maven project chưa được khởi tạo trong repository. Sau khi có `pom.xml` và Spring Boot application, chạy từ thư mục gốc dự án:
 
 ```bash
-java -version
-mvn -version
-```
-
-## 5. Cấu hình SQLite JDBC
-
-### Khai báo dependencies trong `pom.xml`
-
-Spring Data JPA cung cấp lớp ORM/repository; SQLite JDBC cung cấp JDBC driver. Hibernate cần SQLite dialect tương thích với phiên bản Hibernate do Spring Boot quản lý.
-
-```xml
-<dependencies>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-thymeleaf</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-data-jpa</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.xerial</groupId>
-        <artifactId>sqlite-jdbc</artifactId>
-        <scope>runtime</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.hibernate.orm</groupId>
-        <artifactId>hibernate-community-dialects</artifactId>
-    </dependency>
-</dependencies>
-```
-
-Dùng Spring Boot parent/BOM để quản lý phiên bản dependencies; không tự chọn phiên bản Hibernate community dialect khác với Hibernate mà Boot quản lý. Nếu phiên bản Boot được chọn không quản lý artifact dialect này, khai báo đúng phiên bản tương ứng với Hibernate đã được quản lý.
-
-### Cấu hình `src/main/resources/application.yml`
-
-```yaml
-spring:
-  datasource:
-    url: jdbc:sqlite:database/bluemoon.db
-    driver-class-name: org.sqlite.JDBC
-  jpa:
-    database-platform: org.hibernate.community.dialect.SQLiteDialect
-    hibernate:
-      ddl-auto: update
-    open-in-view: false
-
-server:
-  port: 8080
-```
-
-`ddl-auto: update` phù hợp để khởi động phát triển ban đầu, nhưng không thay thế quy trình migration có kiểm soát cho dữ liệu quan trọng. Kiểm tra tính tương thích của SQLite dialect với Spring Boot/Hibernate được chọn. Đường dẫn `jdbc:sqlite:database/bluemoon.db` tương đối với **working directory** của tiến trình; chạy lệnh Maven từ thư mục gốc dự án và bảo đảm thư mục `database/` tồn tại. SQLite sẽ tạo file DB khi kết nối nếu thư mục cha đã có.
-
-## 6. Cài đặt và chạy thử
-
-### Windows PowerShell
-
-```powershell
-git clone <repository-url>
-cd <repository-folder>
-New-Item -ItemType Directory -Force database
 mvn spring-boot:run
 ```
 
-Nếu Maven Wrapper có trong repository, có thể chạy thay bằng:
-
-```powershell
-.\mvnw.cmd spring-boot:run
-```
-
-### macOS/Linux
+Hoặc dùng Maven Wrapper:
 
 ```bash
-git clone <repository-url>
-cd <repository-folder>
-mkdir -p database
+# Windows
+.\mvnw.cmd spring-boot:run
+
+# macOS/Linux
 ./mvnw spring-boot:run
 ```
 
-Nếu không có Maven Wrapper, dùng `mvn spring-boot:run`.
+Khi ứng dụng khởi động, địa chỉ mặc định dự kiến là `http://localhost:8080/`. Cấu hình SQLite và hướng dẫn thiết lập đầy đủ nằm trong [BLUEMOON.md](./BLUEMOON.md).
 
-Khi ứng dụng khởi động thành công, truy cập `http://localhost:8080/`. Các route Admin/Portal được bổ sung theo controller và chức năng được triển khai. Build và chạy tests bằng:
+## Tài liệu
 
-```bash
-mvn test
-mvn package
-```
+- [BLUEMOON.md](./BLUEMOON.md) — tổng quan kỹ thuật, sơ đồ kiến trúc, cây thư mục, cấu hình SQLite, hướng dẫn chạy và coding guidelines.
+- `docs/requirements/` — SRS và yêu cầu nghiệp vụ (sẽ bổ sung).
+- `docs/design/` — sơ đồ thiết kế, ERD và luồng nghiệp vụ (sẽ bổ sung).
 
-## 7. Quy ước đặt tên
+## Đóng góp
 
-| Thành phần | Quy ước | Ví dụ |
-|---|---|---|
-| Package Java | chữ thường, phân cấp theo domain | `com.bluemoon.bfms.service` |
-| Class/interface/record/enum | `PascalCase` | `InvoiceService`, `InvoiceCreateRequest` |
-| Method/field/biến | `camelCase` | `calculateMonthlyFee()` |
-| Hằng số | `UPPER_SNAKE_CASE` | `DEFAULT_PAGE_SIZE` |
-| Entity | tên miền số ít, `PascalCase` | `Resident`, `Invoice`, `Apartment` |
-| Repository | `<Entity>Repository` | `InvoiceRepository` |
-| Service | `<Domain>Service` | `InvoiceService` |
-| Controller | theo khu vực/chức năng + `Controller` | `AdminController`, `PortalController` |
-| Thymeleaf template | chữ thường, theo khu vực và tính năng | `templates/admin/invoices/list.html` |
-| Bảng/cột database | `snake_case`, thống nhất toàn dự án | `invoices`, `created_at` |
-| Test | `<ClassUnderTest>Test` hoặc tên hành vi rõ ràng | `InvoiceServiceTest` |
-
-Dùng một thuật ngữ miền thống nhất trong code, giao diện và tài liệu; tránh tên viết tắt không phổ biến.
-
-## 8. Coding Guidelines cho thành viên và AI Agent
-
-1. **Đọc trước khi sửa:** kiểm tra cấu trúc, conventions, dependencies, route và tests hiện có. Mở rộng pattern của dự án thay vì tạo framework hoặc tầng mới không cần thiết.
-2. **Giữ đúng phân tầng:** Controller xử lý HTTP/view; Service chứa nghiệp vụ; Repository truy cập persistence; Entity mô tả dữ liệu lưu trữ; DTO là hợp đồng trao đổi. Không đặt nghiệp vụ trong controller hoặc template.
-3. **Constructor injection:** ưu tiên constructor injection (có thể dùng `final` fields) thay cho field injection.
-4. **Validation và lỗi:** dùng Jakarta Bean Validation cho input; trả lỗi rõ ràng qua exception handler hoặc view phù hợp. Không nuốt exception, không trả dữ liệu thành công giả.
-5. **Database:** đặt transaction ở service boundary phù hợp; dùng query có tham số/JPA, không ghép SQL từ input. Thay đổi schema cần có migration/kế hoạch nâng cấp và phải giữ tương thích với SQLite.
-6. **Bảo mật:** kiểm tra xác thực và quyền ở server; không tin dữ liệu từ trình duyệt; không lưu mật khẩu dạng rõ; không commit secret, file DB có dữ liệu thật hoặc dữ liệu cá nhân. Escape dữ liệu động khi render HTML.
-7. **Thymeleaf:** giữ trang Admin và Portal tách riêng; dùng fragment/layout chung khi hợp lý. Không đưa logic nghiệp vụ phức tạp vào biểu thức template.
-8. **Kiểm thử:** thêm/cập nhật unit tests cho nghiệp vụ và integration tests cho repository/controller khi cần. Test phải dùng dữ liệu cô lập, không phụ thuộc database của người dùng.
-9. **Dependencies:** chỉ thêm thư viện khi cần; ghi nhận trong `pom.xml`, ưu tiên phiên bản được Spring Boot quản lý.
-10. **Thay đổi có phạm vi:** không sửa file/dữ liệu không liên quan; cập nhật README/docs khi thay đổi cách build, cấu hình, route hoặc hành vi đáng kể.
-
-## 9. Dữ liệu và sao lưu
-
-File `database/bluemoon.db` là database local có thể chứa dữ liệu cư dân và thông tin tài chính. Không commit file này khi có dữ liệu thật; thêm `database/*.db`, `database/*.db-*` vào `.gitignore`. Chỉ dùng dữ liệu mẫu giả trong môi trường phát triển. Sao lưu bằng cách dừng ứng dụng trước khi copy file hoặc dùng công cụ backup SQLite phù hợp để tránh bản sao không nhất quán.
-
-## 10. Tài liệu dự án
-
-- `docs/requirements/`: SRS và yêu cầu nghiệp vụ.
-- `docs/design/`: kiến trúc, ERD và luồng nghiệp vụ.
-- `docs/operations/`: hướng dẫn chạy, cấu hình và sao lưu.
+Trước khi triển khai một tính năng, hãy đọc [BLUEMOON.md](./BLUEMOON.md), tuân thủ phân tầng Controller → Service → Repository và cập nhật tests/tài liệu liên quan. Ưu tiên thay đổi nhỏ, có thể kiểm chứng và không đưa dữ liệu cư dân hoặc thông tin nhạy cảm vào repository.
