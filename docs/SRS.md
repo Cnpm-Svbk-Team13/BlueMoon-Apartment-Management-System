@@ -6,13 +6,18 @@
 ## 1. Giới thiệu tổng quan
 Tài liệu Đặc tả Yêu cầu Phần mềm (SRS) này mô tả toàn diện các yêu cầu chức năng, yêu cầu phi chức năng, các tác nhân hệ thống và các điều kiện nghiệm thu cho dự án **BlueMoon BFMS**.
 
-Bộ tài liệu yêu cầu chi tiết của dự án được biên dịch từ đề bài BTL môn Công nghệ phần mềm (`CNPM_20261_YcBTL`) và lưu trữ tại thư mục [`docs/requirements/`](./requirements/README.md):
-- [01. Đề bài và Giới thiệu bài toán](./requirements/01_de_bai_tong_quan.md)
-- [02. Kế hoạch Khai phá Yêu cầu (SMART & Elicitation Plan)](./requirements/02_ke_hoach_khai_pha_yeu_cau.md)
-- [03. Client's Wish List và Danh sách Yêu cầu thô](./requirements/03_client_wishlist_va_raw_findings.md)
-- [04. Kịch bản Hiện trạng (As-Is) và Viễn cảnh Tương lai (To-Be)](./requirements/04_kich_ban_hien_trang_va_tuong_lai.md)
-- [05. Bộ Scrum Artefacts (Epics, Features, User Stories, Acceptance Criteria)](./requirements/05_scrum_artefacts.md)
-- [06. Product Backlog & Ma trận Truy vết Yêu cầu](./requirements/06_product_backlog_traceability.md)
+Bộ tài liệu yêu cầu chi tiết và kế hoạch dự án chính thức của nhóm được biên dịch và số hóa toàn bộ tại thư mục [`docs/proposal/`](./proposal/README.md) cùng văn bản đề bài gốc [`docs/DE_BAI_GOC.md`](./DE_BAI_GOC.md):
+- [00. Tổng quan Hồ sơ Đề xuất](./proposal/00_tong_quan_proposal.md)
+- [01. Phác thảo và Kế hoạch Phân công Nhóm](./proposal/01_phac_thao_va_ke_hoach_phan_cong.md)
+- [02. Kế hoạch Chi tiết Khai phá Yêu cầu](./proposal/02_ke_hoach_chi_tiet_khai_pha.md)
+- [03. Tuyên ngôn Dự án (Project Charter sơ khởi)](./proposal/03_tuyen_ngon_du_an.md)
+- [04. Kế hoạch Dự án & Epic-Focused User Story Map](./proposal/04_ke_hoach_du_an_va_user_story_map.md)
+- [05. Chi tiết User Stories & Acceptance Criteria (US-001 -> US-011)](./proposal/05_chi_tiet_us_va_acceptance_criteria.md)
+- [06. Client Wish List, Kịch bản As-Is/To-Be & Yêu cầu Phi chức năng](./proposal/06_client_wishlist_as_is_to_be_nfr.md)
+- [07. Ma trận Truy vết Yêu cầu & Báo cáo Xử lý Xung đột](./proposal/07_traceability_matrix_va_quan_ly_rui_ro.md)
+- [08. Phụ lục Tuân thủ Pháp lý (Luật Cư trú, TT 02/2016, NĐ 93/2021)](./proposal/08_phu_luc_tuan_thu_phap_ly.md)
+- [09. Kế hoạch Dự án Chi tiết & WBS 2 dạng (Chuẩn SoICT)](./proposal/09_ke_hoach_du_an_chi_tiet.md)
+- [10. Kế hoạch Quản lý Rủi ro Toàn diện & Risk Log (Chuẩn SoICT)](./proposal/10_ke_hoach_quan_ly_rui_ro_toan_dien.md)
 
 ---
 
@@ -48,6 +53,8 @@ Bộ tài liệu yêu cầu chi tiết của dự án được biên dịch từ
 ---
 
 ## 5. Tiêu chuẩn Nghiệm thu & Quản lý Truy vết
-Toàn bộ chi tiết về kịch bản nghiệm thu **Given - When - Then** và ma trận truy vết **Traceability Matrix** ánh xạ $100\%$ các yêu cầu từ Client's Wish List đến Acceptance Criteria được trình bày chi tiết tại:
-- [Tài liệu Scrum Artefacts & AC](./requirements/05_scrum_artefacts.md)
-- [Tài liệu Product Backlog & Traceability Matrix](./requirements/06_product_backlog_traceability.md)
+Toàn bộ chi tiết về kịch bản nghiệm thu **Given - When - Then**, tiêu chí Definition of Done và ma trận truy vết **Traceability Matrix** ánh xạ $100\%$ các yêu cầu từ Client's Wish List đến Acceptance Criteria được trình bày chi tiết tại:
+- [Tài liệu Chi tiết US & Acceptance Criteria (US-001 -> US-011)](./proposal/05_chi_tiet_us_va_acceptance_criteria.md)
+- [Tài liệu Ma trận Truy vết & Quản lý Rủi ro](./proposal/07_traceability_matrix_va_quan_ly_rui_ro.md)
+- [Kế hoạch Dự án & Biểu đồ Gantt (Chuẩn SoICT)](./proposal/09_ke_hoach_du_an_chi_tiet.md)
+- [Kế hoạch Quản lý Rủi ro Toàn diện (Chuẩn SoICT)](./proposal/10_ke_hoach_quan_ly_rui_ro_toan_dien.md)
