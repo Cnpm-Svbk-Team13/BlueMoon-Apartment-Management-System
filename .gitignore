@@ -1,0 +1,27 @@
+# Maven build output
+target/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+application-local.yml
+application-prod.yml
+
+# PostgreSQL exports and local backups
+*.dump
+*.backup
+*.sql.gz
+
+# IDE and operating-system files
+.idea/
+.vscode/
+*.iml
+.classpath
+.project
+.settings/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

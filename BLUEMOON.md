@@ -41,14 +41,15 @@
 
 ## 3. Cây thư mục Maven Standard Structure
 
-Ví dụ dùng package gốc `com`; các package con như `com.controller`, `com.service` tương ứng với thư mục bên dưới `src/main/java/com/`:
+Ví dụ dùng package gốc `com.bluemoon.bfms`; các package Java được đặt dưới `src/main/java/` theo cấu trúc Maven:
 
 ```text
 bluemoon-bfms/
 ├── pom.xml
 ├── mvnw
 ├── mvnw.cmd
-├── .mvn/wrapper/
+├── .mvn/
+│   └── wrapper/
 ├── .gitignore
 ├── README.md
 ├── docs/
@@ -59,19 +60,22 @@ bluemoon-bfms/
 │   └── local-development.md     # Hướng dẫn chạy và sao lưu local
 └── src/
     ├── main/
-    │   ├── java/com/
-    │   │   ├── BlueMoonBfmsApplication.java
-    │   │   ├── config/         # Cấu hình MVC, bảo mật, beans
-    │   │   ├── controller/
-    │   │   │   ├── AdminController.java
-    │   │   │   ├── PortalController.java
-    │   │   │   └── AuthController.java
-    │   │   ├── service/        # Quy tắc và điều phối nghiệp vụ
-    │   │   ├── repository/     # Spring Data JPA repositories/DAO
-    │   │   ├── model/          # JPA entities ánh xạ bảng
-    │   │   ├── dto/            # Request/response/view data objects
-    │   │   ├── exception/      # Exception miền và xử lý lỗi chung
-    │   │   └── util/           # Tiện ích dùng chung, không chứa nghiệp vụ
+    │   ├── java/
+    │   │   └── com/
+    │   │       └── bluemoon/
+    │   │           └── bfms/
+    │   │               ├── BlueMoonBfmsApplication.java
+    │   │               ├── config/         # Cấu hình MVC, bảo mật, beans
+    │   │               ├── controller/
+    │   │               │   ├── AdminController.java
+    │   │               │   ├── PortalController.java
+    │   │               │   └── AuthController.java
+    │   │               ├── service/        # Quy tắc và điều phối nghiệp vụ
+    │   │               ├── repository/     # Spring Data JPA repositories/DAO
+    │   │               ├── model/          # JPA entities ánh xạ bảng PostgreSQL
+    │   │               ├── dto/            # Request/response/view data objects
+    │   │               ├── exception/      # Exception miền và xử lý lỗi chung
+    │   │               └── util/           # Tiện ích dùng chung, không chứa nghiệp vụ
     │   └── resources/
     │       ├── application.yml             # Cấu hình Spring và PostgreSQL
     │       ├── templates/
@@ -83,13 +87,17 @@ bluemoon-bfms/
     │           ├── css/
     │           ├── js/
     │           └── images/
-    └── test/java/com/
-        ├── controller/
-        ├── service/
-        └── repository/
+    └── test/
+        └── java/
+            └── com/
+                └── bluemoon/
+                    └── bfms/
+                        ├── controller/
+                        ├── service/
+                        └── repository/
 ```
 
-Các đường dẫn gộp bằng dấu `/` trong sơ đồ chỉ rút gọn cách trình bày những tầng thư mục liên tiếp. Với cấu trúc trên, lớp ứng dụng khai báo `package com;`, còn các lớp trong thư mục con khai báo package tương ứng, ví dụ `package com.controller;`.
+Các thư mục package phản chiếu tên package Java: lớp ứng dụng khai báo `package com.bluemoon.bfms;`, còn lớp trong `controller/` khai báo `package com.bluemoon.bfms.controller;`. Cây test dùng cùng package tương ứng với mã nguồn chính.
 
 ### Ý nghĩa các thành phần chính
 
@@ -215,7 +223,7 @@ mvn package
 
 | Thành phần | Quy ước | Ví dụ |
 |---|---|---|
-| Package Java | chữ thường, theo cấu trúc thư mục | `com.service` |
+| Package Java | chữ thường, theo cấu trúc thư mục | `com.bluemoon.bfms.service` |
 | Class/interface/record/enum | `PascalCase` | `InvoiceService`, `InvoiceCreateRequest` |
 | Method/field/biến | `camelCase` | `calculateMonthlyFee()` |
 | Hằng số | `UPPER_SNAKE_CASE` | `DEFAULT_PAGE_SIZE` |
