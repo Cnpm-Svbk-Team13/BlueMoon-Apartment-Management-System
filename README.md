@@ -81,7 +81,9 @@ Khi ứng dụng khởi động, địa chỉ mặc định dự kiến là `htt
 ## Tài liệu
 
 - [BLUEMOON.md](./BLUEMOON.md) — tổng quan kỹ thuật, sơ đồ kiến trúc, cây thư mục, cấu hình SQLite, hướng dẫn chạy và coding guidelines.
-- `docs/requirements/` — SRS và yêu cầu nghiệp vụ (sẽ bổ sung).
+- [docs/requirements/](./docs/requirements/README.md) — bộ hồ sơ khai phá và đặc tả yêu cầu chi tiết (Wish List, As-Is/To-Be Scenarios, Scrum Artefacts, Product Backlog, Traceability Matrix).
+- [docs/SRS.md](./docs/SRS.md) — tài liệu Đặc tả Yêu cầu Phần mềm (SRS) tổng quan.
+- [docs/workflows.md](./docs/workflows.md) — sơ đồ và mô tả chi tiết 4 luồng nghiệp vụ cốt lõi.
 - `docs/design/` — sơ đồ thiết kế, ERD và luồng nghiệp vụ (sẽ bổ sung).
 
 ## Đóng góp
