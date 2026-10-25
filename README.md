@@ -80,6 +80,8 @@ Khi ứng dụng khởi động, địa chỉ mặc định dự kiến là `htt
 
 ## Tài liệu
 
+- [docs/proposal/](./docs/proposal/README.md) — trọn bộ hồ sơ đề xuất & khai phá yêu cầu chính thức của **Team 13** (biên dịch đầy đủ từ Google Docs `CNPM_Proposal_Team13`, Google Sheets `IT3180_BTL_Team13`, `CNPM_Team13_Epic-US` shape texts và các file đính kèm).
+
 - [BLUEMOON.md](./BLUEMOON.md) — tổng quan kỹ thuật, sơ đồ kiến trúc, cây thư mục, cấu hình SQLite, hướng dẫn chạy và coding guidelines.
 - [docs/requirements/](./docs/requirements/README.md) — bộ hồ sơ khai phá và đặc tả yêu cầu chi tiết (Wish List, As-Is/To-Be Scenarios, Scrum Artefacts, Product Backlog, Traceability Matrix).
 - [docs/SRS.md](./docs/SRS.md) — tài liệu Đặc tả Yêu cầu Phần mềm (SRS) tổng quan.
