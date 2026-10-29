@@ -60,7 +60,7 @@ bluemoon-bfms/
 
 
 
-│   └── local-development.md     # Hướng dẫn chạy và sao lưu local
+├── database/                    # DDL Schema và Seed Data CSDL
 └── src/
     ├── main/
     │   ├── java/
