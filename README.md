@@ -2,73 +2,78 @@
 
 **BlueMoon BFMS** (BlueMoon Facility Management System) là phần mềm web hỗ trợ quản lý thu phí và vận hành chung cư, phục vụ Ban quản trị, bộ phận Kế toán và cư dân.
 
-> **Giai đoạn hiện tại:** khởi động dự án và thống nhất kiến trúc. Tài liệu đã được chuẩn bị; mã nguồn ứng dụng và Maven build scaffold chưa được thêm vào repository.
+> **Trạng thái dự án:** Khung xương mã nguồn (Scaffold), tài liệu đặc tả (SRS, Proposals, Workflows) và cấu hình môi trường đã được hoàn tất trên nền tảng **Java 25 LTS**, **Spring Boot 3.4.5** và **PostgreSQL**.
 
 ## Mục tiêu
 
 - Cung cấp **Trang Quản trị** để quản lý căn hộ, cư dân, khoản phí, hóa đơn và báo cáo.
 - Cung cấp **Cổng Cư dân** để tra cứu công nợ/hóa đơn và gửi phản ánh (ticket).
-- Tập trung nghiệp vụ và dữ liệu trong một ứng dụng web có phân tầng rõ ràng.
+- Tập trung nghiệp vụ và dữ liệu trong một ứng dụng web có phân tầng rõ ràng (Controller → Service → Repository).
 
-## Công nghệ dự kiến
+## Công nghệ nền tảng
 
 | Thành phần | Công nghệ |
 |---|---|
-| Ngôn ngữ | Java |
-| Backend/Web | Spring Boot, Spring MVC |
+| Ngôn ngữ | Java 25 LTS (tương thích JDK 21+) |
+| Framework Backend | Spring Boot 3.4.5, Spring MVC |
 | Giao diện máy chủ | Thymeleaf |
-| Persistence | Spring Data JPA / Hibernate, JDBC |
-| Database giai đoạn đầu | SQLite (`database/bluemoon.db`) |
-| Build và quản lý thư viện | Maven |
+| Xác thực & Bảo mật | Spring Security (RBAC, BCrypt) |
+| Persistence | Spring Data JPA / Hibernate |
+| Cơ sở dữ liệu | PostgreSQL 16/17 (Google Cloud Console / Docker) |
+| Kiểm thử | JUnit 5, Mockito, H2 In-Memory Database |
+| Build & Quản lý thư viện | Maven Wrapper (Apache Maven 3.9.9) |
 
-## Kiến trúc
+## Kiến trúc Hệ thống
 
 ```text
 Admin Panel ───────┐
-                   ├── HTTP ──► Spring MVC Controller
-Cổng Cư dân ───────┘                    │
-                                        ▼
-                                  Service (nghiệp vụ)
-                                        │
-                                        ▼
-                                Repository / JPA
-                                        │
-                                        ▼
-                             SQLite: database/bluemoon.db
+                   ├── HTTP/HTTPS ──► Spring Boot / Spring MVC
+Cổng Cư dân ───────┘                            │
+                                                ▼
+                                          Service (nghiệp vụ)
+                                                │
+                                                ▼
+                                        Repository / JPA
+                                                │
+                                                ▼
+                                 PostgreSQL (Google Cloud / Local)
 ```
 
-Ứng dụng theo **Pure Web Architecture** và **Layered Architecture**. Trình duyệt chỉ giao tiếp với Spring Boot; không truy cập database trực tiếp. Chi tiết kiến trúc và cấu trúc thư mục xem trong [BLUEMOON.md](./BLUEMOON.md).
+Ứng dụng theo **Pure Web Architecture** và **Layered Architecture**. Trình duyệt chỉ giao tiếp với Spring Boot; không truy cập database trực tiếp. Chi tiết kiến trúc xem trong [BLUEMOON.md](./BLUEMOON.md).
 
-## Trạng thái khởi động
+## Trạng thái triển khai
 
-- [x] Thống nhất công nghệ nền tảng và database phát triển.
-- [x] Đề xuất cấu trúc Maven và phân chia các tầng.
-- [ ] Tạo Maven Wrapper, `pom.xml` và Spring Boot application scaffold.
-- [ ] Cấu hình SQLite JDBC/JPA và kiểm tra kết nối database.
-- [ ] Phát triển các luồng nghiệp vụ Admin và Cổng Cư dân.
-- [ ] Bổ sung kiểm thử và hướng dẫn vận hành.
-
-Các mục trạng thái phản ánh giai đoạn hiện tại và cần được cập nhật khi dự án có tiến triển.
+- [x] Thống nhất công nghệ nền tảng (Java 25 LTS, Spring Boot 3.4.5, PostgreSQL).
+- [x] Tạo cấu trúc Maven chuẩn, Maven Wrapper và Spring Boot application scaffold.
+- [x] Cấu hình DataSource linh hoạt hỗ trợ biến môi trường Google Cloud và Docker Compose.
+- [x] Tích hợp cấu hình kiểm thử độc lập với H2 In-Memory Database.
+- [ ] Xây dựng Database Schema và migration scripts cho 30 tầng căn hộ & cư dân.
+- [ ] Phát triển các luồng nghiệp vụ Quản trị (Admin) và Cổng Cư dân (Portal).
+- [ ] Bổ sung kiểm thử tự động (Unit Test / Integration Test) và hoàn thiện giao diện.
 
 ## Bắt đầu phát triển
 
-### Yêu cầu
+### 1. Yêu cầu môi trường
 
-- JDK 17 trở lên (khuyến nghị JDK 21 LTS).
-- Maven 3.9 trở lên hoặc Maven Wrapper khi được thêm vào repository.
-- Không cần cài SQLite server; SQLite sử dụng file local.
+- JDK 25 LTS (hoặc JDK 21 trở lên).
+- Maven Wrapper (`mvnw` / `mvnw.cmd`) có sẵn trong repository.
+- Cơ sở dữ liệu PostgreSQL (kết nối tới Google Cloud instance của nhóm hoặc chạy qua Docker).
 
-### Chạy ứng dụng
+### 2. Cấu hình biến môi trường
 
-Maven project chưa được khởi tạo trong repository. Sau khi có `pom.xml` và Spring Boot application, chạy từ thư mục gốc dự án:
+Copy tệp [`.env.example`](./.env.example) và cấu hình thông tin kết nối database (xem chi tiết tại [docs/local-development.md](./docs/local-development.md)):
 
 ```bash
-mvn spring-boot:run
+DB_URL=jdbc:postgresql://<GCP_HOST>:5432/bluemoon?sslmode=prefer
+DB_USERNAME=bluemoon_admin
+DB_PASSWORD=your_password
 ```
 
-Hoặc dùng Maven Wrapper:
+### 3. Chạy ứng dụng
 
-```bash
+Chạy từ thư mục gốc dự án bằng Maven Wrapper:
+
+```powershell
 # Windows
 .\mvnw.cmd spring-boot:run
 
@@ -76,14 +81,24 @@ Hoặc dùng Maven Wrapper:
 ./mvnw spring-boot:run
 ```
 
-Khi ứng dụng khởi động, địa chỉ mặc định dự kiến là `http://localhost:8080/`. Cấu hình SQLite và hướng dẫn thiết lập đầy đủ nằm trong [BLUEMOON.md](./BLUEMOON.md).
+Khi ứng dụng khởi động thành công, truy cập tại: `http://localhost:8080/`.
 
-## Tài liệu
+### 4. Chạy kiểm thử
 
-- [BLUEMOON.md](./BLUEMOON.md) — tổng quan kỹ thuật, sơ đồ kiến trúc, cây thư mục, cấu hình SQLite, hướng dẫn chạy và coding guidelines.
-- `docs/requirements/` — SRS và yêu cầu nghiệp vụ (sẽ bổ sung).
-- `docs/design/` — sơ đồ thiết kế, ERD và luồng nghiệp vụ (sẽ bổ sung).
+```powershell
+.\mvnw.cmd test
+```
 
-## Đóng góp
+## Tài liệu Dự án
 
-Trước khi triển khai một tính năng, hãy đọc [BLUEMOON.md](./BLUEMOON.md), tuân thủ phân tầng Controller → Service → Repository và cập nhật tests/tài liệu liên quan. Ưu tiên thay đổi nhỏ, có thể kiểm chứng và không đưa dữ liệu cư dân hoặc thông tin nhạy cảm vào repository.
+- [docs/local-development.md](./docs/local-development.md) — Hướng dẫn chi tiết thiết lập môi trường, kết nối Google Cloud PostgreSQL và quy trình phát triển.
+- [docs/proposal/](./docs/proposal/README.md) — Trọn bộ hồ sơ đề xuất & khai phá yêu cầu chính thức của **Team 13** (biên dịch đầy đủ từ Google Docs `CNPM_Proposal_Team13`, Google Sheets `IT3180_BTL_Team13`, `CNPM_Team13_Epic-US`).
+- [BLUEMOON.md](./BLUEMOON.md) — Tổng quan kỹ thuật, sơ đồ kiến trúc, phân tầng và coding guidelines.
+- [docs/DE_BAI_GOC.md](./docs/DE_BAI_GOC.md) — Toàn văn đề bài gốc bài tập lớn môn Công nghệ phần mềm và phân tích ảnh mẫu phiếu thu viết tay Hình 1-1.
+- [docs/SRS.md](./docs/SRS.md) — Tài liệu Đặc tả Yêu cầu Phần mềm (SRS) tổng quan.
+- [docs/workflows.md](./docs/workflows.md) — Sơ đồ và mô tả chi tiết 4 luồng nghiệp vụ cốt lõi.
+- [docs/erd.md](./docs/erd.md) — Mô hình thực thể liên kết (ERD) và cấu trúc dữ liệu.
+
+## Đóng góp và Quy ước
+
+Trước khi triển khai tính năng, hãy đọc [BLUEMOON.md](./BLUEMOON.md), tuân thủ phân tầng Controller → Service → Repository và cập nhật tests/tài liệu liên quan.
