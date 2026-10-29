@@ -29,3 +29,4 @@ Thumbs.db
 # Local agent configuration
 .agents/
 docs/source_files/
+AGENTS.md

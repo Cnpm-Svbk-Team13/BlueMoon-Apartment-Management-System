@@ -1,3 +1,7 @@
+[🏠 Trang chủ Docs](../README.md) > [Giai đoạn 2: Thiết kế Hệ thống](./README.md) > **workflows.md**
+
+---
+
 # LUỒNG NGHIỆP VỤ HỆ THỐNG (SYSTEM WORKFLOWS)
 ## Dự án: Hệ thống Quản lý Thu phí Chung cư BlueMoon (BlueMoon BFMS)
 

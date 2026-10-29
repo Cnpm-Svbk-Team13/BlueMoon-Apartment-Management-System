@@ -1,3 +1,7 @@
+[🏠 Trang chủ Docs](../README.md) > [Giai đoạn 2: Thiết kế Hệ thống](./README.md) > **erd.md**
+
+---
+
 # MÔ HÌNH THỰC THỂ LIÊN KẾT (ENTITY-RELATIONSHIP DIAGRAM - ERD)
 ## Dự án: Hệ thống Quản lý Thu phí và Dân cư Chung cư BlueMoon (BlueMoon BFMS)
 
@@ -154,4 +158,4 @@ erDiagram
 | Biên lai | `receipts` | Phiếu thu xuất cho cư dân khi gạch nợ | `id` | `invoice_id`, `contribution_id` |
 | Nhật ký | `audit_logs` | Lịch sử thao tác biến động nhân khẩu và tiền | `id` | `user_id` |
 
-*Chi tiết các câu lệnh SQL khởi tạo được lưu trữ tại:* [`database/schema.sql`](../database/schema.sql) và [`database/seed_data.sql`](../database/seed_data.sql).
+*Chi tiết các câu lệnh SQL khởi tạo được lưu trữ tại:* [`database/schema.sql`](../../database/schema.sql) và [`database/seed_data.sql`](../../database/seed_data.sql).

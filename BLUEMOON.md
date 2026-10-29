@@ -53,10 +53,13 @@ bluemoon-bfms/
 ├── .gitignore
 ├── README.md
 ├── docs/
-│   ├── SRS.md                   # Đặc tả yêu cầu phần mềm
-│   ├── architecture.md          # Kiến trúc và quyết định thiết kế
-│   ├── erd.md                   # Mô hình dữ liệu/ERD
-│   ├── workflows.md             # Luồng nghiệp vụ
+│   ├── README.md                # Cổng điều hướng tài liệu trung tâm
+│   ├── 01_requirements_and_planning/ # Giai đoạn 1: Khai phá & Kế hoạch
+│   ├── 02_design_and_architecture/   # Giai đoạn 2: SRS, Kiến trúc, ERD
+│   └── 03_operations_and_guides/     # Giai đoạn 3: Cài đặt, GCP, Docker
+
+
+
 │   └── local-development.md     # Hướng dẫn chạy và sao lưu local
 └── src/
     ├── main/

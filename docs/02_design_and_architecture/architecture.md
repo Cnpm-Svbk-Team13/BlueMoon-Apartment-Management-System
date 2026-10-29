@@ -1,3 +1,7 @@
+[🏠 Trang chủ Docs](../README.md) > [Giai đoạn 2: Thiết kế Hệ thống](./README.md) > **architecture.md**
+
+---
+
 # TÀI LIỆU KIẾN TRÚC HỆ THỐNG (SYSTEM ARCHITECTURE)
 ## Dự án: Phần mềm Quản lý Thu phí Chung cư BlueMoon (BlueMoon BFMS)
 
@@ -83,4 +87,4 @@ flowchart TD
 3. **Bảo mật và Xác thực:**
    - Sử dụng **Spring Security 6** với cơ chế băm mật khẩu **BCrypt**, bảo vệ CSRF trên các biểu mẫu giao dịch thu tiền, và kiểm soát truy cập dựa trên vai trò (RBAC).
 4. **Quản lý Vòng đời Cơ sở dữ liệu (Database as Code):**
-   - Không dựa vào việc tự sinh schema ngẫu nhiên. Toàn bộ cấu trúc CSDL và dữ liệu hạt giống được số hóa tại thư mục [`database/`](../database/).
+   - Không dựa vào việc tự sinh schema ngẫu nhiên. Toàn bộ cấu trúc CSDL và dữ liệu hạt giống được số hóa tại thư mục [`database/`](../../database/).

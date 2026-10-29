@@ -1,3 +1,7 @@
+[🏠 Trang chủ Docs](../README.md) > **Giai đoạn 1: Khai phá Yêu cầu & Kế hoạch Dự án**
+
+---
+
 # HỒ SƠ ĐỀ XUẤT VÀ KHAI PHÁ YÊU CẦU DỰ ÁN - TEAM 13
 ## Dự án: Phần mềm Quản lý Thu phí Chung cư BlueMoon (BlueMoon Management System - BMS)
 
@@ -20,21 +24,19 @@ Mục tiêu của bộ tài liệu này là cung cấp nguồn tri thức chuẩ
 ## 2. Cấu trúc thư mục tài liệu
 
 ```text
-docs/
-├── DE_BAI_GOC.md                                      # Toàn văn đề bài gốc môn học & phân tích Hình 1-1 (phiếu thu tay)
-└── proposal/
-    ├── README.md                                      # Tổng quan và hướng dẫn điều hướng
-    ├── 00_tong_quan_proposal.md                       # Tổng hợp tài liệu văn bản & khung báo cáo
-    ├── 01_phac_thao_va_ke_hoach_phan_cong.md         # Tab 0 & Tab 1: Phác thảo 5 bước và bảng phân công 5 TV / 6 ngày
-    ├── 02_ke_hoach_chi_tiet_khai_pha.md               # Tab 2: Kế hoạch chi tiết khai phá yêu cầu (Bối cảnh, MoSCoW, JAD...)
-    ├── 03_tuyen_ngon_du_an.md                         # Tab 5: Tài liệu Tuyên ngôn dự án sơ khởi (Scope, Stakeholders, SMART)
-    ├── 04_ke_hoach_du_an_va_user_story_map.md         # Tab 6: Kế hoạch dự án & User Story Map trích xuất từ Drawing Shapes
-    ├── 05_chi_tiet_us_va_acceptance_criteria.md       # Bảng chi tiết US-001 -> US-011 (AC, DoD, Story Points)
-    ├── 06_client_wishlist_as_is_to_be_nfr.md          # 32 RAW Wishlist, As-Is Map, To-Be Map, 5 NFRs định lượng
-    ├── 07_traceability_matrix_va_quan_ly_rui_ro.md    # Tab 7: Traceability Matrix 5 tầng, Conflict Resolution & Risk Log ban đầu
-    ├── 08_phu_luc_tuan_thu_phap_ly.md                 # Tab 3: Phụ lục Yêu cầu Tuân thủ và Pháp lý (Luật Cư trú, TT 02/2016)
-    ├── 09_ke_hoach_du_an_chi_tiet.md                  # [CHUẨN SOICT - BÀI 4.2] Cấu trúc phân cấp công việc WBS 2 dạng (Sản phẩm & Scrum), RACI & Gantt Chart
-    └── 10_ke_hoach_quan_ly_rui_ro_toan_dien.md        # [CHUẨN SOICT - BÀI 4.3] Thang đo Bảng 4-2/4-3, Ma trận 3x3, 13 rủi ro chi tiết & Risk Tracking Log
+docs/01_requirements_and_planning/
+├── README.md                                      # Tổng quan và hướng dẫn điều hướng giai đoạn 1
+├── 00_tong_quan_proposal.md                       # Tổng hợp tài liệu văn bản & khung báo cáo
+├── 01_phac_thao_va_ke_hoach_phan_cong.md         # Tab 0 & Tab 1: Phác thảo 5 bước và bảng phân công 5 TV / 6 ngày
+├── 02_ke_hoach_chi_tiet_khai_pha.md               # Tab 2: Kế hoạch chi tiết khai phá yêu cầu (Bối cảnh, MoSCoW, JAD...)
+├── 03_tuyen_ngon_du_an.md                         # Tab 5: Tài liệu Tuyên ngôn dự án sơ khởi (Scope, Stakeholders, SMART)
+├── 04_ke_hoach_du_an_va_user_story_map.md         # Tab 6: Kế hoạch dự án & User Story Map trích xuất từ Drawing Shapes
+├── 05_chi_tiet_us_va_acceptance_criteria.md       # Bảng chi tiết US-001 -> US-011 (AC, DoD, Story Points)
+├── 06_client_wishlist_as_is_to_be_nfr.md          # 32 RAW Wishlist, As-Is Map, To-Be Map, 5 NFRs định lượng
+├── 07_traceability_matrix_va_quan_ly_rui_ro.md    # Tab 7: Traceability Matrix 5 tầng, Conflict Resolution & Risk Log ban đầu
+├── 08_phu_luc_tuan_thu_phap_ly.md                 # Tab 3: Phụ lục Yêu cầu Tuân thủ và Pháp lý (Luật Cư trú, TT 02/2016)
+├── 09_ke_hoach_du_an_chi_tiet.md                  # [CHUẨN SOICT - BÀI 4.2] Cấu trúc phân cấp công việc WBS 2 dạng (Sản phẩm & Scrum), RACI & Gantt Chart
+└── 10_ke_hoach_quan_ly_rui_ro_toan_dien.md        # [CHUẨN SOICT - BÀI 4.3] Thang đo Bảng 4-2/4-3, Ma trận 3x3, 13 rủi ro chi tiết & Risk Tracking Log
 ```
 
 ---
@@ -43,7 +45,7 @@ docs/
 
 | Tab trong Google Docs | Tiêu đề Tab | Tập tin Markdown tương ứng | Trọng tâm nội dung |
 |---|---|---|---|
-| **Đề bài gốc** | Đề bài BTL BlueMoon | [`docs/DE_BAI_GOC.md`](../DE_BAI_GOC.md) | Giới thiệu bài toán, quy mô tòa nhà 30 tầng, phân loại phí, đánh giá ảnh chụp phiếu thu viết tay Hình 1-1. |
+| **Đề bài gốc** | Đề bài BTL BlueMoon | [`../02_design_and_architecture/DE_BAI_GOC.md`](../02_design_and_architecture/DE_BAI_GOC.md) | Giới thiệu bài toán, quy mô tòa nhà 30 tầng, phân loại phí, đánh giá ảnh chụp phiếu thu viết tay Hình 1-1. |
 | **Tab 0** (`t.0`) | Phác thảo công việc | [`01_phac_thao_va_ke_hoach_phan_cong.md`](./01_phac_thao_va_ke_hoach_phan_cong.md) | 5 bước khai phá yêu cầu (Preparation, Execution, Modeling, Analysis, Documentation) và kết quả dự kiến (Deliverables). |
 | **Tab 1** (`t.8i9vt2uy4m8v`) | Kế hoạch phân công | [`01_phac_thao_va_ke_hoach_phan_cong.md`](./01_phac_thao_va_ke_hoach_phan_cong.md) | Bảng ánh xạ 5 nhóm tài liệu vào kế hoạch phân công cho 5 thành viên trong 6 ngày. |
 | **Tab 2** (`t.8a2x2coysd5z`) | KẾ HOẠCH CHI TIẾT KHAI PHÁ YÊU CẦU | [`02_ke_hoach_chi_tiet_khai_pha.md`](./02_ke_hoach_chi_tiet_khai_pha.md) | Bối cảnh tòa nhà 30 tầng, bài toán thu phí m², phân công cụ thể 5 vai trò BA, ma trận MoSCoW, giải quyết xung đột, quản lý rủi ro và 9 deliverables. |
