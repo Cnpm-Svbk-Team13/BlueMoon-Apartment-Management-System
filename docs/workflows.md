@@ -124,5 +124,5 @@ flowchart TD
 ---
 
 ## 3. Liên kết tài liệu yêu cầu chi tiết
-- Để xem các kịch bản kiểm thử tương ứng cho từng luồng: [Tài liệu Scrum Artefacts & AC](./requirements/05_scrum_artefacts.md).
-- Để xem ma trận truy vết từ nguồn gốc yêu cầu: [Tài liệu Traceability Matrix](./requirements/06_product_backlog_traceability.md).
+- Để xem các kịch bản kiểm thử tương ứng cho từng luồng: [Tài liệu Scrum Artefacts & AC](./proposal/05_chi_tiet_us_va_acceptance_criteria.md).
+- Để xem ma trận truy vết từ nguồn gốc yêu cầu: [Tài liệu Traceability Matrix](./proposal/07_traceability_matrix_va_quan_ly_rui_ro.md).

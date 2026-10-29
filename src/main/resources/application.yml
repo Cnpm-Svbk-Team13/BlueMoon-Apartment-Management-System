@@ -1,13 +1,24 @@
-# TODO: Configure Spring, JPA, and PostgreSQL connection settings for each environment.
 spring:
+  application:
+    name: bluemoon-bfms
+
   datasource:
+    # URL kết nối: Ưu tiên lấy từ biến môi trường DB_URL (dành cho Cloud SQL / GCP VM)
+    # Mặc định fallback về PostgreSQL localhost
     url: ${DB_URL:jdbc:postgresql://localhost:5432/bluemoon}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
-      ddl-auto: update
+      # 'update' tự động đồng bộ entity trong giai đoạn phát triển ban đầu
+      ddl-auto: ${JPA_DDL_AUTO:update}
     open-in-view: false
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
 
 server:
-  port: 8080
+  port: ${PORT:8080}

@@ -120,7 +120,7 @@ Không bắt buộc tạo mọi thư mục rỗng ngay từ đầu. Chỉ thêm 
 
 ## 4. Yêu cầu môi trường
 
-- **JDK 17 trở lên** (khuyến nghị JDK 21 LTS nếu cả nhóm thống nhất).
+- **JDK 25 LTS** (hoặc tối thiểu JDK 21 trở lên).
 - **Apache Maven 3.9 trở lên**, hoặc dùng Maven Wrapper (`mvnw`/`mvnw.cmd`) để chuẩn hóa phiên bản Maven trong nhóm.
 - Git và terminal.
 - Cài đặt và khởi chạy PostgreSQL server local hoặc sử dụng một instance PostgreSQL được cấp cho nhóm.
