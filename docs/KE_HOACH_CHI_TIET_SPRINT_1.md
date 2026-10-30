@@ -2,9 +2,17 @@
 ## Phân hệ: Khởi tạo Nền tảng Kiến trúc, Database Schema & Quản lý Tài khoản BQT / Đăng nhập
 ### Học phần: Nhập môn Công nghệ Phần mềm (IT3180) — SoICT / HUST
 **Nhóm thực hiện:** Nhóm 13 (Team 13)  
-**Thời gian thực hiện Sprint 1:** 2 tuần (Từ 20/10/2026 đến 02/11/2026)  
-**Phiên bản kế hoạch:** 1.0 (Official Baseline Plan)  
+**Thời gian thực hiện Sprint 1:** 7 ngày liên tục (Từ Thứ Bảy 31/10/2026 đến Thứ Sáu 06/11/2026)  
+**Phiên bản kế hoạch:** 2.0 (Official Refined Baseline Plan)  
 **Tiêu chuẩn áp dụng:** Hướng dẫn Đồ án Công nghệ Phần mềm SoICT (Chương 8 & 9), Bất biến Nghiệp vụ `AGENTS.md`
+
+> [!NOTE]
+> **ĐIỀU HƯỚNG TÀI LIỆU SPRINT 1 THEO MÔ-ĐUN:**  
+> Kế hoạch Sprint 1 đã được phân rã thành các tệp cẩm nang chuyên biệt cho từng thành viên và bộ thẻ GitHub Kanban tại:  
+> 📂 [**`docs/sprints/sprint-1/README.md`**](./sprints/sprint-1/README.md)  
+> - 📄 Cẩm nang thành viên: [TV1 Khánh](./sprints/sprint-1/TV1_Khanh_PO_BA.md) | [TV2 Sơn](./sprints/sprint-1/TV2_Son_Database_Backend.md) | [TV3 Hoà](./sprints/sprint-1/TV3_Hoa_TechLead_Security.md) | [TV4 Đức Anh](./sprints/sprint-1/TV4_DucAnh_Frontend_UI.md) | [TV5 Huy](./sprints/sprint-1/TV5_Huy_QA_Automation.md)  
+> - 📋 Danh mục 18 Thẻ GitHub Issues Backlog: [github_issues_backlog.md](./sprints/sprint-1/github_issues_backlog.md)  
+> - 📐 Chứng minh Toán học CFG & Decision Table: [kiem_thu_hoc_thuat_cfg_decision_table.md](./sprints/sprint-1/kiem_thu_hoc_thuat_cfg_decision_table.md)
 
 ---
 
@@ -12,83 +20,82 @@
 
 ### 1.1. Thông tin Cơ bản
 - **Tên Sprint:** Sprint 1 — Khởi tạo Nền tảng Kiến trúc Spring Boot, Chuẩn hóa Database Schema & Xây dựng Phân hệ Quản lý Tài khoản BQT / Xác thực Đăng nhập.
-- **Thời lượng:** 2 tuần (10 ngày làm việc chính thức, từ Thứ Ba 20/10/2026 đến Thứ Hai 02/11/2026).
-- **Quy mô Nhân sự:** 5 thành viên (100% năng lực đóng góp, ước tính 32 giờ/thành viên/Sprint $\rightarrow$ Tổng quỹ thời gian khả dụng: **160 giờ làm việc**).
-- **Tổng dung lượng Story Points cam kết (Sprint Capacity):** **40 Story Points (SP)**.
+- **Thời lượng:** Đúng **7 ngày liên tục** (từ Thứ Bảy 31/10/2026 đến Thứ Sáu 06/11/2026).
+- **Quy mô Nhân sự:** 5 thành viên giữ vững phân công chuyên môn gốc, ước tính 20–28 giờ/thành viên/Sprint $\rightarrow$ Tổng quỹ thời gian khả dụng: **117 giờ làm việc**.
+- **Tổng dung lượng Story Points cam kết (Sprint Capacity):** **30 Story Points (SP)** (tinh gọn, khả thi cao cho khung thời gian 7 ngày).
 
 ### 1.2. Mục tiêu Cốt lõi của Sprint (Sprint Goal)
 > **Sprint Goal:**  
-> Thiết lập hoàn chỉnh khung kiến trúc dự án **Spring Boot 3.4.5 (Java 25 LTS)** theo mô hình phân tầng thuần Web (Pure Web Architecture), kết nối và hoàn thiện kịch bản CSDL **PostgreSQL** (vá triệt để các lỗi thiếu `start_date`/`end_date` và `version`), hiện thực hóa thành công phân hệ **Xác thực Đăng nhập, Cơ chế khóa Brute-force, Quản lý Tài khoản Ban Quản trị & Phân quyền RBAC**, kết hợp phân hệ **Quản lý Căn hộ & Chủ hộ** nền tảng, đáp ứng 100% tiêu chí kiểm thử và chuẩn mực học thuật của Viện CNTT&TT (SoICT / HUST).
+> Thiết lập hoàn chỉnh khung kiến trúc dự án **Spring Boot 3.4.5 (Java 25 LTS)** theo mô hình phân tầng thuần Web (Pure Web Architecture), kết nối và hoàn thiện kịch bản CSDL **PostgreSQL** (vá triệt để các lỗi thiếu `start_date`/`end_date` và `version`), hiện thực hóa thành công phân hệ **Xác thực Đăng nhập, Cơ chế khóa Brute-force 15 phút sau 5 lần sai, Quản lý Tài khoản Ban Quản trị & Phân quyền RBAC**, kết hợp phân hệ **Quản lý Căn hộ & Chủ hộ** nền tảng, đáp ứng 100% tiêu chí kiểm thử Shift-Left và chuẩn mực học thuật của Viện CNTT&TT (SoICT / HUST).
 
 ### 1.3. Căn cứ Quy chiếu & Phạm vi Nghiệp vụ Sprint 1
-Để giải quyết dứt điểm mâu thuẫn định danh và làm rõ bản chất công việc, Sprint 1 quy chuẩn phạm vi thực thi bao gồm:
+Sprint 1 quy chuẩn phạm vi thực thi bao gồm 3 nhóm hạng mục:
 1. **Phân hệ Nghiệp vụ Căn hộ & Không gian Tòa nhà (Business Feature):**
-   - **US-001 (thuộc 11 User Stories gốc của nhóm trong `05_chi_tiet_us_va_acceptance_criteria.md`):** *Khởi tạo và Quản lý Danh mục Căn hộ (30 tầng bao gồm Kiot tầng 1, Thương mại tầng 2–5, Căn hộ tầng 6–29, Penthouse tầng 30) và Thông tin Hồ sơ Chủ hộ đại diện.*
+   - **US-001 (thuộc 11 User Stories gốc trong `05_chi_tiet_us_va_acceptance_criteria.md`):** *Khởi tạo và Quản lý Danh mục Căn hộ (30 tầng bao gồm Kiot tầng 1, Thương mại tầng 2–5, Căn hộ tầng 6–29, Penthouse tầng 30) và Thông tin Hồ sơ Chủ hộ đại diện.*
 2. **Phân hệ Nền tảng Xác thực & Quản trị BQT (Core Workflow 1 theo Đề bài gốc & `AGENTS.md`):**
-   *(Lưu ý đối soát: Trong 11 User Stories ban đầu của nhóm chỉ tập trung vào nghiệp vụ chung cư nên chưa có mã riêng cho phân hệ Đăng nhập/Tài khoản vốn là điều kiện tiên quyết ở Mục 4.1.5 của `DE_BAI_GOC.md`. Hai mã `US-SEC-01` và `US-SEC-02` được đặt tên trong báo cáo audit để phân rã kỹ thuật, bản chất chính là Luồng nghiệp vụ cốt lõi 1 của hệ thống):*
-   - **Xác thực Đăng nhập & Khóa Brute-force (`TASK-SEC-AUTH` / tạm chiếu `US-SEC-02`):** Xác thực Người dùng, Đăng nhập hệ thống, Kiểm soát phiên Session, Khóa tài khoản sau 5 lần sai và Đổi mật khẩu chủ động.
+   - **Xác thực Đăng nhập & Khóa Brute-force (`TASK-SEC-AUTH` / tạm chiếu `US-SEC-02`):** Xác thực Người dùng, Đăng nhập hệ thống, Kiểm soát phiên Session, Khóa tài khoản tạm thời 15 phút sau 5 lần nhập sai liên tiếp và Đổi mật khẩu chủ động.
    - **Quản lý Tài khoản Ban Quản trị & Phân quyền RBAC (`TASK-SEC-USER` / tạm chiếu `US-SEC-01`):** Quản trị viên cấp cao (Admin) khởi tạo, cập nhật, kích hoạt/vô hiệu hóa tài khoản cho các thành viên BQT, Kế toán và Thủ quỹ.
-3. **Nhiệm vụ Kỹ thuật Nền tảng (Technical Enablers):**
+3. **Nhiệm vụ Kỹ thuật Nền tảng (Technical Enablers & Quality):**
    - **TASK-TECH-01:** Khởi tạo khung dự án Spring Boot 3.4.5, cấu hình Pure Web đa tầng và xử lý ngoại lệ tập trung.
    - **TASK-TECH-02:** Nạp kịch bản Migration CSDL PostgreSQL `V1.1__fix_schema_and_seed.sql` và khởi tạo JPA Entities/Repositories.
+   - **TASK-TECH-03 (Shift-Left Testing):** Thiết lập môi trường kiểm thử tự động, chuẩn bị sẵn dữ liệu mẫu fixture và khung kiểm thử từ Ngày 1.
 
 ---
 
 ## 2. PHÂN CÔNG CÔNG VIỆC CỤ THỂ CHO 5 THÀNH VIÊN (WORK BREAKDOWN & ASSIGNMENT)
 
-Nhóm 13 gồm 5 thành viên được phân công vai trò rõ ràng, cân đối khối lượng công việc theo năng lực chuyên môn và trách nhiệm giải trình:
+Nhóm 13 gồm 5 thành viên được phân công giữ nguyên vẹn chuyên môn gốc, tối ưu hóa phối hợp và quy trình làm việc:
 
 ### 2.1. Bảng Tổng hợp Phân bổ Nhiệm vụ Toàn đội
 
-| Thành viên | Vai trò Sprint 1 | Trách nhiệm chính | Mã nhiệm vụ (Task IDs) | Story Points | Giờ ước lượng | Tỷ trọng |
+| Thành viên | Vai trò Sprint 1 | Trách nhiệm chính trong 7 ngày | Mã nhiệm vụ (Task IDs) | Story Points | Giờ ước lượng | Tỷ trọng |
 |---|---|---|---|:---:|:---:|:---:|
-| **TV1: Phạm Nam Khánh** | Project Manager (PM) & Lead BA | Điều phối Scrum, kiểm soát WBS, giám sát DoD, hoàn thiện AC & Kế hoạch UAT | `PM-01`, `PM-02`, `PM-03` | 7 SP | 30h | 18.75% |
-| **TV2: Nguyễn Xuân Sơn** | Database Engineer & Backend Dev | Khắc phục Schema CSDL, Entity JPA, Backend CRUD Căn hộ & Chủ hộ (`US-001`) | `DB-01`, `BE-01`, `BE-02` | 9 SP | 34h | 21.25% |
-| **TV3: Phạm Thái Hoà** | Technical Lead & Core Backend Dev | Kiến trúc hệ thống, Spring Security 6, API Đăng nhập (`US-SEC-02`), Quản lý User (`US-SEC-01`), PR Review & Gatekeeping | `ARCH-01`, `SEC-01`, `SEC-02`, `SEC-03`, `SEC-04` | 10 SP | 36h | 22.50% |
-| **TV4: Nghiêm Đức Anh** | Frontend Developer & UI/UX Specialist | Dựng Master Layout Thymeleaf, Giao diện Login, UI Quản lý tài khoản, UI Căn hộ | `FE-01`, `FE-02`, `FE-03`, `FE-04` | 8 SP | 32h | 20.00% |
-| **TV5: Nguyễn Hợp Huy** | QA Lead & Test Automation Engineer | Cấu hình Test Framework, lập trình Unit Test CFG Basis Path, MockMvc Integration Test, Decision Table | `QA-01`, `QA-02`, `QA-03`, `QA-04` | 6 SP | 28h | 17.50% |
-| **TỔNG CỘNG** | | | **19 Tasks** | **40 SP** | **160h** | **100%** |
+| **TV1: Phạm Nam Khánh** | Product Owner (PO) & Lead BA | Điều phối tiến độ Scrum, chuẩn hóa 12 kịch bản UAT, thực hiện kiểm thử UAT giao diện và lập biên bản nghiệm thu BQT | `PM-01`, `PM-02` | 5 SP | 20h | 17.09% |
+| **TV2: Nguyễn Xuân Sơn** | Database Engineer & Backend Dev | Khắc phục Schema CSDL `V1.1`, Entity JPA, Backend CRUD Căn hộ & Chủ hộ (`US-001`) | `DB-01`, `BE-01`, `BE-02` | 7 SP | 25h | 21.37% |
+| **TV3: Phạm Thái Hoà** | Technical Lead & Core Backend Dev | Kiến trúc hệ thống, Spring Security 6, API Đăng nhập (`US-SEC-02`), Quản lý User (`US-SEC-01`), Code Review & Gatekeeping | `ARCH-01`, `SEC-01`, `SEC-02`, `SEC-03`, `SEC-04` | 8 SP | 28h | 23.93% |
+| **TV4: Nghiêm Đức Anh** | Frontend Developer & UI/UX Specialist | Dựng Master Layout Thymeleaf, Giao diện Login, UI Quản lý tài khoản, UI Căn hộ 30 tầng | `FE-01`, `FE-02`, `FE-03`, `FE-04` | 6 SP | 24h | 20.51% |
+| **TV5: Nguyễn Hợp Huy** | QA Lead & Test Automation Engineer | Áp dụng Shift-Left: Cấu hình Test Framework, Unit Test CFG Basis Path, MockMvc Integration Test, Decision Table | `QA-01`, `QA-02`, `QA-03`, `QA-04` | 4 SP | 20h | 17.09% |
+| **TỔNG CỘNG** | | | **18 Tasks** | **30 SP** | **117h** | **100%** |
 
 ---
 
 ### 2.2. Chi tiết Nhiệm vụ & Tiêu chí Nghiệm thu Từng Thành viên
 
-#### THÀNH VIÊN 1: PHẠM NAM KHÁNH — PROJECT MANAGER & LEAD BUSINESS ANALYST
-- **Trách nhiệm trọng tâm:** Đảm bảo dự án đi đúng tiến độ, tuân thủ phương pháp luận Agile/Scrum, kiểm soát phạm vi và chất lượng hồ sơ tài liệu đặc tả.
+#### THÀNH VIÊN 1: PHẠM NAM KHÁNH — PRODUCT OWNER & LEAD BUSINESS ANALYST
+- **Trách nhiệm trọng tâm:** Đảm bảo dự án đi đúng tiến độ Scrum, kiểm soát chất lượng hồ sơ đặc tả, trực tiếp soạn thảo kịch bản kiểm thử nghiệm thu (UAT) và thực hiện nghiệm thu chức năng trên giao diện web do Đức Anh xây dựng.
+- **Sản phẩm đóng góp cụ thể trên Git:** File kịch bản `docs/UAT_SCENARIOS_SPRINT_1.md` và biên bản kết quả kiểm thử `docs/UAT_REPORT_SPRINT_1.md`.
 - **Danh mục Nhiệm vụ Chi tiết:**
 
 | Mã Task | Tên Nhiệm vụ | Mô tả Chi tiết Công việc | Ước lượng | Tiêu chí Hoàn thành (Acceptance Criteria) |
 |---|---|---|:---:|---|
-| **PM-01** | Điều phối Vận hành Sprint 1 & Quản trị Tiến độ | • Thiết lập bảng Kanban Sprint 1.<br>• Tổ chức Daily Standup 15 phút hàng ngày.<br>• Kiểm soát tiến độ theo Burndown Chart.<br>• Tổ chức Sprint Review và Retrospective. | 10 giờ (2 SP) | • 100% thành viên cập nhật task hàng ngày.<br>• Biên bản họp Sprint Review & Retrospective đầy đủ. |
-| **PM-02** | Chuẩn hóa Đặc tả Yêu cầu cho Sprint 1 | • Chi tiết hóa kịch bản Given-When-Then cho `US-SEC-01`, `US-SEC-02`, `US-001`.<br>• Rà soát tính bất biến pháp lý (Luật Cư trú, TT 02/2016, NĐ 93/2021).<br>• Cập nhật Ma trận Truy vết Sprint 1. | 10 giờ (3 SP) | • Tài liệu AC chi tiết được chuyển giao cho Dev và QA.<br>• Ma trận truy vết khớp 100% mã RAW sang Task. |
-| **PM-03** | Xây dựng Kế hoạch UAT & Nghiệm thu BQT | • Thiết kế kịch bản kiểm thử chấp nhận người dùng (User Acceptance Test).<br>• Soạn thảo biên bản bàn giao tính năng Sprint 1 cho đại diện Ban Quản trị. | 10 giờ (2 SP) | • Bộ kịch bản UAT gồm 12 tình huống thực tế tại chung cư Văn Phú.<br>• Biên bản bàn giao demo sẵn sàng. |
+| **PM-01** | Vận hành Sprint 1 & Quản trị Tiến độ Scrum | • Thiết lập bảng Kanban Sprint 1 trên GitHub Projects / Trello.<br>• Tổ chức Daily Standup 10 phút hàng ngày.<br>• Theo dõi Burndown Chart 7 ngày.<br>• Tổ chức Demo Sprint Review và họp Retrospective ngày 06/11. | 6 giờ (2 SP) | • 100% thành viên cập nhật trạng thái task hàng ngày.<br>• Biên bản họp Sprint Review & Retrospective đầy đủ. |
+| **PM-02** | Xây dựng Bộ Kịch bản UAT & Trực tiếp Nghiệm thu Giao diện | • Soạn thảo tài liệu `docs/UAT_SCENARIOS_SPRINT_1.md` gồm 12 kịch bản thực tế tại chung cư Văn Phú (đăng nhập đúng/sai, tài khoản bị khóa 15 phút, thêm căn hộ các tầng 1, 2-5, 6-29, 30).<br>• Trực tiếp thao tác kiểm thử thủ công trên giao diện web Thymeleaf do Đức Anh xây dựng.<br>• Lập nhật ký lỗi (Bug Log) chuyển cho Dev sửa.<br>• Đóng gói Báo cáo Nghiệm thu UAT (`docs/UAT_REPORT_SPRINT_1.md`). | 14 giờ (3 SP) | • File Markdown kịch bản UAT được commit lên repo Git.<br>• 100% các màn hình Login, Căn hộ, Quản lý tài khoản được kiểm thử và ký xác nhận đạt chuẩn. |
 
 ---
 
 #### THÀNH VIÊN 2: NGUYỄN XUÂN SƠN — DATABASE ENGINEER & BACKEND DEVELOPER
-- **Trách nhiệm trọng tâm:** Đảm bảo cơ sở dữ liệu PostgreSQL chuẩn mực, khắc phục toàn bộ các lỗi phát hiện tại báo cáo audit, và hiện thực hóa phân hệ Căn hộ (`US-001`).
+- **Trách nhiệm trọng tâm:** Đảm bảo CSDL PostgreSQL chuẩn mực, khắc phục toàn bộ các lỗi phát hiện tại báo cáo audit, và hiện thực hóa phân hệ Căn hộ (`US-001`).
 - **Danh mục Nhiệm vụ Chi tiết:**
 
 | Mã Task | Tên Nhiệm vụ | Mô tả Chi tiết Công việc | Ước lượng | Tiêu chí Hoàn thành (Acceptance Criteria) |
 |---|---|---|:---:|---|
-| **DB-01** | Soạn thảo Kịch bản Migration CSDL `V1.1__fix_schema_and_seed.sql` | • Bổ sung `start_date`, `end_date` vào `residents` kèm check constraint ngày.<br>• Bổ sung `version BIGINT NOT NULL DEFAULT 0` vào `invoices`.<br>• Thêm ràng buộc XOR cho bảng `receipts`.<br>• Chuyển `apartments.area_sqm` sang `DECIMAL(12,2)`.<br>• Đổi khóa `households.apartment_id` sang Partial Unique Index (`status = 'ACTIVE'`).<br>• Cập nhật hash BCrypt chuẩn và bổ sung seed data cho `TAM_TRU`, `TAM_VANG`. | 10 giờ (3 SP) | • Kịch bản SQL chạy trơn tru không lỗi trên PostgreSQL 15/16.<br>• Toàn bộ 7 lỗi DDL và DML được vá 100%. |
-| **BE-01** | Xây dựng Tầng Entity JPA & Repositories | • Ánh xạ JPA Entity chuẩn cho `User`, `Apartment`, `Household`, `Resident`.<br>• Khai báo `@Version` trên `Invoice` entity.<br>• Viết các Repository Interface kế thừa `JpaRepository` kèm custom JPQL query tìm kiếm căn hộ theo tầng, mã căn. | 12 giờ (3 SP) | • Entity ánh xạ chính xác 100% bảng CSDL.<br>• Không dùng `float`/`double`, toàn bộ diện tích dùng `BigDecimal`. |
-| **BE-02** | Hiện thực hóa Backend CRUD Căn hộ (`US-001`) | • Viết `ApartmentService` và `ApartmentController`.<br>• Kiểm tra ràng buộc diện tích thông thủy strictly positive ($m^2 > 0$).<br>• Xử lý thêm/sửa/xóa logic căn hộ (30 tầng) và gán hồ sơ chủ hộ đại diện.<br>• Ghi nhật ký kiểm toán vào `AuditLog`. | 12 giờ (3 SP) | • Thỏa mãn 100% AC của `US-001`.<br>• Chặn thành công diện tích $\le 0$ và mã căn trùng lặp.<br>• Lưu vết lịch sử chủ hộ cũ an toàn. |
+| **DB-01** | Soạn thảo Kịch bản Migration CSDL `V1.1__fix_schema_and_seed.sql` | • Bổ sung `start_date`, `end_date` vào `residents` kèm check constraint ngày.<br>• Bổ sung `version BIGINT NOT NULL DEFAULT 0` vào `invoices`.<br>• Thêm ràng buộc XOR cho bảng `receipts`.<br>• Chuyển `apartments.area_sqm` sang `DECIMAL(12,2)`.<br>• Đổi khóa `households.apartment_id` sang Partial Unique Index (`status = 'ACTIVE'`).<br>• Cập nhật hash BCrypt chuẩn (`$2a$10$ThEK5Lsf49T189/5nvFzwuYgdsmzBFWloKeb2FM2QSwB4JsNK2uTK`) cho `Password@123` và bổ sung seed data cho `TAM_TRU`, `TAM_VANG`. | 7 giờ (2 SP) | • Kịch bản SQL chạy trơn tru không lỗi trên PostgreSQL 15/16.<br>• Toàn bộ 7 lỗi DDL và DML được vá 100%. |
+| **BE-01** | Xây dựng Tầng Entity JPA & Repositories | • Ánh xạ JPA Entity chuẩn cho `User`, `Apartment`, `Household`, `Resident`.<br>• Khai báo `@Version` trên `Invoice` entity.<br>• Viết các Repository Interface kế thừa `JpaRepository` kèm custom JPQL query tìm kiếm căn hộ theo tầng, mã căn. | 9 giờ (2 SP) | • Entity ánh xạ chính xác 100% bảng CSDL.<br>• Không dùng `float`/`double`, toàn bộ diện tích dùng `BigDecimal`. |
+| **BE-02** | Hiện thực hóa Backend CRUD Căn hộ (`US-001`) | • Viết `ApartmentService` và `ApartmentController`.<br>• Kiểm tra ràng buộc diện tích thông thủy strictly positive ($m^2 > 0$).<br>• Xử lý thêm/sửa/xóa logic căn hộ (30 tầng) và gán hồ sơ chủ hộ đại diện.<br>• Ghi nhật ký kiểm toán vào `AuditLog`. | 9 giờ (3 SP) | • Thỏa mãn 100% AC của `US-001`.<br>• Chặn thành công diện tích $\le 0$ và mã căn trùng lặp.<br>• Lưu vết lịch sử chủ hộ cũ an toàn. |
 
 ---
 
 #### THÀNH VIÊN 3: PHẠM THÁI HOÀ — TECHNICAL LEAD & CORE BACKEND DEVELOPER
 - **Trách nhiệm trọng tâm:** Thiết lập nền tảng kiến trúc phần mềm, cấu hình bảo mật Spring Security 6, xây dựng phân hệ Đăng nhập (`US-SEC-02`), Quản lý Tài khoản BQT (`US-SEC-01`), và giữ vai trò Gatekeeper kiểm duyệt chất lượng mã nguồn (Pull Request Review & Architecture Governance).
-- **Phân bổ công việc:** Khối lượng công việc của Hoà được phân rã chi tiết thành 5 nhiệm vụ độc lập: `ARCH-01` (6h, 2 SP), `SEC-01` (8h, 2 SP), `SEC-02` (10h, 3 SP), `SEC-03` (8h, 2 SP), và `SEC-04: Code Review, PR Review & Architecture Gatekeeping` (4h, 1 SP). Tổng cộng: **36h, 10 SP**.
 - **Danh mục Nhiệm vụ Chi tiết:**
 
 | Mã Task | Tên Nhiệm vụ | Mô tả Chi tiết Công việc | Ước lượng | Tiêu chí Hoàn thành (Acceptance Criteria) |
 |---|---|---|:---:|---|
-| **ARCH-01** | Thiết lập Khung Kiến trúc Phân tầng & Cấu hình Hệ thống | • Chuẩn hóa cấu trúc Maven đa tầng theo quy chuẩn Pure Web (`controller`, `service`, `repository`, `model`, `dto`, `exception`).<br>• Thiết lập môi trường chạy trên **Java 25 LTS** và Spring Boot 3.4.5.<br>• Cấu hình kết nối HikariCP, JPA Hibernate trong `application.yml`.<br>• Viết Global Exception Handler (`@ControllerAdvice`). | 6 giờ (2 SP) | • Dự án biên dịch sạch sẽ (`mvn clean compile` không cảnh báo).<br>• Khởi động kết nối PostgreSQL thành công. |
-| **SEC-01** | Cấu hình Spring Security 6 & Quản trị Phiên (Session) | • Thiết lập `SecurityFilterChain` quản lý phân quyền theo Role (`ROLE_ADMIN`, `ROLE_ACCOUNTANT`, `ROLE_CASHIER`, `ROLE_RESIDENT`).<br>• Cấu hình bảo mật Form Login, Logout, Cookie Session, bảo vệ CSRF và Header XSS Protection.<br>• Khai báo Bean `BCryptPasswordEncoder` (10 rounds). | 8 giờ (2 SP) | • Truy cập các route nội bộ bị chặn khi chưa đăng nhập.<br>• Phân quyền route chuẩn xác theo vai trò. |
-| **SEC-02** | Hiện thực hóa Service Xác thực & Đăng nhập (`US-SEC-02`) | • Lập trình `CustomUserDetailsService` và `AuthService`.<br>• Hiện thực hóa cơ chế đếm `failed_attempts` và tự động khóa tài khoản 15 phút sau 5 lần nhập sai mật khẩu.<br>• Bổ sung kiểm tra cờ `is_active` ngăn tài khoản bị vô hiệu hóa đăng nhập; tự động reset biến đếm khi hết hạn khóa.<br>• Lập trình tính năng Đổi mật khẩu (kiểm tra mật khẩu cũ, mật khẩu mới $\ge 8$ ký tự có chữ hoa, số). | 10 giờ (3 SP) | • Đăng nhập thành công với tài khoản mẫu.<br>• Khóa tài khoản chính xác sau lần thứ 5 đăng nhập sai.<br>• Mật khẩu mới được băm BCrypt trước khi lưu. |
-| **SEC-03** | Hiện thực hóa Quản lý Tài khoản BQT (`US-SEC-01`) | • Lập trình `UserService` và `AdminController`.<br>• API/Web Controller tạo tài khoản mới cho cán bộ BQT, kích hoạt/khóa tài khoản.<br>• Kiểm tra trùng lặp `username`, `email`.<br>• Bọc toàn bộ thao tác trong `@Transactional(rollbackFor = Exception.class)`. | 8 giờ (2 SP) | • Chỉ Admin mới có quyền tạo và phân quyền tài khoản.<br>• Không thể tạo 2 tài khoản trùng username/email. |
-| **SEC-04** | Code Review, PR Review & Architecture Gatekeeping | • Thẩm định và duyệt 100% Pull Requests từ TV2 (DB/Entity), TV4 (Thymeleaf/UI), TV5 (Test harnesses).<br>• Kiểm soát tuân thủ kiến trúc Pure Web (không để lọt SQL/business logic vào Controller hay View).<br>• Gatekeeper chất lượng: Đảm bảo không merge code có mùi mã (Code smells) hoặc vi phạm quy chuẩn SoICT. | 4 giờ (1 SP) | • 100% PR được review và approve trước khi merge vào nhánh develop.<br>• Không xảy ra xung đột merge hoặc suy thoái kiến trúc. |
+| **ARCH-01** | Thiết lập Khung Kiến trúc Phân tầng & Cấu hình Hệ thống | • Chuẩn hóa cấu trúc Maven đa tầng theo quy chuẩn Pure Web (`controller`, `service`, `repository`, `model`, `dto`, `exception`).<br>• Thiết lập môi trường chạy trên **Java 25 LTS** và Spring Boot 3.4.5.<br>• Cấu hình kết nối HikariCP, JPA Hibernate trong `application.yml`.<br>• Viết Global Exception Handler (`@ControllerAdvice`). | 5 giờ (1 SP) | • Dự án biên dịch sạch sẽ (`mvn clean compile` không cảnh báo).<br>• Khởi động kết nối PostgreSQL thành công. |
+| **SEC-01** | Cấu hình Spring Security 6 & Quản trị Phiên (Session) | • Thiết lập `SecurityFilterChain` quản lý phân quyền theo Role (`ROLE_ADMIN`, `ROLE_ACCOUNTANT`, `ROLE_CASHIER`, `ROLE_RESIDENT`).<br>• Cấu hình bảo mật Form Login, Logout, Cookie Session, bảo vệ CSRF và Header XSS Protection.<br>• Khai báo Bean `BCryptPasswordEncoder` (10 rounds). | 6 giờ (2 SP) | • Truy cập các route nội bộ bị chặn khi chưa đăng nhập.<br>• Phân quyền route chuẩn xác theo vai trò. |
+| **SEC-02** | Hiện thực hóa Service Xác thực & Đăng nhập (`US-SEC-02`) | • Lập trình `CustomUserDetailsService` và `AuthService`.<br>• Hiện thực hóa cơ chế đếm `failed_attempts` và tự động khóa tài khoản tạm thời 15 phút sau 5 lần nhập sai mật khẩu liên tiếp.<br>• Bổ sung kiểm tra cờ `is_active` ngăn tài khoản bị vô hiệu hóa đăng nhập; tự động reset biến đếm khi hết hạn khóa.<br>• Lập trình tính năng Đổi mật khẩu chủ động. | 8 giờ (2 SP) | • Đăng nhập thành công với tài khoản mẫu.<br>• Khóa tài khoản chính xác 15 phút sau lần thứ 5 đăng nhập sai.<br>• Mật khẩu mới được băm BCrypt trước khi lưu. |
+| **SEC-03** | Hiện thực hóa Quản lý Tài khoản BQT (`US-SEC-01`) | • Lập trình `UserService` và `AdminController`.<br>• API/Web Controller tạo tài khoản mới cho cán bộ BQT, kích hoạt/khóa tài khoản.<br>• Kiểm tra trùng lặp `username`, `email`.<br>• Bọc toàn bộ thao tác trong `@Transactional(rollbackFor = Exception.class)`. | 6 giờ (2 SP) | • Chỉ Admin mới có quyền tạo và phân quyền tài khoản.<br>• Không thể tạo 2 tài khoản trùng username/email. |
+| **SEC-04** | Code Review, PR Review & Architecture Gatekeeping | • Thẩm định và duyệt 100% Pull Requests từ TV2 (DB/Entity), TV4 (Thymeleaf/UI), TV5 (Test harnesses).<br>• Kiểm soát tuân thủ kiến trúc Pure Web (không để lọt SQL/business logic vào Controller hay View).<br>• Gatekeeper chất lượng: Đảm bảo không merge code có mùi mã (Code smells) hoặc vi phạm quy chuẩn SoICT. | 3 giờ (1 SP) | • 100% PR được review và approve trước khi merge vào nhánh develop.<br>• Không xảy ra xung đột merge hoặc suy thoái kiến trúc. |
 
 ---
 
@@ -98,56 +105,45 @@ Nhóm 13 gồm 5 thành viên được phân công vai trò rõ ràng, cân đ�
 
 | Mã Task | Tên Nhiệm vụ | Mô tả Chi tiết Công việc | Ước lượng | Tiêu chí Hoàn thành (Acceptance Criteria) |
 |---|---|---|:---:|---|
-| **FE-01** | Xây dựng Master Layout Thymeleaf Chuẩn mực | • Thiết kế khung giao diện Master Layout (`templates/fragments/layout.html`) gồm: Header (thông tin user, nút đăng xuất), Sidebar điều hướng, Footer bản quyền.<br>• Tích hợp Bootstrap 5 / Tailwind CSS và JavaScript hỗ trợ modal, dropdown.<br>• Đảm bảo tính Responsive trên Desktop và Tablet. | 8 giờ (2 SP) | • Master layout tái sử dụng được cho toàn bộ các trang con.<br>• Giao diện hiển thị sắc nét, không vỡ khung. |
-| **FE-02** | Xây dựng Giao diện Màn hình Đăng nhập | • Hiện thực hóa `templates/auth/login.html` với logo BlueMoon chuyên nghiệp.<br>• Xử lý hiển thị thông báo lỗi rõ ràng khi sai tài khoản, hiển thị cảnh báo số lần thử còn lại hoặc thông báo tài khoản bị khóa 15 phút. | 8 giờ (2 SP) | • Form đăng nhập tương thích đầy đủ với Spring Security.<br>• Thông báo lỗi hiển thị bằng tiếng Việt thân thiện. |
-| **FE-03** | Xây dựng Giao diện Quản lý Tài khoản BQT | • Trang danh sách tài khoản BQT (`templates/admin/users.html`) có phân trang, bộ lọc vai trò.<br>• Modal/Form tạo tài khoản mới, gán vai trò (`ROLE_ADMIN`, `ACCOUNTANT`, `CASHIER`).<br>• Modal đổi mật khẩu an toàn. | 8 giờ (2 SP) | • Giao diện trực quan, xác thực form phía client.<br>• Hiển thị badge trạng thái hoạt động / bị khóa. |
-| **FE-04** | Xây dựng Màn hình Dashboard & Danh mục Căn hộ | • Trang Dashboard tổng quan (`templates/admin/dashboard.html`) hiển thị thẻ thống kê sơ bộ.<br>• Trang Danh mục Căn hộ (`templates/admin/apartments.html`): Bảng danh sách 30 tầng căn hộ, modal thêm/sửa căn hộ với trường diện tích $m^2$. | 8 giờ (2 SP) | • Hiển thị đúng dữ liệu căn hộ từ Controller.<br>• Chặn người dùng nhập số âm cho diện tích trên UI. |
+| **FE-01** | Xây dựng Master Layout Thymeleaf Chuẩn mực | • Thiết kế khung giao diện Master Layout (`templates/fragments/layout.html`) gồm: Header (thông tin user, nút đăng xuất), Sidebar điều hướng, Footer bản quyền.<br>• Tích hợp Bootstrap 5 / Tailwind CSS và JavaScript hỗ trợ modal, dropdown.<br>• Đảm bảo tính Responsive trên Desktop và Tablet. | 6 giờ (1.5 SP) | • Master layout tái sử dụng được cho toàn bộ các trang con.<br>• Giao diện hiển thị sắc nét, không vỡ khung. |
+| **FE-02** | Xây dựng Giao diện Màn hình Đăng nhập | • Hiện thực hóa `templates/auth/login.html` với logo BlueMoon chuyên nghiệp.<br>• Xử lý hiển thị thông báo lỗi rõ ràng khi sai tài khoản, hiển thị cảnh báo số lần thử còn lại hoặc thông báo tài khoản bị khóa 15 phút. | 6 giờ (1.5 SP) | • Form đăng nhập tương thích đầy đủ với Spring Security.<br>• Thông báo lỗi hiển thị bằng tiếng Việt thân thiện. |
+| **FE-03** | Xây dựng Giao diện Quản lý Tài khoản BQT | • Trang danh sách tài khoản BQT (`templates/admin/users.html`) có phân trang, bộ lọc vai trò.<br>• Modal/Form tạo tài khoản mới, gán vai trò (`ROLE_ADMIN`, `ACCOUNTANT`, `CASHIER`).<br>• Modal đổi mật khẩu an toàn. | 6 giờ (1.5 SP) | • Giao diện trực quan, xác thực form phía client.<br>• Hiển thị badge trạng thái hoạt động / bị khóa. |
+| **FE-04** | Xây dựng Màn hình Dashboard & Danh mục Căn hộ | • Trang Dashboard tổng quan (`templates/admin/dashboard.html`) hiển thị thẻ thống kê sơ bộ.<br>• Trang Danh mục Căn hộ (`templates/admin/apartments.html`): Bảng danh sách 30 tầng căn hộ, modal thêm/sửa căn hộ với trường diện tích $m^2$. | 6 giờ (1.5 SP) | • Hiển thị đúng dữ liệu căn hộ từ Controller.<br>• Chặn người dùng nhập số âm cho diện tích trên UI. |
 
 ---
 
-#### THÀNH VIÊN 5: NGUYỄN HỢP HUY — QA LEAD & TEST ENGINEER
-- **Trách nhiệm trọng tâm:** Thiết kế kế hoạch kiểm thử, xây dựng bộ ca kiểm thử tự động đạt chuẩn học thuật SoICT (Chương 8 & 9), thẩm định chất lượng toàn diện.
+#### THÀNH VIÊN 5: NGUYỄN HỢP HUY — QA LEAD & TEST AUTOMATION ENGINEER
+- **Trách nhiệm trọng tâm:** Áp dụng phương pháp luận **Shift-Left Testing**, cấu hình framework kiểm thử từ Ngày 1, viết trước khung test stubs song song với quá trình Dev, bảo đảm độ bao phủ $\ge 85\%$ theo chuẩn SoICT.
 - **Danh mục Nhiệm vụ Chi tiết:**
 
 | Mã Task | Tên Nhiệm vụ | Mô tả Chi tiết Công việc | Ước lượng | Tiêu chí Hoàn thành (Acceptance Criteria) |
 |---|---|---|:---:|---|
-| **QA-01** | Thiết lập Khung & Môi trường Kiểm thử Tự động (Test Setup) | • Cấu hình môi trường kiểm thử độc lập `application-test.yml` (H2 in-memory DB / mocks) cho phép chạy test tự động không cần môi trường DB bên ngoài.<br>• Thiết lập thư viện JUnit 5, Mockito, MockMvc, AssertJ.<br>• Xây dựng các lớp cơ sở (Base Test Classes) và bộ dữ liệu fixture dùng chung cho nhóm. | 6 giờ (1 SP) | • Chạy lệnh `mvn test` sạch sẽ không báo lỗi môi trường.<br>• Khung kiểm thử tự động sẵn sàng cho tầng Service và Controller. |
-| **QA-02** | Lập trình Ca Kiểm thử CFG Basis Path (AuthService) | • Chuyển hóa đồ thị dòng điều khiển CFG và 5 Basis Paths đã thiết kế trong Section 5 thành mã nguồn JUnit 5 trong `AuthServiceTest.java`.<br>• Bao phủ 100% 5 Basis Paths (`TC_LOGIN_BP_01` $\rightarrow$ `05`) và 2 trường hợp biên (tài khoản vô hiệu hóa, tự động giải phóng sau 15 phút). | 8 giờ (2 SP) | • Toàn bộ 7 ca kiểm thử luồng đăng nhập pass 100%.<br>• Báo cáo độ bao phủ nhánh rẽ đạt 100%. |
-| **QA-03** | Lập trình Ca Kiểm thử Tham số hóa Decision Table (ApartmentService) | • Chuyển hóa Black-box Decision Table (6 Rules $R_1 \rightarrow R_6$ đã thiết kế trong Section 5) thành các ca kiểm thử tham số hóa `@ParameterizedTest` trong `ApartmentServiceTest.java`.<br>• Kiểm tra biên diện tích $\le 0$, số tầng ngoài dải $1 \le \text{floor} \le 30$, xung đột loại hình với số tầng. | 6 giờ (1 SP) | • Bắt chính xác 100% các ngoại lệ nghiệp vụ theo từng rule.<br>• Dữ liệu test tham số hóa bao phủ đầy đủ các hoán vị điều kiện biên. |
-| **QA-04** | Lập trình Web Integration Test (MockMvc) & Đo lường Coverage | • Viết bộ ca kiểm thử tích hợp Controller với `MockMvc` cho `AuthController` và `AdminController`.<br>• Thực thi kiểm thử tự động, đo độ bao phủ mã nguồn (Line Coverage $\ge 85\%$).<br>• Đóng gói Báo cáo Tổng kết Đo lường Chất lượng Sprint 1 nộp SoICT. | 8 giờ (2 SP) | • 100% ca kiểm thử pass xanh (`BUILD SUCCESS`).<br>• Đo độ bao phủ đạt $\ge 85\%$ dòng lệnh cho tầng Service/Controller. |
+| **QA-01** | Thiết lập Khung & Môi trường Kiểm thử Tự động (Shift-Left) | • Cấu hình môi trường kiểm thử độc lập `application-test.yml` (H2 in-memory DB / mocks) cho phép chạy test tự động không cần môi trường DB bên ngoài.<br>• Thiết lập thư viện JUnit 5, Mockito, MockMvc, AssertJ.<br>• Xây dựng các lớp cơ sở (Base Test Classes) và bộ dữ liệu fixture dùng chung cho nhóm từ Ngày 1. | 4 giờ (1 SP) | • Chạy lệnh `mvn test` sạch sẽ không báo lỗi môi trường.<br>• Khung kiểm thử tự động sẵn sàng cho tầng Service và Controller. |
+| **QA-02** | Lập trình Ca Kiểm thử CFG Basis Path (AuthService) | • Dựng trước khung kiểm thử `AuthServiceTest.java` (Test Stubs) từ Ngày 2.<br>• Chuyển hóa đồ thị dòng điều khiển CFG và 5 Basis Paths đã thiết kế trong Section 5 thành mã nguồn JUnit 5 thực thi ngay khi Hoà vừa push code.<br>• Bao phủ 100% 5 Basis Paths (`TC_LOGIN_BP_01` $\rightarrow$ `05`) và 2 trường hợp biên (tài khoản vô hiệu hóa, tự động giải phóng sau 15 phút). | 6 giờ (1 SP) | • Toàn bộ 7 ca kiểm thử luồng đăng nhập pass 100%.<br>• Báo cáo độ bao phủ nhánh rẽ đạt 100%. |
+| **QA-03** | Lập trình Ca Kiểm thử Tham số hóa Decision Table (ApartmentService) | • Chuyển hóa Black-box Decision Table (6 Rules $R_1 \rightarrow R_6$ đã thiết kế trong Section 5) thành các ca kiểm thử tham số hóa `@ParameterizedTest` trong `ApartmentServiceTest.java`.<br>• Kiểm tra biên diện tích $\le 0$, số tầng ngoài dải $1 \le \text{floor} \le 30$, xung đột loại hình với số tầng. | 5 giờ (1 SP) | • Bắt chính xác 100% các ngoại lệ nghiệp vụ theo từng rule.<br>• Dữ liệu test tham số hóa bao phủ đầy đủ các hoán vị điều kiện biên. |
+| **QA-04** | Lập trình Web Integration Test (MockMvc) & Đo lường Coverage | • Viết bộ ca kiểm thử tích hợp Controller với `MockMvc` cho `AuthController` và `AdminController`.<br>• Thực thi kiểm thử tự động, đo độ bao phủ mã nguồn (Line Coverage $\ge 85\%$).<br>• Đóng gói Báo cáo Tổng kết Đo lường Chất lượng Sprint 1 (`SPRINT_1_TEST_REPORT.md`) nộp SoICT. | 5 giờ (1 SP) | • 100% ca kiểm thử pass xanh (`BUILD SUCCESS`).<br>• Đo độ bao phủ đạt $\ge 85\%$ dòng lệnh cho tầng Service/Controller. |
 
 ---
 
-### 2.3. Ma trận Phân định Trách nhiệm (RACI Matrix) Cho 5 Thành viên trong Sprint 1
+### 2.3. Ma trận Phân định Trách nhiệm (RACI Matrix) Cập nhật Cho 5 Thành viên
 
-Nhằm bảo đảm không xảy ra khoảng trống trách nhiệm (Accountability gaps) và tối ưu hóa phối hợp nhóm, ma trận RACI được thiết lập chuẩn hóa cho 5 Deliverables và các hoạt động trọng tâm của Sprint 1:
+Ma trận RACI bảo toàn 100% phân công chuyên môn gốc của nhóm:
 - **R (Responsible):** Người trực tiếp thực hiện nhiệm vụ kỹ thuật / tạo ra sản phẩm bàn giao.
 - **A (Accountable):** Người chịu trách nhiệm cao nhất về kết quả cuối cùng và phê duyệt chất lượng (mỗi hạng mục có duy nhất 1 cá nhân Accountable).
 - **C (Consulted):** Người được tham vấn chuyên môn, đóng góp ý kiến nghiệp vụ và kỹ thuật 2 chiều.
 - **I (Informed):** Người được cập nhật thông tin tiến độ và kết quả bàn giao một chiều.
 
-| Hạng mục Công việc & Deliverables Sprint 1 | TV1: Khánh (PM/BA) | TV2: Sơn (DB/BE) | TV3: Hoà (Tech Lead) | TV4: Đ.Anh (UI/UX) | TV5: Huy (QA Lead) |
+| Hạng mục Công việc & Deliverables Sprint 1 | TV1: Khánh (PO/BA) | TV2: Sơn (DB/BE) | TV3: Hoà (Tech Lead) | TV4: Đ.Anh (UI/UX) | TV5: Huy (QA Lead) |
 |---|:---:|:---:|:---:|:---:|:---:|
 | **D1: Khung Kiến trúc Spring Boot 3.4.5 & Pure Web** | I | C | **A / R** | C | I |
 | **D2: Kịch bản Migration CSDL `V1.1` & Seed Data** | C | **R** | **A** | I | C |
 | **D3a: Backend Xác thực, Khóa Brute-force & Quản lý User** | C | I | **A / R** | C | C |
 | **D3b: Backend CRUD Danh mục Căn hộ & Chủ hộ (`US-001`)** | C | **R** | **A** | C | C |
-| **D4: Bộ Giao diện Thymeleaf (Layout, Login, Admin)** | **A** | I | C | **R** | I |
+| **D4: Bộ Giao diện Thymeleaf (Layout, Login, Admin)** | **C / Approver (UAT)** | I | **A** *(Kiến trúc)* | **R** *(Xây dựng)* | I |
 | **D5: Bộ Ca Kiểm thử Tự động CFG/BVA & Test Report SoICT** | C | I | C | I | **A / R** |
-| **Điều phối Scrum, Burndown, DoD & Nghiệm thu UAT** | **A / R** | I | C | I | C |
+| **Hồ sơ Kịch bản UAT & Báo cáo Nghiệm thu BQT** | **A / R** | I | C | I | C |
+| **Điều phối Tiến độ Scrum, Burndown & Retrospective** | **A / R** | I | C | I | C |
 | **Code Review, PR Review & Architecture Gatekeeping** | I | C | **A / R** | C | I |
-
-#### Bảng Tổng hợp RACI Chi tiết theo Nhóm Tác vụ (Task-Level RACI Summary):
-
-| Nhóm Tác vụ Kỹ thuật | TV1: Khánh (PM/BA) | TV2: Sơn (DB/BE) | TV3: Hoà (Tech Lead) | TV4: Đ.Anh (UI/UX) | TV5: Huy (QA Lead) |
-|---|:---:|:---:|:---:|:---:|:---:|
-| **Quản trị Tiến độ, AC & UAT (`PM-01..03`)** | **A / R** | I | C | I | C |
-| **CSDL Migration & Entity JPA (`DB-01`, `BE-01`)** | C | **R** | **A** | I | C |
-| **Kiến trúc Spring Boot & Bảo mật (`ARCH-01`, `SEC-01..03`)** | I | C | **A / R** | C | C |
-| **Gatekeeping & PR Review (`SEC-04`)** | I | C | **A / R** | C | I |
-| **Nghiệp vụ Backend Căn hộ 30 tầng (`BE-02`)** | C | **R** | **A** | C | C |
-| **Giao diện Thymeleaf, Layout & Form (`FE-01..04`)** | **A** | I | C | **R** | I |
-| **Kiểm thử CFG Basis Path & Decision Table (`QA-01..04`)** | C | I | C | I | **A / R** |
 
 ---
 
@@ -181,8 +177,8 @@ Một User Story hoặc Nhiệm vụ Kỹ thuật chỉ được xem là **HOÀN
    - Tuyệt đối **CẤM** lưu trữ mật khẩu dưới dạng văn bản thô (plain text) ở bất kỳ đâu (CSDL, log, biến tạm).
    - Bắt buộc mã hóa mật khẩu bằng thuật toán **BCrypt** với độ phức tạp tối thiểu 10 rounds (`BCryptPasswordEncoder`).
 2. **Phòng chống Tấn công Brute-Force:**
-   - Hệ thống phải tự động đếm số lần đăng nhập sai liên tiếp.
-   - Sau đúng **5 lần đăng nhập sai**, tài khoản phải bị tự động khóa tạm thời trong **15 phút** (`locked_until = now() + 15m`).
+   - Hệ thống tự động đếm số lần đăng nhập sai liên tiếp.
+   - Sau đúng **5 lần đăng nhập sai**, tài khoản bị tự động khóa tạm thời trong **15 phút** (`locked_until = now() + 15m`). Tuyệt đối không xóa tài khoản để phòng ngừa tấn công từ chối dịch vụ (DoS).
 3. **Phòng chống Lỗ hổng Web Phổ biến:**
    - Tầng Repository bắt buộc dùng JPQL có tham số hoặc Spring Data Query Methods để chống triệt để **SQL Injection**.
    - Bật cờ bảo vệ chống **CSRF** trên Spring Security cho toàn bộ các Form POST/PUT.
@@ -199,21 +195,22 @@ Một User Story hoặc Nhiệm vụ Kỹ thuật chỉ được xem là **HOÀN
 
 ### 3.5. Tiêu chuẩn Đánh giá Tĩnh & Tích hợp (Static Code Analysis)
 - Chạy công cụ kiểm tra tĩnh (SonarLint / Maven Checkstyle): **0 lỗi Blocker, 0 lỗi Critical, 0 lỗ hổng bảo mật (Vulnerabilities)**.
-- Mã nguồn được commit lên Git nhánh `sprint-1-release` với thông điệp chuẩn mực (Conventional Commits: `feat:`, `fix:`, `test:`, `docs:`), đã giải quyết xong merge conflict và được Pull Request Review bởi Tech Lead (Hoà).
+- Mã nguồn được commit lên Git nhánh `develop` với thông điệp chuẩn mực (Conventional Commits: `feat:`, `fix:`, `test:`, `docs:`), đã giải quyết xong merge conflict và được Pull Request Review bởi Tech Lead (Hoà).
 
 ---
 
 ## 4. DANH MỤC DELIVERABLES CỦA SPRINT 1 (SPRINT 1 DELIVERABLES)
 
-Sprint 1 cam kết bàn giao đầy đủ 5 sản phẩm bàn giao (Deliverables) chuẩn mực:
+Sprint 1 cam kết bàn giao đầy đủ 5 sản phẩm bàn giao kỹ thuật kèm bộ hồ sơ nghiệm thu thực tế:
 
 ```
-DELIVERABLES SPRINT 1
+DELIVERABLES SPRINT 1 (31/10 - 06/11/2026)
 ├── D1: Mã nguồn Khung Kiến trúc Phân tầng Spring Boot 3.4.5 (Java 25 LTS)
 ├── D2: Bộ Kịch bản CSDL PostgreSQL Hoàn thiện (Migration V1.1 Script)
 ├── D3: Phân hệ Backend API/Service/Controller Xác thực & Quản lý Tài khoản BQT
 ├── D4: Bộ Giao diện Người dùng Thymeleaf Hoàn chỉnh (Layout, Login, Dashboard, Users, Apartments)
-└── D5: Bộ Ca Kiểm thử Tự động & Báo cáo Đo lường Chất lượng Chuẩn SoICT
+├── D5: Bộ Ca Kiểm thử Tự động & Báo cáo Đo lường Chất lượng Chuẩn SoICT
+└── D-UAT: Bộ Hồ sơ Kịch bản Kiểm thử Chấp nhận & Báo cáo Nghiệm thu BQT (Khánh phụ trách)
 ```
 
 ### Deliverable D1: Mã nguồn Khung Kiến trúc Phân tầng Chuẩn mực
@@ -241,7 +238,7 @@ DELIVERABLES SPRINT 1
 - **Mô tả chức năng:**
   - `AuthService` & `AuthController`:
     - Tiếp nhận thông tin đăng nhập từ form web, xác thực BCrypt.
-    - Xử lý tăng biến `failed_attempts`; kích hoạt tự động khóa tài khoản trong 15 phút khi nhập sai liên tiếp lần thứ 5.
+    - Xử lý tăng biến `failed_attempts`; kích hoạt tự động khóa tài khoản tạm thời trong 15 phút khi nhập sai liên tiếp lần thứ 5.
     - Xử lý tính năng Đổi mật khẩu chủ động, kiểm tra mật khẩu cũ và băm mật khẩu mới.
   - `UserService` & `AdminController`:
     - Chức năng quản trị tài khoản BQT: Xem danh sách cán bộ, tạo tài khoản mới, phân vai trò (`ROLE_ADMIN`, `ROLE_ACCOUNTANT`, `ROLE_CASHIER`), kích hoạt/khóa tài khoản.
@@ -254,24 +251,28 @@ DELIVERABLES SPRINT 1
 - **Vị trí lưu trữ:** `src/main/resources/templates/`, `src/main/resources/static/`
 - **Mô tả màn hình:**
   - `templates/fragments/layout.html`: Master Layout chuẩn responsive với thanh tiêu đề Header hiển thị thông tin cán bộ đăng nhập, Sidebar điều hướng đa phân hệ và Footer tòa nhà.
-  - `templates/auth/login.html`: Màn hình Đăng nhập hiện đại với thông báo lỗi tiếng Việt trực quan, cảnh báo số lần nhập sai còn lại hoặc thông báo thời gian tài khoản bị khóa.
+  - `templates/auth/login.html`: Màn hình Đăng nhập hiện đại với thông báo lỗi tiếng Việt trực quan, cảnh báo số lần nhập sai còn lại hoặc thông báo thời gian tài khoản bị khóa 15 phút.
   - `templates/admin/dashboard.html`: Màn hình Trang chủ quản trị hiển thị các thẻ tổng quan về số căn hộ, số tài khoản BQT.
   - `templates/admin/users.html`: Màn hình Quản lý tài khoản BQT với bảng danh sách, bộ lọc vai trò, nút kích hoạt/khóa và modal tạo tài khoản mới.
   - `templates/admin/apartments.html`: Màn hình Quản lý Căn hộ với bảng phân loại 30 tầng và form modal khai báo diện tích $m^2$.
 
 ### Deliverable D5: Bộ Ca Kiểm thử Tự động & Báo cáo Đo lường Chuẩn SoICT
-- **Vị trí lưu trữ:** `src/test/java/com/bluemoon/bfms/`, `docs/reports/SPRINT_1_TEST_REPORT.md`
+- **Vị trí lưu trữ:** `src/test/java/com/bluemoon/bfms/`, `docs/SPRINT_1_TEST_REPORT.md`
 - **Mô tả kiểm thử:**
-  - `AuthServiceTest.java`: Bộ ca kiểm thử đơn vị cho luồng đăng nhập, áp dụng phân tích đồ thị dòng điều khiển CFG (Control Flow Graph), xác định Cyclomatic Complexity và bao phủ 100% Basis Paths (Đường dẫn cơ sở 1: User không tồn tại $\rightarrow$ Đường dẫn 2: Sai pass lần $<5$ $\rightarrow$ Đường dẫn 3: Sai pass chạm mốc 5 bị khóa $\rightarrow$ Đường dẫn 4: Tài khoản đang trong thời gian bị khóa $\rightarrow$ Đường dẫn 5: Đăng nhập thành công, reset attempt).
-  - `ApartmentServiceTest.java`: Bộ ca kiểm thử cho CRUD căn hộ, kiểm tra biên diện tích $m^2 \le 0$, diện tích hợp lệ, trùng mã căn hộ theo Black-box Decision Table.
+  - `AuthServiceTest.java`: Bộ ca kiểm thử đơn vị cho luồng đăng nhập, áp dụng phân tích đồ thị dòng điều khiển CFG (Control Flow Graph), xác định Cyclomatic Complexity $V(G)=5$ và bao phủ 100% 5 Basis Paths.
+  - `ApartmentServiceTest.java`: Bộ ca kiểm thử cho CRUD căn hộ, kiểm tra biên diện tích $m^2 \le 0$, diện tích hợp lệ, trùng mã căn hộ theo Black-box Decision Table (6 Rules).
   - `AuthControllerIntegrationTest.java`: Kiểm thử tích hợp với `@SpringBootTest` và `MockMvc` kiểm tra đăng nhập form, chuyển hướng sau đăng nhập thành công và chặn các route yêu cầu quyền Admin.
   - Báo cáo đo lường độ bao phủ (Coverage Report) đạt $\ge 85\%$ kèm đồ thị CFG và Bảng quyết định.
+
+### Deliverable D-UAT: Bộ Hồ sơ Nghiệm thu Chấp nhận Người dùng (Khánh phụ trách)
+- **Vị trí lưu trữ:** `docs/UAT_SCENARIOS_SPRINT_1.md`, `docs/UAT_REPORT_SPRINT_1.md`
+- **Mô tả nội dung:**
+  - 12 kịch bản kiểm thử nghiệp vụ thực tế tại tòa nhà BlueMoon Văn Phú.
+  - Biên bản kiểm thử thủ công trên trình duyệt web, ghi nhận nhật ký lỗi và xác nhận nghiệm thu tính năng của Sprint 1.
 
 ---
 
 ## 5. THIẾT KẾ KIỂM THỬ MẪU THEO CHUẨN SOICT (CHAPTER 8 & 9)
-
-Để đảm bảo tính chuẩn mực tuyệt đối theo yêu cầu của Bộ môn Công nghệ Phần mềm (SoICT / HUST), dưới đây là thiết kế kiểm thử chi tiết cho chức năng cốt lõi của Sprint 1:
 
 ### 5.1. Kiểm thử Hộp trắng: Đồ thị Dòng Điều khiển CFG cho Chức năng Đăng nhập (`US-SEC-02`)
 
@@ -355,7 +356,7 @@ public LoginResult authenticate(String username, String password) {
 Độ phức tạp chu trình $V(G)$ được tính toán chuẩn xác theo các phương pháp lý thuyết đồ thị kiểm thử (SoICT Chapter 8):
 * Công thức theo số nút vị từ: $V(G) = P + 1 = 4 + 1 = 5$ (với $P=4$ là 4 nút điều kiện rẽ nhánh: `user == null`, `lockedUntil != null && isAfter(...)`, `!passwordEncoder.matches(...)`, `attempts >= 5`).
 * Hoặc theo công thức đồ thị đa điểm thoát: $V(G) = E - N + e + 1 = 12 - 13 + 5 + 1 = 5$ (với $E=12$ cạnh, $N=13$ nút, $e=5$ nút thoát).
-* Bổ sung ghi nhận: Ma trận liên thuộc thực nghiệm đạt $\text{Rank} = 5$, bảo đảm 5 Basis Paths độc lập tuyến tính.
+* Ma trận liên thuộc thực nghiệm đạt $\text{Rank} = 5$, bảo đảm 5 Basis Paths độc lập tuyến tính.
 $\Rightarrow$ Có chính xác **5 Đường dẫn Cơ sở Độc lập (Basis Paths)** cần phải kiểm thử để đạt 100% Basis Path Coverage.
 
 #### Tập 5 Đường dẫn Cơ sở (Independent Basis Paths) & Ca Kiểm thử Tương ứng:
@@ -364,7 +365,7 @@ $\Rightarrow$ Có chính xác **5 Đường dẫn Cơ sở Độc lập (Basis P
 2. **Path 2 (Tài khoản đang bị khóa tạm thời):** `1 -> 2 -> 4 -> 5`
    - *Test Case TC_LOGIN_BP_02:* Nhập `username = "locked_user"` (có `locked_until = now() + 10m`). Kỳ vọng: Trả về `ACCOUNT_LOCKED`.
 3. **Path 3 (Sai mật khẩu lần thứ 5 $\rightarrow$ Khóa ngay lập tức):** `1 -> 2 -> 4 -> 6 -> 7 -> 8 -> 9 -> 10`
-   - *Test Case TC_LOGIN_BP_03:* Nhập `username = "admin"`, sai mật khẩu khi `failedAttempts = 4`. Kỳ vọng: `failedAttempts` tăng lên 5, gán `locked_until`, trả về `LOCKED_NOW`.
+   - *Test Case TC_LOGIN_BP_03:* Nhập `username = "admin"`, sai mật khẩu khi `failedAttempts = 4`. Kỳ vọng: `failedAttempts` tăng lên 5, gán `locked_until = now() + 15m`, trả về `LOCKED_NOW`.
 4. **Path 4 (Sai mật khẩu dưới 5 lần):** `1 -> 2 -> 4 -> 6 -> 7 -> 8 -> 11`
    - *Test Case TC_LOGIN_BP_04:* Nhập `username = "admin"`, sai mật khẩu khi `failedAttempts = 2`. Kỳ vọng: `failedAttempts` tăng lên 3, `locked_until` vẫn NULL, trả về `BAD_CREDENTIALS`.
 5. **Path 5 (Đăng nhập thành công):** `1 -> 2 -> 4 -> 6 -> 12 -> 13`
@@ -436,7 +437,7 @@ $\Rightarrow$ Có chính xác **5 Đường dẫn Cơ sở Độc lập (Basis P
 5. **TC_APT_DT_03b (Biên diện tích âm - R3):** Nhập `area_sqm = -75.50`. Kỳ vọng: Báo lỗi A4 `InvalidAreaException`.
 6. **TC_APT_DT_04 (Sai danh mục loại hình - R4):** Nhập `apartment_type = "WAREHOUSE"`. Kỳ vọng: Báo lỗi A5 `InvalidApartmentTypeException`.
 7. **TC_APT_DT_05 (Xung đột Tầng & Loại hình - R5):** Nhập `apartment_type = "PENTHOUSE"` tại `floor_number = 1`, hoặc `KIOT` tại `floor_number = 30`. Kỳ vọng: Báo lỗi A6 `FloorTypeMismatchException`.
-8. **TC_APT_DT_06 (Rule R6: Kiểm soát tương thích Loại hình Căn hộ và Số tầng, Kiểm tra chặt biên):** Áp dụng Rule R6: Kiểm soát tương thích Loại hình Căn hộ và Số tầng (Kiot: Tầng 1; Thương mại: Tầng 2–5; Căn hộ: Tầng 6–29; Penthouse: Tầng 30), và kiểm tra chặt biên tầng `< 1` hoặc `> 30` -> Báo lỗi; `area_sqm <= 0` -> Báo lỗi. Dữ liệu thử nghiệm chuẩn: Nhập `room = "P.702"`, `floor = 7`, `area = 85.50`, `type = "RESIDENTIAL"`. Kỳ vọng: Thỏa mãn toàn bộ điều kiện, hệ thống lưu thành công A1, mã căn hộ trả về không null.
+8. **TC_APT_DT_06 (Rule R6: Kiểm soát tương thích Loại hình Căn hộ và Số tầng, Kiểm tra chặt biên):** Áp dụng Rule R6: Nhập `room = "P.702"`, `floor = 7`, `area = 85.50`, `type = "RESIDENTIAL"`. Kỳ vọng: Thỏa mãn toàn bộ điều kiện, hệ thống lưu thành công A1, mã căn hộ trả về không null.
 
 ---
 
@@ -446,32 +447,47 @@ Ma trận truy vết 5 tầng dưới đây bảo đảm tính liên kết hữu
 
 | Mã RAW Ban đầu | User Story Quy chuẩn | Mã Nhiệm vụ Triển khai | Người phụ trách | Sản phẩm Bàn giao (Deliverable) | Mã Ca Kiểm thử (Test Cases) | Tiêu chuẩn Nghiệp vụ & Bất biến Áp dụng |
 |:---:|---|:---:|:---:|:---:|---|---|
-| **Nền tảng** | Khung kiến trúc Pure Web & Master Layout | `ARCH-01` (6h, 2 SP), `FE-01: Thiết kế Master Layout Thymeleaf` (8h, 2 SP), `SEC-04` (4h, 1 SP) | Hoà (TV3), Đ.Anh (TV4) | **Deliverable D1, D4** | `SmokeTest.java`, `LayoutRenderTest.java` | Kiến trúc Pure Web phân tầng, Master Layout Thymeleaf responsive, Gatekeeper PR review, Java 25 LTS, Spring Boot 3.4.5. |
-| **RAW-001** | `US-001`: Danh mục Căn hộ 30 tầng | `BE-01`, `BE-02`, `FE-04` | Sơn (TV2), Đ.Anh (TV4) | **Deliverable D2, D3, D4** | `TC_APT_01`, `TC_APT_02`, `TC_APT_03` | Bất biến 2: Diện tích thông thủy strictly positive ($m^2 > 0$), `DECIMAL(12,2)`. |
+| **Nền tảng** | Khung kiến trúc Pure Web & Master Layout | `ARCH-01` (5h, 1 SP), `FE-01` (6h, 1.5 SP), `SEC-04` (3h, 1 SP) | Hoà (TV3), Đ.Anh (TV4) | **Deliverable D1, D4** | `SmokeTest.java`, `LayoutRenderTest.java` | Kiến trúc Pure Web phân tầng, Master Layout Thymeleaf responsive, Gatekeeper PR review, Java 25 LTS, Spring Boot 3.4.5. |
+| **RAW-001** | `US-001`: Danh mục Căn hộ 30 tầng | `BE-01`, `BE-02`, `FE-04` | Sơn (TV2), Đ.Anh (TV4) | **Deliverable D2, D3, D4** | `TC_APT_DT_01` $\rightarrow$ `06` | Bất biến 2: Diện tích thông thủy strictly positive ($m^2 > 0$), `DECIMAL(12,2)`. |
 | **RAW-002** | `US-001`: Thông tin Hồ sơ Chủ hộ | `BE-02`, `FE-04` | Sơn (TV2), Đ.Anh (TV4) | **Deliverable D3, D4** | `TC_OWNER_01`, `TC_OWNER_02` | CCCD 12 chữ số, SĐT 10 số, lưu vết lịch sử chủ hộ (`status = 'ACTIVE'`). |
 | **RAW-006** *(Chuẩn bị)* | `US-003`: Trạng thái Tạm trú/vắng | `DB-01` | Sơn (TV2) | **Deliverable D2** (Schema migration) | `TC_DB_MIGRATE_01` | Bất biến 3: Thêm `start_date`, `end_date` vào `residents` (Luật Cư trú 2020). |
 | **RAW-011..016** *(Chuẩn bị)* | Thu phí & Khóa lạc quan | `DB-01` | Sơn (TV2) | **Deliverable D2** (Schema migration) | `TC_DB_MIGRATE_02` | Concurrency Invariant: Thêm `version BIGINT` vào `invoices` chống gạch nợ đúp. |
 | **RAW-022..025** *(Chuẩn bị)* | Tách biệt Đóng góp Tự nguyện | `DB-01` | Sơn (TV2) | **Deliverable D2** (Schema migration) | `TC_DB_MIGRATE_03` | Bất biến 1: Thêm XOR check trên `receipts` chống in gộp biên lai (NĐ 93/2021). |
 | **NFR-02** | `US-SEC-01`: Quản lý Tài khoản BQT | `SEC-03`, `FE-03` | Hoà (TV3), Đ.Anh (TV4) | **Deliverable D3, D4** | `TC_USER_CRUD_01`, `TC_USER_CRUD_02` | Phân quyền RBAC (`ROLE_ADMIN`, `ACCOUNTANT`, `CASHIER`), kiểm tra tính duy nhất. |
-| **NFR-02** | `US-SEC-02`: Đăng nhập & Khóa Brute-force | `SEC-01`, `SEC-02`, `FE-02` | Hoà (TV3), Đ.Anh (TV4) | **Deliverable D3, D4** | `TC_LOGIN_BP_01` $\rightarrow$ `TC_LOGIN_BP_05` | Khóa tài khoản sau 5 lần sai trong 15 phút, mã hóa BCrypt $\ge 10$ rounds. |
-| **Toàn bộ** | Đảm bảo Chất lượng Kiểm thử | `QA-01..04`, `PM-01..03` | Huy (TV5), Khánh (TV1) | **Deliverable D5** | Toàn bộ Test Suite (Pass 100%) | SoICT Workbook Chương 8 (CFG Basis Path) & Chương 9 (Decision Table). |
+| **NFR-02** | `US-SEC-02`: Đăng nhập & Khóa Brute-force | `SEC-01`, `SEC-02`, `FE-02` | Hoà (TV3), Đ.Anh (TV4) | **Deliverable D3, D4** | `TC_LOGIN_BP_01` $\rightarrow$ `TC_LOGIN_BP_05` | Khóa tạm thời 15 phút sau 5 lần sai liên tiếp, mã hóa BCrypt $\ge 10$ rounds. |
+| **Nghiệm thu** | Bộ Kịch bản UAT & Báo cáo Bàn giao | `PM-02` | Khánh (TV1) | **Deliverable D-UAT** | 12 Kịch bản UAT Thực tế | Xác nhận nghiệm thu chức năng từ góc độ Product Owner / Ban Quản trị. |
+| **Toàn bộ** | Đảm bảo Chất lượng Kiểm thử | `QA-01..04`, `PM-01` | Huy (TV5), Khánh (TV1) | **Deliverable D5** | Toàn bộ Test Suite (Pass 100%) | SoICT Workbook Chương 8 (CFG Basis Path) & Chương 9 (Decision Table). |
 
 ---
 
-## 7. KẾ HOẠCH LÀM VIỆC THEO NGÀY (DAILY SPRINT SCHEDULE)
+## 7. KẾ HOẠCH LÀM VIỆC THEO NGÀY (DAILY SPRINT SCHEDULE: 31/10/2026 – 06/11/2026)
+
+```mermaid
+gantt
+    title TIẾN ĐỘ 7 NGÀY SPRINT 1 (31/10/2026 - 06/11/2026)
+    dateFormat  YYYY-MM-DD
+    section Khởi động & Nền tảng
+    Họp Sprint Planning, Khung Spring Boot (Hoà), Script DB V1.1 (Sơn) :2026-10-31, 1d
+    Test Setup Shift-Left (Huy), Phác thảo 12 kịch bản UAT (Khánh)     :2026-10-31, 1d
+    section Xây dựng Song song
+    Cấu hình Security, JPA Entity, Master Layout Thymeleaf UI         :2026-11-01, 1d
+    AuthService (Hoà), Test Stubs CFG (Huy), UI Login (Đức Anh)        :2026-11-02, 1d
+    Ghép Form Login, Test CFG chạy thật, Decision Table (Huy+Khánh)   :2026-11-03, 1d
+    section Tích hợp & Nghiệm thu
+    Backend Căn hộ (Sơn), UI Căn hộ (Đức Anh), Decision Test (Huy)    :2026-11-04, 1d
+    Ghép UI Căn hộ, MockMvc Test (Huy), UAT thủ công (Khánh)          :2026-11-05, 1d
+    Code Freeze, Đo Coverage >= 85%, Demo Sprint Review & Retrospective:2026-11-06, 1d
+```
 
 | Ngày làm việc | Hoạt động Trọng tâm Toàn đội | Output Kỳ vọng Cuối ngày |
 |---|---|---|
-| **Ngày 1 (20/10)** | Họp Sprint Planning. Hoà thiết lập khung kiến trúc Spring Boot (ARCH-01). Sơn soạn thảo kịch bản migration CSDL (DB-01). | Mã nguồn khung biên dịch sạch; script migration `V1.1` sẵn sàng. |
-| **Ngày 2 (21/10)** | Chạy migration CSDL, cập nhật hash BCrypt chuẩn. Hoà cấu hình Spring Security 6 (SEC-01). Sơn ánh xạ Entity JPA (BE-01). | Kết nối DB PostgreSQL thành công; Security filter hoạt động. |
-| **Ngày 3 (22/10)** | Hoà lập trình `AuthService` và xử lý khóa Brute-force 5 lần (SEC-02). Đức Anh dựng Master Layout Thymeleaf (FE-01). | Logic xác thực hoạt động qua Unit Test ban đầu; layout chuẩn. |
-| **Ngày 4 (23/10)** | Đức Anh xây dựng giao diện Login (FE-02). Hoà hoàn thiện `AuthController` và tích hợp Form Login với Spring Security. | Đăng nhập giao diện thành công với tài khoản seed mẫu. |
-| **Ngày 5 (24/10)** | Huy vẽ CFG và viết trọn bộ 5 ca kiểm thử Basis Path cho Login (QA-02). Hoà bắt đầu viết `UserService` (SEC-03). | 100% ca kiểm thử Basis Path đăng nhập pass xanh. |
-| **Ngày 6 (27/10)** | Sơn hiện thực hóa `ApartmentService` (BE-02). Đức Anh thiết kế giao diện Quản lý tài khoản BQT (FE-03). | Backend Căn hộ hoàn thành; UI Quản lý tài khoản sẵn sàng. |
-| **Ngày 7 (28/10)** | Đức Anh hoàn thiện màn hình Quản lý Căn hộ (FE-04). Sơn kết nối Controller với View Căn hộ. | Thao tác Thêm/Sửa Căn hộ hoạt động mượt mà trên giao diện. |
-| **Ngày 8 (29/10)** | Huy thiết kế Bảng quyết định và viết ca kiểm thử cho Căn hộ (QA-03). Khánh rà soát AC và kiểm tra Definition of Done. | Bộ ca kiểm thử tự động đạt 30+ tests, bao phủ $\ge 85\%$. |
-| **Ngày 9 (30/10)** | Kiểm thử tích hợp toàn diện bằng `MockMvc` (QA-04). Tối ưu hóa giao diện và fix bug phát hiện. | Báo cáo kiểm định chất lượng hoàn thiện; 0 bug mở. |
-| **Ngày 10 (02/11)** | Họp Sprint Review, demo tính năng cho Ban Quản trị. Họp Sprint Retrospective đánh giá cải tiến. Đóng gói Deliverables D1–D5. | Biên bản nghiệm thu Sprint 1 có chữ ký; sẵn sàng cho Sprint 2. |
+| **Ngày 1 (Thứ Bảy, 31/10)** | • Sáng: Họp Sprint Planning 45 phút, chốt backlog 30 SP.<br>• Hoà: Thiết lập khung Spring Boot 3.4.5 (`ARCH-01`).<br>• Sơn: Hoàn tất script CSDL migration `V1.1` (`DB-01`).<br>• Huy (Shift-Left): Cấu hình môi trường test `application-test.yml`, JUnit 5, Mockito (`QA-01`).<br>• Khánh: Thiết lập Kanban board, bắt đầu phác thảo 12 kịch bản UAT (`PM-01`). | Mã nguồn khung biên dịch sạch; script migration `V1.1` sẵn sàng; môi trường test sẵn sàng. |
+| **Ngày 2 (Chủ Nhật, 01/11)** | • Sơn & Hoà: Nạp migration CSDL, chạy seed data hash BCrypt chuẩn; Hoà cấu hình Security Filter (`SEC-01`); Sơn ánh xạ JPA Entity (`BE-01`).<br>• Đức Anh: Xây dựng Master Layout Thymeleaf (`FE-01`).<br>• Huy & Khánh: Huy vẽ đồ thị CFG và dựng khung test stubs; Khánh hoàn thiện kịch bản UAT cho Đăng nhập. | Kết nối DB PostgreSQL thành công; Security filter hoạt động; Master layout sẵn sàng; khung test stubs sẵn sàng. |
+| **Ngày 3 (Thứ Hai, 02/11)** | • Hoà: Hoàn thành `AuthService` xử lý khóa 15 phút sau 5 lần sai (`SEC-02`).<br>• Đức Anh: Hoàn thành giao diện màn hình Đăng nhập `login.html` (`FE-02`).<br>• Huy: Ráp `AuthServiceTest` vào code của Hoà vừa push, chạy kiểm thử 5 Basis Paths ngay trong ngày (Continuous Feedback). | Logic xác thực pass 5 Basis Paths; giao diện Login sẵn sàng. |
+| **Ngày 4 (Thứ Ba, 03/11)** | • Đức Anh & Hoà: Ghép nối Form Login Thymeleaf với Spring Security.<br>• Khánh: Trực tiếp đăng nhập thử nghiệm trên giao diện web, kiểm tra thông báo lỗi tiếng Việt theo kịch bản UAT.<br>• Sơn: Bắt đầu code `ApartmentService` (`BE-02`).<br>• Huy: Thiết kế Bảng quyết định và viết sẵn khung kiểm thử tham số hóa cho Căn hộ (`QA-03`). | Đăng nhập trên giao diện web thành công; khung test Bảng quyết định căn hộ sẵn sàng. |
+| **Ngày 5 (Thứ Tư, 04/11)** | • Sơn: Hoàn thành Backend CRUD Căn hộ (ràng buộc 30 tầng và diện tích $>0$).<br>• Đức Anh: Xây dựng giao diện Quản lý Căn hộ và Quản lý tài khoản BQT (`FE-03`, `FE-04`).<br>• Huy: Thực thi bộ test Bảng quyết định trên `ApartmentService`, xác nhận bắt đúng 100% các lỗi biên. | Backend Căn hộ hoàn thành; UI Căn hộ và User sẵn sàng; kiểm thử biên pass 100%. |
+| **Ngày 6 (Thứ Năm, 05/11)** | • Đức Anh & Sơn: Ghép nối Controller với màn hình Căn hộ.<br>• Khánh: Thực hiện kiểm thử chấp nhận (UAT) trên màn hình Căn hộ, lập danh sách lỗi gửi Dev sửa.<br>• Huy: Viết bộ kiểm thử tích hợp `MockMvc` cho Controller (`QA-04`). | Thao tác Thêm/Sửa Căn hộ hoạt động mượt mà trên giao diện; bộ kiểm thử tích hợp hoàn tất. |
+| **Ngày 7 (Thứ Sáu, 06/11)** | • Toàn đội: Code Freeze lúc 12:00 trưa. Sửa các lỗi tồn đọng cuối cùng.<br>• Huy: Đo lường độ bao phủ JaCoCo/Test Coverage đạt $\ge 85\%$, xuất `SPRINT_1_TEST_REPORT.md`.<br>• Khánh: Hoàn tất biên bản nghiệm thu UAT, chủ trì buổi Demo Sprint Review và Retrospective tổng kết Sprint 1. | 100% ca kiểm thử pass xanh; biên bản nghiệm thu UAT hoàn chỉnh; đóng gói 5 Deliverables sẵn sàng cho Sprint 2. |
 
 ---
 
@@ -483,9 +499,10 @@ Ma trận truy vết 5 tầng dưới đây bảo đảm tính liên kết hữu
 | **RSK-S1-02** | Xung đột phiên bản Java giữa máy các thành viên (Java 17 vs Java 25). | **TRUNG BÌNH** | Chốt cứng Java 25 LTS trong `pom.xml` và tài liệu; yêu cầu cài đặt bản JDK Temurin 25 đồng nhất. |
 | **RSK-S1-03** | Khóa tài khoản sau 5 lần sai không tự động mở sau 15 phút. | **TRUNG BÌNH** | So sánh thời gian dựa trên `ZonedDateTime.now()` với múi giờ chuẩn UTC/GMT+7, viết Unit Test bao phủ mốc thời gian. |
 | **RSK-S1-04** | Trùng lặp mã căn hộ khi nhập đồng thời danh mục căn hộ 30 tầng. | **THẤP** | Cài đặt Unique constraint tại CSDL và kiểm tra `existsByRoomNumber` tại Service trước khi lưu. |
+| **RSK-S1-05** | Nghẽn cổ chai kiểm thử do bàn giao muộn và áp lực vai trò lên thành viên mới. | **CAO** | Áp dụng quy trình **Shift-Left Testing**: Huy viết test stubs từ Ngày 1; Khánh tập trung đúng chuyên môn BA/PO (viết 12 kịch bản UAT và trực tiếp nghiệm thu web); Đức Anh chủ trì xây dựng giao diện Thymeleaf. |
 
 ---
 
 ## 9. KẾT LUẬN & CAM KẾT HOÀN THÀNH
 
-Kế hoạch chi tiết Sprint 1 của Nhóm 13 đã thiết lập một lộ trình kỹ thuật chặt chẽ, cân đối tuyệt đối giữa 5 thành viên và bám sát toàn diện các quy chuẩn học thuật của Viện CNTT&TT (SoICT / HUST). Toàn bộ 5 thành viên cam kết tuân thủ nghiêm ngặt Definition of Done, 4 Bất biến nghiệp vụ trong `AGENTS.md` và hoàn thành 100% các Deliverables cam kết đúng hạn vào ngày **02/11/2026**.
+Kế hoạch chi tiết Sprint 1 (Phiên bản v2.0) của Nhóm 13 đã thiết lập một lộ trình kỹ thuật chuẩn xác, bảo toàn trọn vẹn chuyên môn của từng thành viên, tối ưu hóa thời lượng 7 ngày liên tục (31/10 – 06/11/2026) với 30 Story Points khả thi cao. Toàn bộ 5 thành viên cam kết tuân thủ nghiêm ngặt Definition of Done, 4 Bất biến nghiệp vụ trong `AGENTS.md` và hoàn thành 100% các Deliverables cam kết đúng hạn vào ngày **06/11/2026**.
