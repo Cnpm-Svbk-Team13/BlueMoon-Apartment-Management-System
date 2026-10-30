@@ -6,6 +6,14 @@
 **Phiên bản kế hoạch:** 2.0 (Official Refined Baseline Plan)  
 **Tiêu chuẩn áp dụng:** Hướng dẫn Đồ án Công nghệ Phần mềm SoICT (Chương 8 & 9), Bất biến Nghiệp vụ `AGENTS.md`
 
+> [!NOTE]
+> **ĐIỀU HƯỚNG TÀI LIỆU SPRINT 1 THEO MÔ-ĐUN:**  
+> Kế hoạch Sprint 1 đã được phân rã thành các tệp cẩm nang chuyên biệt cho từng thành viên và bộ thẻ GitHub Kanban tại:  
+> 📂 [**`docs/sprints/sprint-1/README.md`**](./sprints/sprint-1/README.md)  
+> - 📄 Cẩm nang thành viên: [TV1 Khánh](./sprints/sprint-1/TV1_Khanh_PO_BA.md) | [TV2 Sơn](./sprints/sprint-1/TV2_Son_Database_Backend.md) | [TV3 Hoà](./sprints/sprint-1/TV3_Hoa_TechLead_Security.md) | [TV4 Đức Anh](./sprints/sprint-1/TV4_DucAnh_Frontend_UI.md) | [TV5 Huy](./sprints/sprint-1/TV5_Huy_QA_Automation.md)  
+> - 📋 Danh mục 18 Thẻ GitHub Issues Backlog: [github_issues_backlog.md](./sprints/sprint-1/github_issues_backlog.md)  
+> - 📐 Chứng minh Toán học CFG & Decision Table: [kiem_thu_hoc_thuat_cfg_decision_table.md](./sprints/sprint-1/kiem_thu_hoc_thuat_cfg_decision_table.md)
+
 ---
 
 ## 1. THÔNG TIN TỔNG QUAN SPRINT 1 (SPRINT OVERVIEW)
