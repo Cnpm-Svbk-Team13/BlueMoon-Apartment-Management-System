@@ -21,15 +21,16 @@
 > Thiết lập hoàn chỉnh khung kiến trúc dự án **Spring Boot 3.4.5 (Java 25 LTS)** theo mô hình phân tầng thuần Web (Pure Web Architecture), kết nối và hoàn thiện kịch bản CSDL **PostgreSQL** (vá triệt để các lỗi thiếu `start_date`/`end_date` và `version`), hiện thực hóa thành công phân hệ **Xác thực Đăng nhập, Cơ chế khóa Brute-force, Quản lý Tài khoản Ban Quản trị & Phân quyền RBAC**, kết hợp phân hệ **Quản lý Căn hộ & Chủ hộ** nền tảng, đáp ứng 100% tiêu chí kiểm thử và chuẩn mực học thuật của Viện CNTT&TT (SoICT / HUST).
 
 ### 1.3. Căn cứ Quy chiếu & Phạm vi Nghiệp vụ Sprint 1
-Để giải quyết dứt điểm mâu thuẫn định danh giữa các tài liệu đặc tả đã chỉ ra trong *Báo cáo Đánh giá Đồng bộ Tài liệu*, Sprint 1 quy chuẩn phạm vi bao gồm:
-1. **Phân hệ Nền tảng & Bảo mật (Security & Foundation Enablers - Epic 0):**
-   - **US-SEC-01 (tương ứng US-001 trong prompt):** *Quản lý Tài khoản Ban Quản trị & Phân quyền RBAC.* Quản trị viên cấp cao (Admin) khởi tạo, cập nhật, kích hoạt/vô hiệu hóa tài khoản cho các thành viên BQT, Kế toán và Thủ quỹ.
-   - **US-SEC-02 (tương ứng US-002 trong prompt / US-005 trong WBS 09 / Core Workflow 1 trong AGENTS.md):** *Xác thực Người dùng, Đăng nhập hệ thống, Kiểm soát phiên Session, Khóa tài khoản sau 5 lần sai và Đổi mật khẩu chủ động.*
-2. **Phân hệ Nghiệp vụ Căn hộ & Không gian Tòa nhà (Business Feature - Epic 1):**
-   - **US-001 (theo tài liệu chuẩn `05_chi_tiet_us_va_acceptance_criteria.md`):** *Khởi tạo và Quản lý Danh mục Căn hộ (30 tầng bao gồm Kiot tầng 1, Thương mại tầng 2–5, Căn hộ tầng 6–29, Penthouse tầng 30) và Thông tin Hồ sơ Chủ hộ đại diện.*
+Để giải quyết dứt điểm mâu thuẫn định danh và làm rõ bản chất công việc, Sprint 1 quy chuẩn phạm vi thực thi bao gồm:
+1. **Phân hệ Nghiệp vụ Căn hộ & Không gian Tòa nhà (Business Feature):**
+   - **US-001 (thuộc 11 User Stories gốc của nhóm trong `05_chi_tiet_us_va_acceptance_criteria.md`):** *Khởi tạo và Quản lý Danh mục Căn hộ (30 tầng bao gồm Kiot tầng 1, Thương mại tầng 2–5, Căn hộ tầng 6–29, Penthouse tầng 30) và Thông tin Hồ sơ Chủ hộ đại diện.*
+2. **Phân hệ Nền tảng Xác thực & Quản trị BQT (Core Workflow 1 theo Đề bài gốc & `AGENTS.md`):**
+   *(Lưu ý đối soát: Trong 11 User Stories ban đầu của nhóm chỉ tập trung vào nghiệp vụ chung cư nên chưa có mã riêng cho phân hệ Đăng nhập/Tài khoản vốn là điều kiện tiên quyết ở Mục 4.1.5 của `DE_BAI_GOC.md`. Hai mã `US-SEC-01` và `US-SEC-02` được đặt tên trong báo cáo audit để phân rã kỹ thuật, bản chất chính là Luồng nghiệp vụ cốt lõi 1 của hệ thống):*
+   - **Xác thực Đăng nhập & Khóa Brute-force (`TASK-SEC-AUTH` / tạm chiếu `US-SEC-02`):** Xác thực Người dùng, Đăng nhập hệ thống, Kiểm soát phiên Session, Khóa tài khoản sau 5 lần sai và Đổi mật khẩu chủ động.
+   - **Quản lý Tài khoản Ban Quản trị & Phân quyền RBAC (`TASK-SEC-USER` / tạm chiếu `US-SEC-01`):** Quản trị viên cấp cao (Admin) khởi tạo, cập nhật, kích hoạt/vô hiệu hóa tài khoản cho các thành viên BQT, Kế toán và Thủ quỹ.
 3. **Nhiệm vụ Kỹ thuật Nền tảng (Technical Enablers):**
-   - **TASK-TECH-01:** Khởi tạo khung dự án Spring Boot, đóng gói DTO, Controller, Service, Repository, Entity.
-   - **TASK-TECH-02:** Migration CSDL PostgreSQL `V1.1__fix_schema_and_seed.sql`, khắc phục toàn bộ 14 điểm sai lệch phát hiện tại Báo cáo Đánh giá Đồng bộ.
+   - **TASK-TECH-01:** Khởi tạo khung dự án Spring Boot 3.4.5, cấu hình Pure Web đa tầng và xử lý ngoại lệ tập trung.
+   - **TASK-TECH-02:** Nạp kịch bản Migration CSDL PostgreSQL `V1.1__fix_schema_and_seed.sql` và khởi tạo JPA Entities/Repositories.
 
 ---
 
@@ -41,18 +42,18 @@ Nhóm 13 gồm 5 thành viên được phân công vai trò rõ ràng, cân đ�
 
 | Thành viên | Vai trò Sprint 1 | Trách nhiệm chính | Mã nhiệm vụ (Task IDs) | Story Points | Giờ ước lượng | Tỷ trọng |
 |---|---|---|---|:---:|:---:|:---:|
-| **TV1: Nguyễn Đình Khánh** | Project Manager (PM) & Lead BA | Điều phối Scrum, kiểm soát WBS, giám sát DoD, hoàn thiện AC & Kế hoạch UAT | `PM-01`, `PM-02`, `PM-03` | 7 SP | 30h | 18.75% |
-| **TV2: Bùi Hồng Sơn** | Database Engineer & Backend Dev | Khắc phục Schema CSDL, Entity JPA, Backend CRUD Căn hộ & Chủ hộ (`US-001`) | `DB-01`, `BE-01`, `BE-02` | 9 SP | 34h | 21.25% |
-| **TV3: Nguyễn Đức Hoà** | Technical Lead & Core Backend Dev | Kiến trúc hệ thống, Spring Security 6, API Đăng nhập (`US-SEC-02`), Quản lý User (`US-SEC-01`), PR Review & Gatekeeping | `ARCH-01`, `SEC-01`, `SEC-02`, `SEC-03`, `SEC-04` | 10 SP | 36h | 22.50% |
-| **TV4: Trần Đức Anh** | Frontend Developer & UI/UX Specialist | Dựng Master Layout Thymeleaf, Giao diện Login, UI Quản lý tài khoản, UI Căn hộ | `FE-01`, `FE-02`, `FE-03`, `FE-04` | 8 SP | 32h | 20.00% |
-| **TV5: Nguyễn Đức Huy** | QA Lead & Test Engineer | Test Plan SoICT, Unit Test CFG Basis Path, MockMvc Integration Test, Decision Table | `QA-01`, `QA-02`, `QA-03`, `QA-04` | 6 SP | 28h | 17.50% |
+| **TV1: Phạm Nam Khánh** | Project Manager (PM) & Lead BA | Điều phối Scrum, kiểm soát WBS, giám sát DoD, hoàn thiện AC & Kế hoạch UAT | `PM-01`, `PM-02`, `PM-03` | 7 SP | 30h | 18.75% |
+| **TV2: Nguyễn Xuân Sơn** | Database Engineer & Backend Dev | Khắc phục Schema CSDL, Entity JPA, Backend CRUD Căn hộ & Chủ hộ (`US-001`) | `DB-01`, `BE-01`, `BE-02` | 9 SP | 34h | 21.25% |
+| **TV3: Phạm Thái Hoà** | Technical Lead & Core Backend Dev | Kiến trúc hệ thống, Spring Security 6, API Đăng nhập (`US-SEC-02`), Quản lý User (`US-SEC-01`), PR Review & Gatekeeping | `ARCH-01`, `SEC-01`, `SEC-02`, `SEC-03`, `SEC-04` | 10 SP | 36h | 22.50% |
+| **TV4: Nghiêm Đức Anh** | Frontend Developer & UI/UX Specialist | Dựng Master Layout Thymeleaf, Giao diện Login, UI Quản lý tài khoản, UI Căn hộ | `FE-01`, `FE-02`, `FE-03`, `FE-04` | 8 SP | 32h | 20.00% |
+| **TV5: Nguyễn Hợp Huy** | QA Lead & Test Automation Engineer | Cấu hình Test Framework, lập trình Unit Test CFG Basis Path, MockMvc Integration Test, Decision Table | `QA-01`, `QA-02`, `QA-03`, `QA-04` | 6 SP | 28h | 17.50% |
 | **TỔNG CỘNG** | | | **19 Tasks** | **40 SP** | **160h** | **100%** |
 
 ---
 
 ### 2.2. Chi tiết Nhiệm vụ & Tiêu chí Nghiệm thu Từng Thành viên
 
-#### THÀNH VIÊN 1: NGUYỄN ĐÌNH KHÁNH — PROJECT MANAGER & LEAD BUSINESS ANALYST
+#### THÀNH VIÊN 1: PHẠM NAM KHÁNH — PROJECT MANAGER & LEAD BUSINESS ANALYST
 - **Trách nhiệm trọng tâm:** Đảm bảo dự án đi đúng tiến độ, tuân thủ phương pháp luận Agile/Scrum, kiểm soát phạm vi và chất lượng hồ sơ tài liệu đặc tả.
 - **Danh mục Nhiệm vụ Chi tiết:**
 
@@ -64,7 +65,7 @@ Nhóm 13 gồm 5 thành viên được phân công vai trò rõ ràng, cân đ�
 
 ---
 
-#### THÀNH VIÊN 2: BÙI HỒNG SƠN — DATABASE ENGINEER & BACKEND DEVELOPER
+#### THÀNH VIÊN 2: NGUYỄN XUÂN SƠN — DATABASE ENGINEER & BACKEND DEVELOPER
 - **Trách nhiệm trọng tâm:** Đảm bảo cơ sở dữ liệu PostgreSQL chuẩn mực, khắc phục toàn bộ các lỗi phát hiện tại báo cáo audit, và hiện thực hóa phân hệ Căn hộ (`US-001`).
 - **Danh mục Nhiệm vụ Chi tiết:**
 
@@ -76,7 +77,7 @@ Nhóm 13 gồm 5 thành viên được phân công vai trò rõ ràng, cân đ�
 
 ---
 
-#### THÀNH VIÊN 3: NGUYỄN ĐỨC HOÀ — TECHNICAL LEAD & CORE BACKEND DEVELOPER
+#### THÀNH VIÊN 3: PHẠM THÁI HOÀ — TECHNICAL LEAD & CORE BACKEND DEVELOPER
 - **Trách nhiệm trọng tâm:** Thiết lập nền tảng kiến trúc phần mềm, cấu hình bảo mật Spring Security 6, xây dựng phân hệ Đăng nhập (`US-SEC-02`), Quản lý Tài khoản BQT (`US-SEC-01`), và giữ vai trò Gatekeeper kiểm duyệt chất lượng mã nguồn (Pull Request Review & Architecture Governance).
 - **Phân bổ công việc:** Khối lượng công việc của Hoà được phân rã chi tiết thành 5 nhiệm vụ độc lập: `ARCH-01` (6h, 2 SP), `SEC-01` (8h, 2 SP), `SEC-02` (10h, 3 SP), `SEC-03` (8h, 2 SP), và `SEC-04: Code Review, PR Review & Architecture Gatekeeping` (4h, 1 SP). Tổng cộng: **36h, 10 SP**.
 - **Danh mục Nhiệm vụ Chi tiết:**
@@ -91,7 +92,7 @@ Nhóm 13 gồm 5 thành viên được phân công vai trò rõ ràng, cân đ�
 
 ---
 
-#### THÀNH VIÊN 4: TRẦN ĐỨC ANH — FRONTEND DEVELOPER & UI/UX SPECIALIST
+#### THÀNH VIÊN 4: NGHIÊM ĐỨC ANH — FRONTEND DEVELOPER & UI/UX SPECIALIST
 - **Trách nhiệm trọng tâm:** Thiết kế và xây dựng giao diện người dùng Thymeleaf đồng bộ, trực quan, chuyên nghiệp, responsive theo thương hiệu BlueMoon.
 - **Danh mục Nhiệm vụ Chi tiết:**
 
@@ -104,16 +105,16 @@ Nhóm 13 gồm 5 thành viên được phân công vai trò rõ ràng, cân đ�
 
 ---
 
-#### THÀNH VIÊN 5: NGUYỄN ĐỨC HUY — QA LEAD & TEST ENGINEER
+#### THÀNH VIÊN 5: NGUYỄN HỢP HUY — QA LEAD & TEST ENGINEER
 - **Trách nhiệm trọng tâm:** Thiết kế kế hoạch kiểm thử, xây dựng bộ ca kiểm thử tự động đạt chuẩn học thuật SoICT (Chương 8 & 9), thẩm định chất lượng toàn diện.
 - **Danh mục Nhiệm vụ Chi tiết:**
 
 | Mã Task | Tên Nhiệm vụ | Mô tả Chi tiết Công việc | Ước lượng | Tiêu chí Hoàn thành (Acceptance Criteria) |
 |---|---|---|:---:|---|
-| **QA-01** | Lập Kế hoạch Kiểm thử Sprint 1 (Test Plan) | • Soạn thảo Test Plan chi tiết theo chuẩn môn học IT3180.<br>• Định nghĩa môi trường test, công cụ kiểm thử (JUnit 5, Mockito, MockMvc, AssertJ).<br>• Thiết lập ma trận rủi ro kiểm thử và tiêu chuẩn chấp nhận. | 6 giờ (1 SP) | • Test Plan được phê duyệt bởi PM và Tech Lead.<br>• Định rõ phạm vi kiểm thử chức năng và phi chức năng. |
-| **QA-02** | Thiết kế Kiểm thử Luồng Điều khiển CFG (US-SEC-02 Login) | • Vẽ đồ thị dòng điều khiển (Control Flow Graph - CFG) cho phương thức `authenticateUser()`.<br>• Tính độ phức tạp chu trình Cyclomatic Complexity theo công thức vị từ $V(G) = P + 1 = 5$ hoặc đa điểm thoát $V(G) = E - N + e + 1 = 5$.<br>• Xác định tập đường cơ sở độc lập (Basis Paths) và viết các ca kiểm thử JUnit 5 bao phủ 100% Basis Paths. | 8 giờ (2 SP) | • Vẽ biểu đồ CFG chi tiết trong báo cáo test.<br>• 100% các nhánh rẽ và đường dẫn cơ sở được test bao phủ. |
-| **QA-03** | Thiết kế Kiểm thử Bảng Quyết định (Decision Table) | • Xây dựng Black-box Decision Table cho quy tắc khóa tài khoản sau 5 lần sai.<br>• Xây dựng Decision Table kiểm tra tính hợp lệ dữ liệu Căn hộ ($m^2 > 0$, trùng mã phòng, loại hình). | 6 giờ (1 SP) | • Bảng quyết định bao phủ đầy đủ các hoán vị điều kiện biên.<br>• Chuyển hóa thành các ca kiểm thử tham số hóa (`@ParameterizedTest`). |
-| **QA-04** | Lập trình Bộ Ca Kiểm thử Tự động & Báo cáo Chất lượng | • Viết bộ ca kiểm thử Unit Test cho Service và Integration Test cho Controller với `MockMvc`.<br>• Thực thi kiểm thử tự động, đo độ bao phủ mã nguồn (Code Coverage $\ge 85\%$).<br>• Viết Báo cáo Tổng kết Kiểm định Chất lượng Sprint 1. | 8 giờ (2 SP) | • 100% ca kiểm thử pass xanh (`BUILD SUCCESS`).<br>• Báo cáo kiểm định chất lượng hoàn chỉnh nộp SoICT. |
+| **QA-01** | Thiết lập Khung & Môi trường Kiểm thử Tự động (Test Setup) | • Cấu hình môi trường kiểm thử độc lập `application-test.yml` (H2 in-memory DB / mocks) cho phép chạy test tự động không cần môi trường DB bên ngoài.<br>• Thiết lập thư viện JUnit 5, Mockito, MockMvc, AssertJ.<br>• Xây dựng các lớp cơ sở (Base Test Classes) và bộ dữ liệu fixture dùng chung cho nhóm. | 6 giờ (1 SP) | • Chạy lệnh `mvn test` sạch sẽ không báo lỗi môi trường.<br>• Khung kiểm thử tự động sẵn sàng cho tầng Service và Controller. |
+| **QA-02** | Lập trình Ca Kiểm thử CFG Basis Path (AuthService) | • Chuyển hóa đồ thị dòng điều khiển CFG và 5 Basis Paths đã thiết kế trong Section 5 thành mã nguồn JUnit 5 trong `AuthServiceTest.java`.<br>• Bao phủ 100% 5 Basis Paths (`TC_LOGIN_BP_01` $\rightarrow$ `05`) và 2 trường hợp biên (tài khoản vô hiệu hóa, tự động giải phóng sau 15 phút). | 8 giờ (2 SP) | • Toàn bộ 7 ca kiểm thử luồng đăng nhập pass 100%.<br>• Báo cáo độ bao phủ nhánh rẽ đạt 100%. |
+| **QA-03** | Lập trình Ca Kiểm thử Tham số hóa Decision Table (ApartmentService) | • Chuyển hóa Black-box Decision Table (6 Rules $R_1 \rightarrow R_6$ đã thiết kế trong Section 5) thành các ca kiểm thử tham số hóa `@ParameterizedTest` trong `ApartmentServiceTest.java`.<br>• Kiểm tra biên diện tích $\le 0$, số tầng ngoài dải $1 \le \text{floor} \le 30$, xung đột loại hình với số tầng. | 6 giờ (1 SP) | • Bắt chính xác 100% các ngoại lệ nghiệp vụ theo từng rule.<br>• Dữ liệu test tham số hóa bao phủ đầy đủ các hoán vị điều kiện biên. |
+| **QA-04** | Lập trình Web Integration Test (MockMvc) & Đo lường Coverage | • Viết bộ ca kiểm thử tích hợp Controller với `MockMvc` cho `AuthController` và `AdminController`.<br>• Thực thi kiểm thử tự động, đo độ bao phủ mã nguồn (Line Coverage $\ge 85\%$).<br>• Đóng gói Báo cáo Tổng kết Đo lường Chất lượng Sprint 1 nộp SoICT. | 8 giờ (2 SP) | • 100% ca kiểm thử pass xanh (`BUILD SUCCESS`).<br>• Đo độ bao phủ đạt $\ge 85\%$ dòng lệnh cho tầng Service/Controller. |
 
 ---
 

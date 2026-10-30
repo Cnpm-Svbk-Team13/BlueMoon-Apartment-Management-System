@@ -14,11 +14,11 @@
 - **Khách hàng thụ hưởng:** Ban Quản trị Chung cư BlueMoon (Ngã tư Văn Phú, quận Hà Đông, TP. Hà Nội)
 - **Quy mô tòa nhà:** $450\text{ m}^2$, 30 tầng nổi (1 tầng ki-ốt, 4 tầng đế kinh doanh, 24 tầng căn hộ ở, 1 tầng penthouse).
 - **Thành viên nhóm & Phân công vai trò:**
-  - **Khánh (TV1):** Business Analysis Lead (Chủ trì Scope, SMART, MoSCoW Backlog)
-  - **Hoà (TV2):** System Analysis (Chủ trì Hộ khẩu, Nhân khẩu, Biến động cư trú)
-  - **Đức Anh (TV3):** UX/UI Designer (Chủ trì Thiết kế Wireframes / Prototype Figma)
-  - **Sơn (TV4):** Data Engineer (Chủ trì Phân tích Quỹ tự nguyện, Khảo sát cư dân, CSDL)
-  - **Huy (TV5):** QA Specialist (Chủ trì NFR Checklist, Acceptance Criteria GWT, Traceability Matrix)
+  - **Phạm Nam Khánh (TV1):** Business Analysis Lead (Chủ trì Scope, SMART, MoSCoW Backlog)
+  - **Phạm Thái Hoà (TV2):** System Analysis (Chủ trì Hộ khẩu, Nhân khẩu, Biến động cư trú)
+  - **Nghiêm Đức Anh (TV3):** UX/UI Designer (Chủ trì Thiết kế Wireframes / Prototype Figma)
+  - **Nguyễn Xuân Sơn (TV4):** Data Engineer (Chủ trì Phân tích Quỹ tự nguyện, Khảo sát cư dân, CSDL)
+  - **Nguyễn Hợp Huy (TV5):** QA Specialist (Chủ trì NFR Checklist, Acceptance Criteria GWT, Traceability Matrix)
 
 ---
 
