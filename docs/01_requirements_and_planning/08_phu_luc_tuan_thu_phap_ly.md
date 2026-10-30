@@ -6,11 +6,11 @@
 
 ## 1. Tổng quan nguyên tắc tuân thủ
 
-Hệ thống phần mềm quản lý chung cư BlueMoon được thiết kế và phát triển dựa trên sự tuân thủ nghiêm ngặt các quy định pháp luật hiện hành của Nhà nước và các tiêu chuẩn hành chính tại địa phương. Cụ thể bao gồm 4 nhóm yêu cầu tuân thủ cốt lõi sau:
+Hệ thống phần mềm quản lý chung cư BlueMoon được thiết kế và phát triển dựa trên sự tuân thủ nghiêm ngặt các quy định pháp luật hiện hành của Nhà nước và các tiêu chuẩn hành chính tại địa phương. Cụ thể bao gồm 5 nhóm yêu cầu tuân thủ cốt lõi sau:
 
 ---
 
-## 2. Chi tiết 4 Yêu cầu Tuân thủ Cốt lõi
+## 2. Chi tiết 5 Yêu cầu Tuân thủ Cốt lõi
 
 ### 2.1. Luật Cư trú năm 2020 (Quản lý Nhân khẩu và Cư trú)
 - **Quy định áp dụng:** Luật Cư trú số 68/2020/QH14 và các văn bản hướng dẫn thi hành.
@@ -44,3 +44,14 @@ Hệ thống phần mềm quản lý chung cư BlueMoon được thiết kế v�
 - **Quy định áp dụng:** Các hướng dẫn về công tác quản lý hành chính dân cư trên địa bàn quận Hà Đông, thành phố Hà Nội.
 - **Yêu cầu tích hợp vào phần mềm:**
   1. Đảm bảo khả năng kết xuất dữ liệu biến động nhân khẩu, danh sách tạm trú theo định dạng chuẩn (Excel/PDF) để sẵn sàng cung cấp cho Ủy ban nhân dân cấp xã/phường hoặc Công an phường khi có yêu cầu thanh tra, kiểm tra hành chính định kỳ hoặc đột xuất.
+
+---
+
+### 2.5. Nghị định số 13/2023/NĐ-CP (Bảo vệ Dữ liệu Cá nhân & Chế độ Public Mode)
+- **Quy định áp dụng:** Nghị định số 13/2023/NĐ-CP ngày 17/04/2023 của Chính phủ về bảo vệ dữ liệu cá nhân (Personal Data Protection Decree).
+- **Yêu cầu tích hợp vào phần mềm:**
+  1. **Bảo mật thông tin nhạy cảm:** Số Căn cước công dân (CCCD), Số điện thoại cá nhân và chi tiết nhân thân của cư dân là dữ liệu cá nhân cơ bản/nhạy cảm cần được bảo vệ nghiêm ngặt, chỉ những tài khoản BQT có thẩm quyền (`ROLE_ADMIN`, `ROLE_ACCOUNTANT`) mới được xem đầy đủ trong nội bộ quản trị.
+  2. **Chế độ công khai sảnh (Public Mode):** Khi trích xuất, in ấn bảng kê tổng kết hoặc niêm yết danh sách căn hộ đóng góp quỹ từ thiện tại bảng tin công cộng sảnh tòa nhà (`RAW-028`, `US-010`), hệ thống bắt buộc phải cung cấp tùy chọn "Chế độ công khai" (Public Mode) để tự động che mặt nạ (masking) thông tin định danh:
+     - Số CCCD được che dạng: `001080****34`.
+     - Số điện thoại được che dạng: `0912****22`.
+     - Danh sách công khai chỉ hiển thị Mã căn hộ, Họ tên đại diện và Số tiền ủng hộ minh bạch, bảo đảm tối đa quyền riêng tư của cư dân theo đúng quy định pháp luật.

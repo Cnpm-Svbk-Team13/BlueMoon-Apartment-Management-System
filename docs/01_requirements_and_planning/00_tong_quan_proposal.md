@@ -1,3 +1,7 @@
+[🏠 Trang chủ Docs](../README.md) > [Giai đoạn 1: Khai phá & Kế hoạch](./README.md) > **00_tong_quan_proposal.md**
+
+---
+
 # TỔNG QUAN HỒ SƠ ĐỀ XUẤT BÀI TẬP LỚN CNPM - TEAM 13
 ## Hệ thống Quản lý Thu phí và Dân cư Chung cư BlueMoon (BMS / BFMS)
 
@@ -10,11 +14,11 @@
 - **Khách hàng thụ hưởng:** Ban Quản trị Chung cư BlueMoon (Ngã tư Văn Phú, quận Hà Đông, TP. Hà Nội)
 - **Quy mô tòa nhà:** $450\text{ m}^2$, 30 tầng nổi (1 tầng ki-ốt, 4 tầng đế kinh doanh, 24 tầng căn hộ ở, 1 tầng penthouse).
 - **Thành viên nhóm & Phân công vai trò:**
-  - **Khánh (TV1):** Business Analysis Lead (Chủ trì Scope, SMART, MoSCoW Backlog)
-  - **Hoà (TV2):** System Analysis (Chủ trì Hộ khẩu, Nhân khẩu, Biến động cư trú)
-  - **Đức Anh (TV3):** UX/UI Designer (Chủ trì Thiết kế Wireframes / Prototype Figma)
-  - **Sơn (TV4):** Data Engineer (Chủ trì Phân tích Quỹ tự nguyện, Khảo sát cư dân, CSDL)
-  - **Huy (TV5):** QA Specialist (Chủ trì NFR Checklist, Acceptance Criteria GWT, Traceability Matrix)
+  - **Phạm Nam Khánh (TV1):** Business Analysis Lead (Chủ trì Scope, SMART, MoSCoW Backlog)
+  - **Phạm Thái Hoà (TV2):** System Analysis (Chủ trì Hộ khẩu, Nhân khẩu, Biến động cư trú)
+  - **Nghiêm Đức Anh (TV3):** UX/UI Designer (Chủ trì Thiết kế Wireframes / Prototype Figma)
+  - **Nguyễn Xuân Sơn (TV4):** Data Engineer (Chủ trì Phân tích Quỹ tự nguyện, Khảo sát cư dân, CSDL)
+  - **Nguyễn Hợp Huy (TV5):** QA Specialist (Chủ trì NFR Checklist, Acceptance Criteria GWT, Traceability Matrix)
 
 ---
 
@@ -66,3 +70,5 @@ flowchart TD
 6. [`06_client_wishlist_as_is_to_be_nfr.md`](./06_client_wishlist_as_is_to_be_nfr.md): Danh sách 32 mong muốn thô của cư dân và BQT (`RAW-001` $\rightarrow$ `RAW-032`), As-Is Scenario Map kèm các Pain Points, To-Be Scenario Map, và 5 yêu cầu phi chức năng có tiêu chí đo kiểm rõ ràng.
 7. [`07_traceability_matrix_va_quan_ly_rui_ro.md`](./07_traceability_matrix_va_quan_ly_rui_ro.md): Ma trận truy vết yêu cầu 5 tầng, Biên bản giải quyết xung đột hóa đơn và Nhật ký quản lý rủi ro dữ liệu Excel cũ.
 8. [`08_phu_luc_tuan_thu_phap_ly.md`](./08_phu_luc_tuan_thu_phap_ly.md): Phụ lục yêu cầu tuân thủ Luật Cư trú 2020, Thông tư 02/2016/TT-BXD, Nghị định 93/2021/NĐ-CP và hướng dẫn quản lý hành chính địa phương.
+9. [`09_ke_hoach_du_an_chi_tiet.md`](./09_ke_hoach_du_an_chi_tiet.md): [Chuẩn SoICT] Kế hoạch dự án, cấu trúc phân cấp công việc WBS 2 dạng (theo Sản phẩm & theo Scrum 4 Sprints), Ma trận RACI và Biểu đồ tiến độ Gantt Chart.
+10. [`10_ke_hoach_quan_ly_rui_ro_toan_dien.md`](./10_ke_hoach_quan_ly_rui_ro_toan_dien.md): [Chuẩn SoICT] Kế hoạch quản lý rủi ro toàn diện, Ma trận Rủi ro 3x3 và Risk Tracking Log.

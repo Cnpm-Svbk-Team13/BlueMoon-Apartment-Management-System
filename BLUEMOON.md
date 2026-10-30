@@ -53,11 +53,14 @@ bluemoon-bfms/
 ├── .gitignore
 ├── README.md
 ├── docs/
-│   ├── SRS.md                   # Đặc tả yêu cầu phần mềm
-│   ├── architecture.md          # Kiến trúc và quyết định thiết kế
-│   ├── erd.md                   # Mô hình dữ liệu/ERD
-│   ├── workflows.md             # Luồng nghiệp vụ
-│   └── local-development.md     # Hướng dẫn chạy và sao lưu local
+│   ├── README.md                # Cổng điều hướng tài liệu trung tâm
+│   ├── 01_requirements_and_planning/ # Giai đoạn 1: Khai phá & Kế hoạch
+│   ├── 02_design_and_architecture/   # Giai đoạn 2: SRS, Kiến trúc, ERD
+│   └── 03_operations_and_guides/     # Giai đoạn 3: Cài đặt, GCP, Docker
+
+
+
+├── database/                    # DDL Schema và Seed Data CSDL
 └── src/
     ├── main/
     │   ├── java/
@@ -256,6 +259,11 @@ PostgreSQL lưu dữ liệu ngoài repository. Không commit thông tin xác th�
 
 ## 10. Tài liệu dự án
 
-- `docs/SRS.md`: SRS và yêu cầu nghiệp vụ.
-- `docs/architecture.md`, `docs/erd.md`, `docs/workflows.md`: kiến trúc, ERD và luồng nghiệp vụ.
-- `docs/local-development.md`: hướng dẫn chạy, cấu hình và sao lưu.
+Hệ thống tài liệu được tổ chức theo 3 giai đoạn chính (chi tiết tại [docs/README.md](docs/README.md)):
+- `docs/README.md`: Cổng điều hướng trung tâm tra cứu toàn bộ hồ sơ đồ án.
+- `docs/01_requirements_and_planning/`: Hồ sơ đề xuất, khai phá yêu cầu, Wishlist, User Stories, WBS và Kế hoạch rủi ro.
+- `docs/02_design_and_architecture/`: Đề bài gốc, SRS, Kiến trúc hệ thống, ERD CSDL và 4 luồng nghiệp vụ cốt lõi.
+- `docs/03_operations_and_guides/`: Hướng dẫn thiết lập môi trường local, kết nối Google Cloud, Docker và kiểm thử.
+- `database/`: Database as Code — DDL Schema và dữ liệu mẫu.
+
+

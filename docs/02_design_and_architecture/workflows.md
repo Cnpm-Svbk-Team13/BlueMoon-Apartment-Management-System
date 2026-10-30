@@ -1,3 +1,7 @@
+[🏠 Trang chủ Docs](../README.md) > [Giai đoạn 2: Thiết kế Hệ thống](./README.md) > **workflows.md**
+
+---
+
 # LUỒNG NGHIỆP VỤ HỆ THỐNG (SYSTEM WORKFLOWS)
 ## Dự án: Hệ thống Quản lý Thu phí Chung cư BlueMoon (BlueMoon BFMS)
 
@@ -88,14 +92,14 @@ sequenceDiagram
     DB-->>System: Trả về danh sách nợ phí & đợt vận động
     System-->>Cashier: Hiển thị giao diện quầy thu ngân
     Cashier->>System: Tích chọn khoản phí cần đóng (Dịch vụ, Quản lý)
-    Cashier->>System: Nhập số tiền ủng hộ quỹ tự nguyện (nếu có)
+    Cashier->>System: Nhập số tiền ủng hộ quỹ tự nguyện tùy tâm (nếu có)
     Cashier->>System: Nhập tên người nộp thực tế & xác nhận thanh toán
-    System->>DB: Bắt đầu giao dịch (Transaction):<br>1. Đổi trạng thái hóa đơn -> "ĐÃ THANH TOÁN"<br>2. Lưu bản ghi đóng góp quỹ<br>3. Tạo phiếu thu & sinh mã biên lai duy nhất
+    System->>DB: Bắt đầu giao dịch ACID (@Transactional):<br>1. Gạch nợ hóa đơn (payment_status='PAID', version++)<br>2. Tạo Biên lai thu phí bắt buộc (chỉ trỏ invoice_id)<br>3. Nếu có ủng hộ quỹ: Lưu bản ghi đóng góp & tạo Phiếu xác nhận riêng (chỉ trỏ contribution_id)
     DB-->>System: Cam kết giao dịch thành công (Commit)
-    System-->>Cashier: Mở bản xem trước biên lai thu tiền
-    Cashier->>System: Nhấn "In biên lai"
-    System-->>Cashier: Xuất phiếu thu / In hóa đơn
-    Cashier-->>Resident: Giao biên lai xác nhận đã nộp tiền
+    System-->>Cashier: Mở bản xem trước chứng từ thu tiền (Biên lai phí & Phiếu xác nhận quỹ độc lập)
+    Cashier->>System: Nhấn "In chứng từ"
+    System-->>Cashier: Xuất các biên lai / phiếu thu tách biệt (Tuân thủ Nghị định 93/2021 & Ràng buộc XOR)
+    Cashier-->>Resident: Giao các biên lai / phiếu thu độc lập cho Cư dân
 ```
 
 ---
@@ -114,7 +118,11 @@ flowchart TD
     SelectMode -->|Báo cáo Quỹ đóng góp tự nguyện| Mode2[Chọn Chiến dịch / Tên Quỹ vận động]
     Mode2 --> QueryDB2[(Truy vấn dữ liệu đóng góp)]
     QueryDB2 --> Calc2[Tổng hợp:<br>- Tổng số tiền quyên góp lũy kế<br>- Danh sách từng hộ, số tiền đã ủng hộ<br>- Thay thế hoàn toàn sổ tay Hình 1-1]
-    Calc2 --> Display2[Hiển thị bảng danh sách ủng hộ minh bạch]
+    Calc2 --> CheckPublic{Bật Chế độ công khai sảnh?<br>Public Mode - NĐ 13/2023}
+    CheckPublic -->|Có| MaskData[Mặt nạ dữ liệu cá nhân:<br>Ẩn CCCD: 001080****34<br>Ẩn SĐT: 0912****22]
+    CheckPublic -->|Không - Xem nội bộ BQT| RawData[Hiển thị đầy đủ thông tin nội bộ]
+    MaskData --> Display2[Hiển thị bảng danh sách ủng hộ minh bạch an toàn]
+    RawData --> Display2
 
     Display1 --> Export[Hỗ trợ Xuất dữ liệu ra file Excel hoặc in báo cáo PDF]
     Display2 --> Export
@@ -124,5 +132,5 @@ flowchart TD
 ---
 
 ## 3. Liên kết tài liệu yêu cầu chi tiết
-- Để xem các kịch bản kiểm thử tương ứng cho từng luồng: [Tài liệu Scrum Artefacts & AC](./proposal/05_chi_tiet_us_va_acceptance_criteria.md).
-- Để xem ma trận truy vết từ nguồn gốc yêu cầu: [Tài liệu Traceability Matrix](./proposal/07_traceability_matrix_va_quan_ly_rui_ro.md).
+- Để xem các kịch bản kiểm thử tương ứng cho từng luồng: [Tài liệu Scrum Artefacts & AC](../01_requirements_and_planning/05_chi_tiet_us_va_acceptance_criteria.md).
+- Để xem ma trận truy vết từ nguồn gốc yêu cầu: [Tài liệu Traceability Matrix](../01_requirements_and_planning/07_traceability_matrix_va_quan_ly_rui_ro.md).

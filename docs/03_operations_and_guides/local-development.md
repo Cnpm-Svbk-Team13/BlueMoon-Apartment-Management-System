@@ -1,10 +1,14 @@
+[🏠 Trang chủ Docs](../README.md) > [Giai đoạn 3: Vận hành & CSDL](./README.md) > **local-development.md**
+
+---
+
 # HƯỚNG DẪN PHÁT TRIỂN CỤC BỘ (LOCAL DEVELOPMENT GUIDE)
 ## Hệ thống Quản lý Thu phí và Dân cư Chung cư BlueMoon (BlueMoon BFMS)
 
 ---
 
 ## 1. Yêu cầu Tiền đề (Prerequisites)
-- **Java Development Kit (JDK):** Phiên bản 17 (hoặc 21 LTS). Kiểm tra bằng lệnh:
+- **Java Development Kit (JDK):** Phiên bản 25 LTS (hoặc tối thiểu JDK 21 trở lên). Kiểm tra bằng lệnh:
   ```bash
   java -version
   ```

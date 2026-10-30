@@ -32,6 +32,7 @@ Toàn bộ nội dung dưới đây được đọc và trích xuất trực ti�
 ```mermaid
 graph TD
     subgraph Epics["EPIC-FOCUSED USER STORY MAP - TEAM 13"]
+        E0["EPIC 0: Quản trị Hệ thống & Bảo mật"]
         E1["EPIC 1: Quản lý Căn hộ & Chủ hộ"]
         E6["EPIC 6: Quản lý Nhân khẩu & Cư trú"]
         E2["EPIC 2: Biểu phí & Thu phí bắt buộc"]
@@ -39,6 +40,9 @@ graph TD
         E4["EPIC 4: Quỹ tự nguyện & Tài chính"]
         E5["EPIC 5: Tiện ích mở rộng tòa nhà (v2.0)"]
     end
+
+    E0 --> USSEC01["US-SEC-01: Quản lý Tài khoản BQT & RBAC"]
+    E0 --> USSEC02["US-SEC-02: Xác thực Đăng nhập & Đổi mật khẩu"]
 
     E1 --> US01["US-001: Thông tin Hộ khẩu & Chủ hộ"]
     E1 --> US04["US-004: Trích xuất Báo cáo Nhân khẩu"]
@@ -64,7 +68,18 @@ graph TD
 
 ---
 
-### CHI TIẾT 6 EPICS TRONG STORY MAP
+### CHI TIẾT CÁC EPICS TRONG STORY MAP
+
+#### EPIC 0: Quản trị Hệ thống & Bảo mật (System Administration & Security)
+- **Mô tả (Epic Description):** Phân hệ nền tảng quản trị tài khoản người dùng BQT, cấu hình phân quyền theo vai trò (RBAC: Admin, Kế toán, Thủ quỹ, Cư dân), xác thực phiên làm việc an toàn và kiểm soát an ninh truy cập.
+- **User Roles:** Quản trị viên (Admin), Kế toán, Thủ quỹ.
+- **User Goals:** Khởi tạo, cập nhật trạng thái tài khoản BQT; bảo vệ hệ thống trước tấn công Brute-force qua cơ chế khóa tài khoản tự động sau 5 lần đăng nhập thất bại liên tiếp; hỗ trợ người dùng tự đổi mật khẩu định kỳ.
+- **User Stories trực thuộc:**
+  - `US-SEC-01`: Quản lý Tài khoản Ban Quản trị & Phân quyền RBAC (`ROLE_ADMIN`, `ROLE_ACCOUNTANT`, `ROLE_CASHIER`). *(Tương ứng US-001 trong prompt Sprint 1)*.
+  - `US-SEC-02`: Xác thực Người dùng, Đăng nhập hệ thống, Khóa Brute-force và Đổi mật khẩu. *(Tương ứng US-002 trong prompt Sprint 1 / US-005 trong WBS cũ / Core Workflow 1 trong AGENTS.md)*.
+- **Priority:** **Highest Priority** | **Release Phase:** Sprint 1 Foundation.
+
+---
 
 #### EPIC 1: Quản lý Căn hộ và Chủ hộ
 - **Mô tả (Epic Description):** Phân hệ nền tảng giúp quản lý toàn bộ danh mục không gian tòa nhà (Kiot, Thương mại, Căn hộ ở, Penthouse) cùng hệ thống hồ sơ pháp lý gắn kết chủ hộ đại diện cho từng căn hộ.
@@ -96,13 +111,13 @@ graph TD
   - `US-005`: Khởi tạo & Quản lý Biểu phí.
   - `US-006`: Tính phí tự động hàng tháng.
 - **User Tasks:**
-  - Tạo UI cấu hình, Validate đơn giá, Lưu MySQL.
+  - Tạo UI cấu hình, Validate đơn giá, Lưu PostgreSQL.
   - Query diện tích $m^2$, Nhân tự động đơn giá, Khởi tạo bảng nợ.
   - Tìm kiếm số phòng, Đổi trạng thái nộp, Export phiếu PDF.
 - **Acceptance Criteria:**
   - Lưu CSDL thành công; Báo lỗi nếu Phí Quản lý $< 7.000\text{ đ}/m^2$; Lưu log chỉnh sửa.
   - Tính chuẩn 100% theo $m^2$; Lập danh sách nợ tháng; Cảnh báo căn hộ có diện tích $0\text{ m}^2$.
-- **Dependencies:** CSDL MySQL và Login BQT; Phụ thuộc US-005 và Data căn hộ.
+- **Dependencies:** CSDL PostgreSQL và Login BQT; Phụ thuộc US-005 và Data căn hộ.
 - **Priority:** **High Priority** | **Release Phase:** Phase 1 (v1.0) / Sprint 1.
 
 ---

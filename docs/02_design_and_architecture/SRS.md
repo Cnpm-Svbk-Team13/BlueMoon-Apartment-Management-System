@@ -1,3 +1,7 @@
+[🏠 Trang chủ Docs](../README.md) > [Giai đoạn 2: Thiết kế Hệ thống](./README.md) > **SRS.md**
+
+---
+
 # SOFTWARE REQUIREMENTS SPECIFICATION (SRS)
 ## Hệ thống Quản lý Thu phí và Dân cư Chung cư BlueMoon (BlueMoon BFMS)
 
@@ -6,18 +10,18 @@
 ## 1. Giới thiệu tổng quan
 Tài liệu Đặc tả Yêu cầu Phần mềm (SRS) này mô tả toàn diện các yêu cầu chức năng, yêu cầu phi chức năng, các tác nhân hệ thống và các điều kiện nghiệm thu cho dự án **BlueMoon BFMS**.
 
-Bộ tài liệu yêu cầu chi tiết và kế hoạch dự án chính thức của nhóm được biên dịch và số hóa toàn bộ tại thư mục [`docs/proposal/`](./proposal/README.md) cùng văn bản đề bài gốc [`docs/DE_BAI_GOC.md`](./DE_BAI_GOC.md):
-- [00. Tổng quan Hồ sơ Đề xuất](./proposal/00_tong_quan_proposal.md)
-- [01. Phác thảo và Kế hoạch Phân công Nhóm](./proposal/01_phac_thao_va_ke_hoach_phan_cong.md)
-- [02. Kế hoạch Chi tiết Khai phá Yêu cầu](./proposal/02_ke_hoach_chi_tiet_khai_pha.md)
-- [03. Tuyên ngôn Dự án (Project Charter sơ khởi)](./proposal/03_tuyen_ngon_du_an.md)
-- [04. Kế hoạch Dự án & Epic-Focused User Story Map](./proposal/04_ke_hoach_du_an_va_user_story_map.md)
-- [05. Chi tiết User Stories & Acceptance Criteria (US-001 -> US-011)](./proposal/05_chi_tiet_us_va_acceptance_criteria.md)
-- [06. Client Wish List, Kịch bản As-Is/To-Be & Yêu cầu Phi chức năng](./proposal/06_client_wishlist_as_is_to_be_nfr.md)
-- [07. Ma trận Truy vết Yêu cầu & Báo cáo Xử lý Xung đột](./proposal/07_traceability_matrix_va_quan_ly_rui_ro.md)
-- [08. Phụ lục Tuân thủ Pháp lý (Luật Cư trú, TT 02/2016, NĐ 93/2021)](./proposal/08_phu_luc_tuan_thu_phap_ly.md)
-- [09. Kế hoạch Dự án Chi tiết & WBS 2 dạng (Chuẩn SoICT)](./proposal/09_ke_hoach_du_an_chi_tiet.md)
-- [10. Kế hoạch Quản lý Rủi ro Toàn diện & Risk Log (Chuẩn SoICT)](./proposal/10_ke_hoach_quan_ly_rui_ro_toan_dien.md)
+Bộ tài liệu yêu cầu chi tiết và kế hoạch dự án chính thức của nhóm được biên dịch và số hóa toàn bộ tại thư mục [`docs/01_requirements_and_planning/`](../01_requirements_and_planning/README.md) cùng văn bản đề bài gốc [`docs/02_design_and_architecture/DE_BAI_GOC.md`](./DE_BAI_GOC.md):
+- [00. Tổng quan Hồ sơ Đề xuất](../01_requirements_and_planning/00_tong_quan_proposal.md)
+- [01. Phác thảo và Kế hoạch Phân công Nhóm](../01_requirements_and_planning/01_phac_thao_va_ke_hoach_phan_cong.md)
+- [02. Kế hoạch Chi tiết Khai phá Yêu cầu](../01_requirements_and_planning/02_ke_hoach_chi_tiet_khai_pha.md)
+- [03. Tuyên ngôn Dự án (Project Charter sơ khởi)](../01_requirements_and_planning/03_tuyen_ngon_du_an.md)
+- [04. Kế hoạch Dự án & Epic-Focused User Story Map](../01_requirements_and_planning/04_ke_hoach_du_an_va_user_story_map.md)
+- [05. Chi tiết User Stories & Acceptance Criteria (US-001 -> US-011)](../01_requirements_and_planning/05_chi_tiet_us_va_acceptance_criteria.md)
+- [06. Client Wish List, Kịch bản As-Is/To-Be & Yêu cầu Phi chức năng](../01_requirements_and_planning/06_client_wishlist_as_is_to_be_nfr.md)
+- [07. Ma trận Truy vết Yêu cầu & Báo cáo Xử lý Xung đột](../01_requirements_and_planning/07_traceability_matrix_va_quan_ly_rui_ro.md)
+- [08. Phụ lục Tuân thủ Pháp lý (Luật Cư trú, TT 02/2016, NĐ 93/2021)](../01_requirements_and_planning/08_phu_luc_tuan_thu_phap_ly.md)
+- [09. Kế hoạch Dự án Chi tiết & WBS 2 dạng (Chuẩn SoICT)](../01_requirements_and_planning/09_ke_hoach_du_an_chi_tiet.md)
+- [10. Kế hoạch Quản lý Rủi ro Toàn diện & Risk Log (Chuẩn SoICT)](../01_requirements_and_planning/10_ke_hoach_quan_ly_rui_ro_toan_dien.md)
 
 ---
 
@@ -54,7 +58,7 @@ Bộ tài liệu yêu cầu chi tiết và kế hoạch dự án chính thức c
 
 ## 5. Tiêu chuẩn Nghiệm thu & Quản lý Truy vết
 Toàn bộ chi tiết về kịch bản nghiệm thu **Given - When - Then**, tiêu chí Definition of Done và ma trận truy vết **Traceability Matrix** ánh xạ $100\%$ các yêu cầu từ Client's Wish List đến Acceptance Criteria được trình bày chi tiết tại:
-- [Tài liệu Chi tiết US & Acceptance Criteria (US-001 -> US-011)](./proposal/05_chi_tiet_us_va_acceptance_criteria.md)
-- [Tài liệu Ma trận Truy vết & Quản lý Rủi ro](./proposal/07_traceability_matrix_va_quan_ly_rui_ro.md)
-- [Kế hoạch Dự án & Biểu đồ Gantt (Chuẩn SoICT)](./proposal/09_ke_hoach_du_an_chi_tiet.md)
-- [Kế hoạch Quản lý Rủi ro Toàn diện (Chuẩn SoICT)](./proposal/10_ke_hoach_quan_ly_rui_ro_toan_dien.md)
+- [Tài liệu Chi tiết US & Acceptance Criteria (US-001 -> US-011)](../01_requirements_and_planning/05_chi_tiet_us_va_acceptance_criteria.md)
+- [Tài liệu Ma trận Truy vết & Quản lý Rủi ro](../01_requirements_and_planning/07_traceability_matrix_va_quan_ly_rui_ro.md)
+- [Kế hoạch Dự án & Biểu đồ Gantt (Chuẩn SoICT)](../01_requirements_and_planning/09_ke_hoach_du_an_chi_tiet.md)
+- [Kế hoạch Quản lý Rủi ro Toàn diện (Chuẩn SoICT)](../01_requirements_and_planning/10_ke_hoach_quan_ly_rui_ro_toan_dien.md)

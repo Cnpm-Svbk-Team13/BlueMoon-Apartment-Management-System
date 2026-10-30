@@ -1,3 +1,7 @@
+[🏠 Trang chủ Docs](../README.md) > [Giai đoạn 2: Thiết kế Hệ thống](./README.md) > **DE_BAI_GOC.md**
+
+---
+
 # ĐỀ BÀI BÀI TẬP LỚN: HỆ THỐNG QUẢN LÝ THU PHÍ CHUNG CƯ BLUEMOON
 
 ---

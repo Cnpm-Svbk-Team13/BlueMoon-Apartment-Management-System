@@ -91,13 +91,13 @@ Khi ứng dụng khởi động thành công, truy cập tại: `http://localhos
 
 ## Tài liệu Dự án
 
-- [docs/local-development.md](./docs/local-development.md) — Hướng dẫn chi tiết thiết lập môi trường, kết nối Google Cloud PostgreSQL và quy trình phát triển.
-- [docs/proposal/](./docs/proposal/README.md) — Trọn bộ hồ sơ đề xuất & khai phá yêu cầu chính thức của **Team 13** (biên dịch đầy đủ từ Google Docs `CNPM_Proposal_Team13`, Google Sheets `IT3180_BTL_Team13`, `CNPM_Team13_Epic-US`).
-- [BLUEMOON.md](./BLUEMOON.md) — Tổng quan kỹ thuật, sơ đồ kiến trúc, phân tầng và coding guidelines.
-- [docs/DE_BAI_GOC.md](./docs/DE_BAI_GOC.md) — Toàn văn đề bài gốc bài tập lớn môn Công nghệ phần mềm và phân tích ảnh mẫu phiếu thu viết tay Hình 1-1.
-- [docs/SRS.md](./docs/SRS.md) — Tài liệu Đặc tả Yêu cầu Phần mềm (SRS) tổng quan.
-- [docs/workflows.md](./docs/workflows.md) — Sơ đồ và mô tả chi tiết 4 luồng nghiệp vụ cốt lõi.
-- [docs/erd.md](./docs/erd.md) — Mô hình thực thể liên kết (ERD) và cấu trúc dữ liệu.
+Hệ thống tài liệu được tổ chức chuẩn mực theo 3 giai đoạn của vòng đời phần mềm (xem chi tiết tại **[docs/README.md](./docs/README.md)**):
+- **[docs/README.md](./docs/README.md)** — **Cổng Điều Hướng Trung Tâm** (Master Navigation Hub tra cứu toàn bộ hồ sơ đồ án).
+- **[docs/01_requirements_and_planning/](./docs/01_requirements_and_planning/README.md)** — Hồ sơ đề xuất, khai phá yêu cầu, 32 RAWs, 11 User Stories (AC Given-When-Then), WBS & Kế hoạch quản lý rủi ro chuẩn SoICT.
+- **[docs/02_design_and_architecture/](./docs/02_design_and_architecture/README.md)** — Đề bài gốc, Đặc tả SRS, Kiến trúc phân tầng, Mô hình CSDL ERD 11 bảng, và 4 luồng nghiệp vụ Sequence.
+- **[docs/03_operations_and_guides/](./docs/03_operations_and_guides/README.md)** — Hướng dẫn cài đặt local, kết nối PostgreSQL trên Google Cloud Console, Docker và chạy test độc lập.
+- **[BLUEMOON.md](./BLUEMOON.md)** — Tổng quan kỹ thuật, phân tầng trách nhiệm và coding guidelines cho dev & AI agents.
+- **[database/README.md](./database/README.md)** — Quy trình quản lý CSDL (Database as Code), scripts DDL schema và dữ liệu mẫu.
 
 ## Đóng góp và Quy ước
 
