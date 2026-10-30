@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS apartments (
     id BIGSERIAL PRIMARY KEY,
     room_number VARCHAR(20) UNIQUE NOT NULL,
     floor_number INT NOT NULL CHECK (floor_number BETWEEN 1 AND 30),
-    area_sqm NUMERIC(8, 2) NOT NULL CHECK (area_sqm > 0),
+    area_sqm DECIMAL(12, 2) NOT NULL CHECK (area_sqm > 0),
     apartment_type VARCHAR(20) NOT NULL CHECK (apartment_type IN ('KIOT', 'RESIDENTIAL', 'PENTHOUSE', 'COMMERCIAL')),
     status VARCHAR(20) DEFAULT 'OCCUPIED' CHECK (status IN ('VACANT', 'OCCUPIED', 'RENOVATING')),
     description TEXT,
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS apartments (
 -- 3. Bảng Sổ Hộ khẩu
 CREATE TABLE IF NOT EXISTS households (
     id BIGSERIAL PRIMARY KEY,
-    apartment_id BIGINT UNIQUE REFERENCES apartments(id) ON DELETE RESTRICT,
+    apartment_id BIGINT NOT NULL REFERENCES apartments(id) ON DELETE RESTRICT,
     registration_code VARCHAR(50) UNIQUE NOT NULL,
     head_name VARCHAR(100) NOT NULL,
     moved_in_date DATE DEFAULT CURRENT_DATE,
@@ -52,13 +52,20 @@ CREATE TABLE IF NOT EXISTS residents (
     full_name VARCHAR(100) NOT NULL,
     date_of_birth DATE NOT NULL,
     gender VARCHAR(10) CHECK (gender IN ('MALE', 'FEMALE', 'OTHER')),
-    national_id VARCHAR(20) UNIQUE, -- Số CCCD / CMND
+    national_id VARCHAR(20) UNIQUE, -- Số CCCD / CMND (12 chữ số theo Luật Căn cước)
     phone VARCHAR(20),
     relationship_with_head VARCHAR(50) NOT NULL,
-    residence_status VARCHAR(20) DEFAULT 'THUONG_TRU' CHECK (residence_status IN ('THUONG_TRU', 'TAM_TRU', 'TAM_VANG')),
+    residence_status VARCHAR(20) NOT NULL DEFAULT 'THUONG_TRU' CHECK (residence_status IN ('THUONG_TRU', 'TAM_TRU', 'TAM_VANG')),
+    start_date DATE,
+    end_date DATE,
     notes TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT chk_residence_dates CHECK (
+        residence_status = 'THUONG_TRU' OR 
+        (start_date IS NOT NULL AND end_date IS NOT NULL AND end_date >= start_date)
+    ),
+    CONSTRAINT chk_national_id_format CHECK (national_id IS NULL OR national_id ~ '^[0-9]{12}$')
 );
 
 -- 5. Bảng Danh mục Loại khoản phí
@@ -66,7 +73,7 @@ CREATE TABLE IF NOT EXISTS fee_types (
     id BIGSERIAL PRIMARY KEY,
     fee_code VARCHAR(30) UNIQUE NOT NULL,
     fee_name VARCHAR(100) NOT NULL,
-    category VARCHAR(30) NOT NULL CHECK (category IN ('SERVICE_MANDATORY', 'MANAGEMENT_MANDATORY', 'VOLUNTARY_FUND')),
+    category VARCHAR(30) NOT NULL CHECK (category IN ('SERVICE_MANDATORY', 'MANAGEMENT_MANDATORY')),
     unit_price NUMERIC(12, 2) NOT NULL DEFAULT 0, -- Đơn giá VNĐ/m2 hoặc giá cố định
     calculation_unit VARCHAR(30) NOT NULL DEFAULT 'M2_MONTH', -- 'M2_MONTH', 'FIXED', 'DONATION'
     is_mandatory BOOLEAN NOT NULL DEFAULT TRUE,
@@ -102,6 +109,7 @@ CREATE TABLE IF NOT EXISTS invoices (
     due_date DATE NOT NULL,
     paid_at TIMESTAMP WITH TIME ZONE,
     cashier_id BIGINT REFERENCES users(id) ON DELETE SET NULL,
+    version BIGINT NOT NULL DEFAULT 0, -- Khóa lạc quan (Optimistic Locking) ngăn chặn double-payment
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT uq_invoice_period UNIQUE (apartment_id, period_month, period_year)
@@ -124,7 +132,7 @@ CREATE TABLE IF NOT EXISTS fund_contributions (
     fund_id BIGINT NOT NULL REFERENCES campaign_funds(id) ON DELETE RESTRICT,
     apartment_id BIGINT NOT NULL REFERENCES apartments(id) ON DELETE RESTRICT,
     contributor_name VARCHAR(100) NOT NULL,
-    amount NUMERIC(15, 2) NOT NULL CHECK (amount > 0),
+    amount NUMERIC(15, 2) NOT NULL CHECK (amount >= 0),
     contributed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     receipt_code VARCHAR(50) UNIQUE,
     cashier_id BIGINT REFERENCES users(id) ON DELETE SET NULL,
@@ -142,7 +150,11 @@ CREATE TABLE IF NOT EXISTS receipts (
     payment_method VARCHAR(30) DEFAULT 'CASH' CHECK (payment_method IN ('CASH', 'BANK_TRANSFER', 'VNPAY', 'OTHER')),
     cashier_id BIGINT REFERENCES users(id) ON DELETE SET NULL,
     printed_at TIMESTAMP WITH TIME ZONE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT chk_receipt_target CHECK (
+        (invoice_id IS NOT NULL AND contribution_id IS NULL) OR 
+        (invoice_id IS NULL AND contribution_id IS NOT NULL)
+    )
 );
 
 -- 11. Bảng Nhật ký Kiểm toán hệ thống (Audit Logs)
@@ -160,11 +172,17 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 -- ==============================================================================
 -- Chỉ mục (Indexes) tối ưu hóa hiệu năng tra cứu
 -- ==============================================================================
-CREATE INDEX IF NOT EXISTS idx_apartments_room ON apartments(room_number);
+-- Partial Unique Index: Mỗi căn hộ chỉ có duy nhất 1 hộ gia đình ACTIVE tại một thời điểm
+CREATE UNIQUE INDEX IF NOT EXISTS uq_active_household_per_apt ON households(apartment_id) WHERE status = 'ACTIVE';
+
+-- Chỉ mục hỗ trợ tìm kiếm, phân trang và truy vấn khóa ngoại
 CREATE INDEX IF NOT EXISTS idx_apartments_floor ON apartments(floor_number);
+CREATE INDEX IF NOT EXISTS idx_households_apartment ON households(apartment_id);
 CREATE INDEX IF NOT EXISTS idx_residents_household ON residents(household_id);
-CREATE INDEX IF NOT EXISTS idx_residents_national_id ON residents(national_id);
-CREATE INDEX IF NOT EXISTS idx_invoices_apt_period ON invoices(apartment_id, period_month, period_year);
 CREATE INDEX IF NOT EXISTS idx_invoices_status ON invoices(payment_status);
+CREATE INDEX IF NOT EXISTS idx_invoice_items_invoice ON invoice_items(invoice_id);
+CREATE INDEX IF NOT EXISTS idx_invoice_items_fee_type ON invoice_items(fee_type_id);
 CREATE INDEX IF NOT EXISTS idx_contributions_fund ON fund_contributions(fund_id);
-CREATE INDEX IF NOT EXISTS idx_receipts_code ON receipts(receipt_code);
+CREATE INDEX IF NOT EXISTS idx_contributions_apt ON fund_contributions(apartment_id);
+CREATE INDEX IF NOT EXISTS idx_receipts_invoice ON receipts(invoice_id);
+CREATE INDEX IF NOT EXISTS idx_receipts_contribution ON receipts(contribution_id);

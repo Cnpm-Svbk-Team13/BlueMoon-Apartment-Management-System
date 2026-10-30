@@ -4,25 +4,63 @@
 
 ---
 
-## 1. Bảng Tổng hợp Bộ User Stories (US-001 $\rightarrow$ US-011)
+## 1. Bảng Tổng hợp Bộ User Stories (Epic 0 & Epic 1 $\rightarrow$ Epic 6)
 
-| Mã US | Tên User Story | Ưu tiên | Ước lượng | Phụ thuộc | Giải quyết RAW |
+| Mã US | Tên User Story | Ưu tiên | Ước lượng | Phụ thuộc | Giải quyết RAW / NFR |
 |:---:|---|:---:|:---:|:---:|---|
+| **US-SEC-01** | Quản lý Tài khoản Ban Quản trị & Phân quyền RBAC | **HIGH** | 4 Story Points | Không có | NFR-001, Bất biến 1 (Core Workflow 1) |
+| **US-SEC-02** | Xác thực Người dùng, Đăng nhập hệ thống & Đổi mật khẩu | **HIGH** | 4 Story Points | US-SEC-01 | NFR-001, Bất biến 1 (Core Workflow 1) |
 | **US-001** | Quản lý Thông tin Căn hộ và Chủ hộ | **HIGH** | 5 Story Points | Không có | RAW-001, RAW-002 |
 | **US-002** | Thêm mới và Quản lý Chi tiết Nhân khẩu | **HIGH** | 6 Story Points | US-001 | RAW-003, RAW-004, RAW-005, RAW-007, RAW-008 |
-| **US-003** | Quản lý Trạng thái và Biến động Cư trú | **MEDIUM** | 4 Story Points | US-002 | RAW-006 |
+| **US-003** | Quản lý Trạng thái và Biến động Cư trú | **MEDIUM** | 4 Story Points | US-002 | RAW-006 (Luật Cư trú 2020) |
 | **US-004** | Trích xuất Báo cáo Nhân khẩu học Hành chính | **MEDIUM** | 5 Story Points | US-001, US-002, US-003 | RAW-009, RAW-010 |
-| **US-005** | Khởi tạo & Quản lý Biểu phí | **HIGH** | 3 Story Points | Login BQT, CSDL | RAW-011, RAW-013, RAW-014 |
+| **US-005** | Khởi tạo & Quản lý Biểu phí | **HIGH** | 3 Story Points | US-SEC-02, CSDL | RAW-011, RAW-013, RAW-014 |
 | **US-006** | Tính phí tự động hàng tháng | **HIGH** | 5 Story Points | US-005, Data Căn hộ | RAW-012, RAW-015 |
 | **US-007** | Thu tiền, Gạch nợ & In phiếu PDF | **HIGH** | 5 Story Points | US-006 | RAW-016, RAW-017, RAW-020 |
-| **US-008** | Tạo và Quản lý Đợt Vận động Quyên góp | **HIGH** | 3 Story Points | Đăng nhập BQT (Epic 5) | RAW-021 |
+| **US-008** | Tạo và Quản lý Đợt Vận động Quyên góp | **HIGH** | 3 Story Points | US-SEC-02 (Epic 0) | RAW-021 |
 | **US-009** | Ghi nhận Đóng góp Tự nguyện & In Phiếu Xác nhận | **HIGH** | 5 Story Points | US-001, US-008 | RAW-022, RAW-023, RAW-024, RAW-025 |
-| **US-010** | Báo cáo Tổng kết Đợt Vận động & Công khai Quỹ | **HIGH** | 5 Story Points | US-009 | RAW-026, RAW-027, RAW-028 |
+| **US-010** | Báo cáo Tổng kết Đợt Vận động & Công khai Quỹ | **HIGH** | 5 Story Points | US-009 | RAW-026, RAW-027, RAW-028 (NĐ 13/2023) |
 | **US-011** | Tra cứu Lịch sử & Báo cáo Nợ phí | **HIGH** | 3 Story Points | US-006, US-007 | RAW-017, RAW-018, RAW-019 |
 
 ---
 
 ## 2. Đặc tả Chi tiết Từng User Story
+
+### US-SEC-01: Quản lý Tài khoản Ban Quản trị & Phân quyền RBAC
+- **User Story:**
+  > Là một Quản trị viên Ban Quản trị (Admin), tôi muốn tạo mới, cập nhật thông tin và phân quyền vai trò cho các thành viên BQT (`ROLE_ADMIN`, `ROLE_ACCOUNTANT`, `ROLE_CASHIER`, `ROLE_RESIDENT`) để bảo đảm hệ thống kiểm soát quyền truy cập chặt chẽ theo nguyên tắc đặc quyền tối thiểu.
+- **Mô tả (Description):** Phân hệ quản trị tài khoản nội bộ BQT, kích hoạt/vô hiệu hóa tài khoản và thiết lập quyền hạn cho từng nhân sự vận hành.
+- **Ưu tiên:** **HIGH** | **Ước lượng:** **4 story points** | **Phụ thuộc:** Không có
+- **Ghi chú (Notes):** Thuộc Epic 0 (System Administration & Security). Tương ứng US-001 trong đề bài Sprint 1.
+- **Acceptance Criteria (AC):**
+  1. Chỉ tài khoản có vai trò `ROLE_ADMIN` mới có quyền truy cập vào chức năng Quản lý tài khoản.
+  2. Bắt buộc nhập đầy đủ: Tên đăng nhập (duy nhất, không trùng lặp), Họ và tên, Email hợp lệ, Số điện thoại (10 số) và Vai trò.
+  3. Cho phép kích hoạt (`is_active = TRUE`) hoặc khóa tài khoản (`is_active = FALSE`). Tài khoản bị khóa không thể đăng nhập.
+  4. Mật khẩu khởi tạo hoặc cấp lại bắt buộc phải được mã hóa bằng thuật toán BCrypt (10 rounds) trước khi lưu CSDL PostgreSQL.
+- **Definition of Done (DoD):**
+  1. Giao diện danh sách và Form tạo tài khoản hiển thị chuẩn responsive.
+  2. Phân quyền RBAC hoạt động chính xác qua Spring Security (chặn 403 Forbidden nếu không phải Admin).
+  3. Pass 100% Unit test kiểm tra ràng buộc dữ liệu tài khoản.
+
+---
+
+### US-SEC-02: Xác thực Người dùng, Đăng nhập hệ thống & Đổi mật khẩu
+- **User Story:**
+  > Là một Thành viên Ban Quản trị hoặc Cư dân, tôi muốn đăng nhập vào hệ thống bằng tài khoản và mật khẩu được cấp, được bảo vệ khỏi tấn công brute-force và có thể đổi mật khẩu cá nhân để bảo vệ an toàn thông tin tài khoản.
+- **Mô tả (Description):** Module xác thực an ninh cốt lõi (Core Workflow 1), xử lý đăng nhập, quản lý phiên làm việc (Session), kiểm soát số lần đăng nhập sai và cung cấp form đổi mật khẩu.
+- **Ưu tiên:** **HIGH** | **Ước lượng:** **4 story points** | **Phụ thuộc:** US-SEC-01
+- **Ghi chú (Notes):** Thuộc Epic 0. Tương ứng US-002 trong đề bài Sprint 1 / US-005 trong WBS cũ / Core Workflow 1 trong AGENTS.md.
+- **Acceptance Criteria (AC):**
+  1. Đăng nhập thành công với thông tin chính xác, chuyển hướng tới Dashboard tương ứng với vai trò của người dùng.
+  2. Nếu nhập sai mật khẩu quá 5 lần liên tiếp, hệ thống tự động khóa tài khoản tạm thời trong 15 phút (`locked_until`) để chống tấn công vét cạn (Brute-force).
+  3. Khi đăng nhập thất bại, hiển thị thông báo lỗi bảo mật chung ("Tên đăng nhập hoặc mật khẩu không chính xác"), không tiết lộ username có tồn tại hay không.
+  4. Cung cấp chức năng Đổi mật khẩu: Yêu cầu nhập đúng mật khẩu hiện tại, mật khẩu mới tối thiểu 8 ký tự và xác nhận mật khẩu mới trùng khớp.
+- **Definition of Done (DoD):**
+  1. Tích hợp Spring Security 6 với `BCryptPasswordEncoder`.
+  2. Kiểm thử tự động (MockMvc) cho luồng đăng nhập thành công, đăng nhập sai và cơ chế khóa sau 5 lần thất bại.
+  3. Lưu nhật ký `audit_logs` khi đăng nhập thành công hoặc thất bại.
+
+---
 
 ### US-001: Quản lý Thông tin Căn hộ và Chủ hộ
 - **User Story:**
@@ -99,16 +137,16 @@
 - **User Story:**
   > As a Ban quản trị, I want to thiết lập và điều chỉnh đơn giá Phí dịch vụ và Phí quản lý theo $m^2$, so that hệ thống có căn cứ chuẩn để tính tiền hàng tháng.
 - **Mô tả (Description):** Quản lý danh mục biểu phí cố định hàng tháng cho tòa nhà chung cư BlueMoon v1.0.
-- **Ưu tiên:** **HIGH** | **Ước lượng:** **3 Story Points** | **Phụ thuộc:** Cần kết nối CSDL MySQL và tài khoản BQT đã đăng nhập.
+- **Ưu tiên:** **HIGH** | **Ước lượng:** **3 Story Points** | **Phụ thuộc:** Cần kết nối CSDL PostgreSQL và tài khoản BQT đã đăng nhập (US-SEC-02).
 - **Ghi chú (Notes):** Traceability: RAW-011, RAW-013, RAW-014.
 - **Acceptance Criteria (AC):**
-  1. Thêm/sửa thành công đơn giá Phí dịch vụ ($2.500 - 16.500\text{ đ}/m^2$) và lưu vào CSDL MySQL.
+  1. Thêm/sửa thành công đơn giá Phí dịch vụ ($2.500 - 16.500\text{ đ}/m^2$) và lưu vào CSDL PostgreSQL.
   2. Ràng buộc đơn giá Phí quản lý tối thiểu $\ge 7.000\text{ đ}/m^2$ (hiển thị thông báo nếu nhập sai).
   3. Lưu vết thời gian và tài khoản BQT thực hiện thay đổi đơn giá.
 - **Definition of Done (DoD):**
   1. Viết mã nguồn (Java) và review code.
   2. Kiểm thử Unit Test các điều kiện biên giá ($< 7.000\text{ đ}$).
-  3. Lưu trữ thành công trên CSDL MySQL.
+  3. Lưu trữ thành công trên CSDL PostgreSQL.
   4. Kiểm thử giao diện thành công.
 
 ---
@@ -153,7 +191,7 @@
 - **User Story:**
   > As a Thành viên Ban Quản trị / Tổ trưởng Tổ dân phố, I want to tạo mới và quản lý các đợt vận động quyên góp xã hội (tên đợt, thời gian, mục đích, đơn vị tiếp nhận) so that dễ dàng thông báo và phát động phong trào ủng hộ đến toàn thể cư dân tòa nhà.
 - **Mô tả (Description):** Cho phép BQT và Tổ dân phố khởi tạo linh hoạt các phong trào quyên góp từ thiện đột xuất hoặc định kỳ (Ủng hộ bão lụt, Vì người nghèo, Tết thiếu nhi) hoàn toàn độc lập với các khoản phí dịch vụ cố định theo $m^2$.
-- **Ưu tiên:** **HIGH** | **Ước lượng:** **3 story points** | **Phụ thuộc:** Đăng nhập tài khoản BQT (Epic 5)
+- **Ưu tiên:** **HIGH** | **Ước lượng:** **3 story points** | **Phụ thuộc:** Đăng nhập tài khoản BQT (US-SEC-02 / Epic 0)
 - **Ghi chú (Notes):** Giải quyết yêu cầu thô RAW-021. Đảm bảo cấu trúc CSDL tách biệt với biểu phí $m^2$ bắt buộc.
 - **Acceptance Criteria (AC):**
   1. Form tạo đợt vận động có đầy đủ các trường: Mã quỹ (tự sinh), Tên đợt vận động, Ngày bắt đầu, Ngày kết thúc, Mục đích quyên góp, Cơ quan/Đơn vị tiếp nhận.
@@ -163,7 +201,7 @@
 - **Definition of Done (DoD):**
   1. Giao diện Form "Tạo/Sửa Đợt Vận động" hiển thị đúng chuẩn thiết kế UI/UX đã duyệt.
   2. Pass 100% Unit Test kiểm tra logic ngày tháng hợp lệ và các trường bắt buộc; QA xác nhận chặn lỗi thành công.
-  3. Database lưu thành công bản ghi vào bảng `Campaign_Fund` trên MySQL, phân biệt rõ ràng với bảng cấu hình biểu phí cố định.
+  3. Database lưu thành công bản ghi vào bảng `Campaign_Fund` trên PostgreSQL, phân biệt rõ ràng với bảng cấu hình biểu phí cố định.
 
 ---
 

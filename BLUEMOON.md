@@ -259,6 +259,11 @@ PostgreSQL lưu dữ liệu ngoài repository. Không commit thông tin xác th�
 
 ## 10. Tài liệu dự án
 
-- `docs/SRS.md`: SRS và yêu cầu nghiệp vụ.
-- `docs/architecture.md`, `docs/erd.md`, `docs/workflows.md`: kiến trúc, ERD và luồng nghiệp vụ.
-- `docs/local-development.md`: hướng dẫn chạy, cấu hình và sao lưu.
+Hệ thống tài liệu được tổ chức theo 3 giai đoạn chính (chi tiết tại [docs/README.md](docs/README.md)):
+- `docs/README.md`: Cổng điều hướng trung tâm tra cứu toàn bộ hồ sơ đồ án.
+- `docs/01_requirements_and_planning/`: Hồ sơ đề xuất, khai phá yêu cầu, Wishlist, User Stories, WBS và Kế hoạch rủi ro.
+- `docs/02_design_and_architecture/`: Đề bài gốc, SRS, Kiến trúc hệ thống, ERD CSDL và 4 luồng nghiệp vụ cốt lõi.
+- `docs/03_operations_and_guides/`: Hướng dẫn thiết lập môi trường local, kết nối Google Cloud, Docker và kiểm thử.
+- `database/`: Database as Code — DDL Schema và dữ liệu mẫu.
+
+

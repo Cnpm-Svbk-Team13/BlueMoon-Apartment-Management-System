@@ -44,7 +44,7 @@ You are an expert pair programmer assisting Team 13 in designing and implementin
 ---
 
 ### 3. TECHNICAL & ARCHITECTURAL GUIDELINES
-- **Technology Stack:** Java 17, Spring Boot 3.4.5, Thymeleaf, Spring Data JPA, PostgreSQL.
+- **Technology Stack:** Java 25 LTS, Spring Boot 3.4.5, Thymeleaf, Spring Data JPA, PostgreSQL.
 - **Pure Web Architecture:** Controller $\rightarrow$ Service $\rightarrow$ Repository $\rightarrow$ Entity.
   - Controllers only handle routing, session checking, and DTO validation (`@Valid`).
   - Services encapsulate 100% of business and financial calculations.

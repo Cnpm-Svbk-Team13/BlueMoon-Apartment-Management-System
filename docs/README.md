@@ -77,9 +77,18 @@ flowchart LR
 
 ---
 
+### 📋 Báo cáo Đánh giá Đồng bộ & Kế hoạch Chi tiết Sprint 1
+*Tài liệu kiểm soát chất lượng kỹ thuật và kế hoạch hành động chi tiết trước khi bước vào lập trình:*
+
+1. [BAO_CAO_DANH_GIA_DONG_BO_TAI_LIEU.md](./BAO_CAO_DANH_GIA_DONG_BO_TAI_LIEU.md): Báo cáo Đánh giá Đồng bộ và Nhất quán Toàn diện Tài liệu Đặc tả (Khảo sát chéo 14 điểm sai lệch kỹ thuật và phương án chuẩn hóa).
+2. [KE_HOACH_CHI_TIET_SPRINT_1.md](./KE_HOACH_CHI_TIET_SPRINT_1.md): Kế hoạch Chi tiết Triển khai Sprint 1 (Khởi tạo Nền tảng Kiến trúc Spring Boot, Database Schema & Quản lý Tài khoản BQT / Đăng nhập).
+
+---
+
 ## 4. Hướng dẫn Truy vết Định danh Kỹ thuật (Traceability Index)
 
 Mọi thành phần trong mã nguồn và kiểm thử đều được truy vết trực tiếp về các mã định danh chuẩn:
+- **Security & Foundation Enablers:** `US-SEC-01`, `US-SEC-02` (Epic 0: Quản lý tài khoản BQT & Xác thực đăng nhập)
 - **Client's Wish List (Yêu cầu thô):** `RAW-001` $\rightarrow$ `RAW-032` (Chi tiết tại [`06_client_wishlist_as_is_to_be_nfr.md`](./01_requirements_and_planning/06_client_wishlist_as_is_to_be_nfr.md))
 - **Mục tiêu SMART:** `OBJ-01` $\rightarrow$ `OBJ-08` (Chi tiết tại [`03_tuyen_ngon_du_an.md`](./01_requirements_and_planning/03_tuyen_ngon_du_an.md))
 - **User Stories & Acceptance Criteria:** `US-001` $\rightarrow$ `US-011` (Chi tiết tại [`05_chi_tiet_us_va_acceptance_criteria.md`](./01_requirements_and_planning/05_chi_tiet_us_va_acceptance_criteria.md))
