@@ -52,7 +52,7 @@
 - **Ghi chú (Notes):** Thuộc Epic 0. Ghi chú lịch sử: US-002 trong đề bài Sprint 1 / US-005 trong WBS cũ. Mã hiện hành US-SEC-02, thuộc Core Workflow 1 trong AGENTS.md.
 - **Acceptance Criteria (AC):**
   1. Đăng nhập thành công với thông tin chính xác, chuyển hướng tới Dashboard tương ứng với vai trò của người dùng.
-  2. Nếu nhập sai mật khẩu lần thứ 5 liên tiếp, hệ thống tự động khóa tài khoản tạm thời trong 15 phút (`locked_until`) để chống tấn công vét cạn (Brute-force).
+  2. Lần nhập sai mật khẩu thứ 5 liên tiếp khóa ngay 15 phút (`locked_until`). Trong hạn khóa chặn cả mật khẩu đúng, không gia hạn khóa; khi now >= locked_until xóa khóa và reset bộ đếm trước lần thử mới. Đăng nhập đúng reset bộ đếm về 0.
   3. Khi đăng nhập thất bại, hiển thị thông báo lỗi bảo mật chung ("Tên đăng nhập hoặc mật khẩu không chính xác"), không tiết lộ username có tồn tại hay không.
   4. Cung cấp chức năng Đổi mật khẩu: Yêu cầu nhập đúng mật khẩu hiện tại, mật khẩu mới tối thiểu 8 ký tự và xác nhận mật khẩu mới trùng khớp.
 - **Definition of Done (DoD):**
@@ -257,3 +257,5 @@
   2. Kiểm thử hiển thị lịch sử giao dịch chính xác.
   3. Kiểm thử xuất file Excel/PDF định dạng báo cáo.
   4. Phê duyệt kết quả UAT trực tiếp với BQT.
+
+> Quy chuẩn Sprint 1: [nguồn quyết định hiện hành](../PROJECT_CONVENTIONS.md). Mã US/AC trong tài liệu này là nguồn truy vết; ghi chú mã cũ chỉ dành cho lịch sử. US-001 bao gồm hồ sơ chủ hộ và lịch sử, không chỉ danh mục căn hộ.

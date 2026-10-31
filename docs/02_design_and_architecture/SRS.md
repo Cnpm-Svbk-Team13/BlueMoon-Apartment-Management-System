@@ -49,9 +49,9 @@ Bộ tài liệu yêu cầu chi tiết và kế hoạch dự án chính thức c
 
 ## 4. Tóm tắt Yêu cầu Phi chức năng (Non-Functional Requirements)
 - **Bảo mật:** Mật khẩu được mã hóa an toàn một chiều (BCrypt); áp dụng cơ chế xác thực và phân quyền RBAC; tự động khóa tài khoản sau 5 lần nhập sai.
-- **Hiệu năng:** Thời gian phản hồi cho các truy vấn tra cứu căn hộ và tính toán hóa đơn $\le 1.5$ giây trong điều kiện tải bình thường.
+- **Hiệu năng (NFR-01):** Tiêu chí đo theo [bảng NFR nguồn](../01_requirements_and_planning/06_client_wishlist_as_is_to_be_nfr.md): tra cứu/chuyển trang tối đa 3 giây, tạo kỳ thu toàn tòa nhà tối đa 30 giây, báo cáo 5 năm tối đa 10 giây. Không dùng mốc 1,5 giây của bản tóm tắt cũ làm tiêu chí khác.
 - **Toàn vẹn dữ liệu:** Mọi giao dịch thu phí, gạch nợ đều tuân thủ nguyên tắc ACID Transaction, đảm bảo không lệch sổ quỹ.
-- **Sao lưu & Phục hồi:** Hỗ trợ sao lưu CSDL định kỳ, thời gian khôi phục sự cố $< 30$ phút.
+- **Sao lưu & Phục hồi (NFR-05):** Theo bảng NFR nguồn: sao lưu hàng ngày, thử phục hồi tối đa 1 giờ, RPO tối đa 24 giờ. Đây là yêu cầu cần kiểm chứng, chưa phải khả năng đã triển khai.
 - **Giao diện & Trải nghiệm:** Giao diện tiếng Việt rõ ràng, bố cục trực quan, tối ưu cho thao tác quầy thu ngân.
 
 ---

@@ -48,7 +48,7 @@
   1. Kiểm tra user có tồn tại không $\rightarrow$ Nếu không: Báo `USER_NOT_FOUND`.
   2. Kiểm tra `is_active == false` $\rightarrow$ Ném ngoại lệ `DisabledException` ngay lập tức.
   3. Kiểm tra nếu `locked_until` đã quá hạn so với hiện tại $\rightarrow$ Tự động reset `failed_attempts = 0` và xóa `locked_until = null`.
-  4. Kiểm tra nếu tài khoản đang trong hạn khóa (`locked_until > now`) $\rightarrow$ Báo `ACCOUNT_LOCKED`.
+  4. Kiểm tra nếu tài khoản đang trong hạn khóa (`now < locked_until`) $\rightarrow$ Báo `ACCOUNT_LOCKED`.
   5. So khớp mật khẩu qua `passwordEncoder.matches(rawPassword, user.getPasswordHash())`:
      - *Nếu sai:* Tăng `failed_attempts`. Nếu chạm mốc $\ge 5$, gán `locked_until = now() + 15 phút` và báo `LOCKED_NOW`. Nếu $< 5$, báo `BAD_CREDENTIALS`.
      - *Nếu đúng:* Reset `failed_attempts = 0`, `locked_until = null`, lưu CSDL và trả về `SUCCESS`.
@@ -66,13 +66,13 @@
 
 ---
 
-### Thẻ Issue 10: `[Sprint 1][QA] Gatekeeping & Thẩm định 100% Pull Requests` (`SEC-04`)
+### Thẻ Issue 10: `[Sprint 1][QA] Gatekeeping & Review chéo cùng Sơn` (`SEC-04`)
 - **Khối lượng:** 3 giờ (1 SP) trải đều suốt 7 ngày.
-- **Trách nhiệm:** Review và duyệt toàn bộ Pull Request của Sơn (DB/BE), Đức Anh (UI), Huy (QA), Khánh (Docs).
+- **Trách nhiệm:** Hoà duyệt PR Sơn; PR Hoà do Sơn duyệt; PR khác có ít nhất một trong hai duyệt.
 - **Checklist Review khi duyệt PR:**
   - [ ] Không có câu lệnh SQL hoặc business logic nào bị viết trong Controller hoặc Thymeleaf View.
   - [ ] Không dùng kiểu `float`/`double` cho tiền tệ hoặc diện tích (bắt buộc dùng `BigDecimal`).
-  - [ ] Chạy lệnh `mvn test` trên máy local thấy pass 100% mới bấm **Merge**.
+  - [ ] Kiểm tra `verify`, CI và test liên quan trước review; không tự duyệt/merge, nghiệm thu thêm profile sprint1-quality.
 
 ---
 
@@ -108,3 +108,7 @@ git push origin feature/issue-08-auth-service-and-lockout
 ```
 
 > Phân công/ước lượng hiện hành và task chủ hộ bổ sung: xem [quy chuẩn](../../PROJECT_CONVENTIONS.md) và phần “Điều chỉnh Sprint 1” trong [backlog](github_issues_backlog.md). Các task lớn trong cẩm nang là gói cha; giao các phần việc 2–4 giờ trong backlog.
+
+### Review và kiểm thử nền tảng
+
+PR của Hoà do Sơn duyệt; Hoà duyệt PR Sơn. Kiểm tra CI và profile sprint1-quality khi nghiệm thu. Boot/JaCoCo/smoke test là nền tảng đã cấu hình, không thay cho test đăng nhập/RBAC. Mở khóa khi now >= locked_until, không chỉ khi lớn hơn.

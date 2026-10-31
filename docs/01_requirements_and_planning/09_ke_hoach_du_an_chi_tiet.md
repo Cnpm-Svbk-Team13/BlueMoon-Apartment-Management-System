@@ -143,7 +143,7 @@ Ma trận RACI phân định rõ vai trò và trách nhiệm của **5 thành vi
 | **3.1 Sprint 1: Auth & Căn hộ (`US-SEC-01`, `US-SEC-02`, `US-001`)** | C | C | R | A / R | C |
 | **3.2 Sprint 2: Quản lý Cư dân & Cư trú (`US-002`, `US-003`, `US-004`)** | C | C | R | A / R | C |
 | **3.3 Sprint 3: Quản lý Thu phí & Gạch nợ (`US-005`, `US-006`, `US-007`)** | C | R | R | A / R | C |
-| **3.4 Sprint 4: Quỹ tự nguyện & Báo cáo (`US-008`, `US-009`, `US-010`, `US-011`)** | C | R | A / R | C | C |
+| **3.4 Sprint 4: Quỹ tự nguyện & Báo cáo (`US-008`, `US-009`, `US-010`, `US-011`)** | C | R | R | A | C |
 | **4.1 Lập Test Plan & Thiết kế Test Cases** | C | I | I | I | **A / R** |
 | **4.2 Kiểm thử tích hợp, kiểm thử hiệu năng & bảo mật** | I | C | C | C | **A / R** |
 | **5.1 Soạn tài liệu Hướng dẫn sử dụng & Cài đặt** | A | C | **R** | C | I |

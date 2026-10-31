@@ -1,8 +1,10 @@
 # 📋 DANH MỤC THẺ GITHUB ISSUES BACKLOG — SPRINT 1
+
+> **Điều chỉnh 31/10/2026:** Có 24 gói cha, **138 giờ / 36 SP**; bảng phần việc cuối tài liệu là đơn vị giao 2–4 giờ. `Issue #xx` là số đề xuất nội bộ, chưa phải ID GitHub thực. Sơn là trưởng nhóm/điều phối, Khánh giữ BA/UAT. Review theo [quy chuẩn hiện hành](../../PROJECT_CONVENTIONS.md).
 ## Dự án: BlueMoon BFMS (IT3180 - Team 13)
 ### Định dạng chuẩn hóa theo Quy tắc Quản trị Dự án `AGENTS.md` (Mục 7)
 
-> **Hướng dẫn sử dụng:**  
+> **Hướng dẫn sử dụng:**
 > Thành viên phụ trách (Sơn điều phối, Khánh hỗ trợ BA) copy từng mục dưới đây để tạo Issue mới trong tab **Issues** trên GitHub repository của nhóm, sau đó gắn thẻ tương ứng lên cột **To Do** trên bảng **GitHub Projects (Kanban)**.
 
 ---
@@ -30,7 +32,7 @@
 - **Layer Impact:** Docs / UAT Testing
 - **Prerequisites:** AC đã chốt để soạn kịch bản ngay; thực thi UAT sau #12, #14, #20, #21, #22
 - **Acceptance Criteria (Checklist):**
-  - [ ] Tệp `docs/sprints/sprint-1/UAT_SCENARIOS_SPRINT_1.md` gồm 12 kịch bản chi tiết được commit lên Git.
+  - [ ] Tệp `docs/sprints/sprint-1/UAT_SCENARIOS_SPRINT_1.md` gồm 12 kịch bản nền và các kịch bản chủ hộ BA-03 chi tiết được commit lên Git.
   - [ ] Thực hiện kiểm thử thủ công trực tiếp trên trình duyệt web cho chức năng Đăng nhập và CRUD Căn hộ.
   - [ ] Bắt và ghi nhận các lỗi hiển thị tiếng Việt, lỗi validate form gửi cho Dev sửa.
   - [ ] Tệp biên bản nghiệm thu `docs/sprints/sprint-1/UAT_REPORT_SPRINT_1.md` được ký xác nhận đạt chuẩn.
@@ -45,7 +47,7 @@
 - **Layer Impact:** Database (PostgreSQL DDL/DML)
 - **Prerequisites:** Database schema gốc `database/schema.sql`
 - **Acceptance Criteria (Checklist):**
-  - [ ] Kịch bản `database/migrations/V1.1__fix_schema_and_seed.sql` chạy thành công không cảnh báo trên PostgreSQL 15/16.
+  - [ ] Kịch bản `database/migrations/V1.1__fix_schema_and_seed.sql` chạy thành công không cảnh báo trên PostgreSQL 17 (Docker chuẩn nhóm).
   - [ ] Bổ sung `residence_status NOT NULL`, `start_date`, `end_date` vào `residents` với check constraint ngày.
   - [ ] Bổ sung `version BIGINT NOT NULL DEFAULT 0` vào `invoices` hỗ trợ khóa lạc quan.
   - [ ] Bổ sung ràng buộc XOR trên `receipts` chống in gộp biên lai quỹ và phí bắt buộc.
@@ -149,13 +151,13 @@
 - **Người phụ trách (Assignee):** Phạm Thái Hoà (TV3)
 - **Ước lượng:** 3 giờ (1 SP)
 - **Mã nhánh Git:** Duyệt trên GitHub PRs
-- **Traceability:** Links to `DoD Standard IT3180`
+- **Traceability:** US-001, US-SEC-01/02 / NFR-02, NFR-03; DoD IT3180
 - **Layer Impact:** Quality Governance
 - **Prerequisites:** Có PRs mở từ các thành viên khác
 - **Acceptance Criteria (Checklist):**
-  - [ ] 100% Pull Requests từ TV1, TV2, TV4, TV5 được review trước khi merge vào `develop`.
+  - [ ] PR Sơn do Hoà duyệt; PR Hoà do Sơn duyệt; PR khác có một trong hai review trước khi merge vào `develop`.
   - [ ] Kiểm tra không để lọt SQL hoặc business logic vào Controller hay View.
-  - [ ] Kiểm tra lệnh `mvn test` thực thi pass 100% trên máy trước khi nhấn Merge.
+  - [ ] Kiểm tra verify/CI/test liên quan trước review; không tự duyệt; nghiệm thu chạy profile sprint1-quality.
 
 ---
 
@@ -184,7 +186,7 @@
 - **Acceptance Criteria (Checklist):**
   - [ ] Màn hình `templates/auth/login.html` có form POST tương thích Spring Security.
   - [ ] Tích hợp token chống CSRF hợp lệ.
-  - [ ] Hiển thị cảnh báo số lần nhập sai còn lại bằng tiếng Việt rõ ràng.
+  - [ ] Hiển thị lỗi chung bằng tiếng Việt, không tiết lộ username/trạng thái khóa.
   - [ ] Hiển thị thông báo màu đỏ khi tài khoản bị khóa tạm thời 15 phút.
 
 ---
@@ -280,3 +282,124 @@
   - [ ] Bộ ca kiểm thử `MockMvc` cho form đăng nhập và chặn các route yêu cầu xác thực.
   - [ ] Đo lường độ bao phủ dòng lệnh (Line Coverage) đạt $\ge 85\%$ cho tầng Service và Controller.
   - [ ] Xuất báo cáo tổng kết chất lượng Sprint 1: `docs/sprints/sprint-1/SPRINT_1_TEST_REPORT.md`.
+
+
+## Điều chỉnh Sprint 1: chủ hộ, review và ước lượng
+
+PM-01 (6h/2 SP) chuyển từ Khánh sang Sơn; Khánh hỗ trợ Kanban và giữ PM-02 (14h/3 SP). SEC-04 của Hoà vẫn 3h/1 SP; PM-03 bổ sung 3h review của Sơn. Thêm 18h/5 SP chủ hộ, tổng 138h/36 SP. Đây là nhu cầu ước lượng, cần theo dõi năng lực mỗi ngày để hoàn thành trong 31/10–06/11.
+
+### Issue #19: `[Sprint 1][DB] Chuẩn bị dữ liệu hồ sơ và lịch sử chủ hộ` (`DB-02`)
+
+- **Người phụ trách:** Sơn
+- **Ước lượng:** 4 giờ (1 SP)
+- **Traceability:** US-001 / RAW-002 / AC 3–4; DB-01, BE-01
+- **Layer Impact:** Database / Entity
+- **Prerequisites:** #03, #04
+- **Acceptance Criteria (Checklist):**
+  - [ ] Thiết kế trường họ tên, CCCD, SĐT, email chủ hộ và lịch sử có thời điểm/người thay đổi; cập nhật DDL/migration và ERD.
+  - [ ] Giữ tối đa một hộ ACTIVE/căn hộ và CCCD duy nhất toàn cục; kiểm tra với PostgreSQL cô lập.
+  - [ ] Giữ dữ liệu chủ hộ cũ khi thay chủ; không xóa cứng. Ghi rõ cách liên kết hồ sơ với households/residents, tránh hai nguồn định danh khác nhau.
+
+### Issue #20: `[Sprint 1][BE] Thay chủ hộ và lưu lịch sử trong một giao dịch` (`BE-03`)
+
+- **Người phụ trách:** Sơn
+- **Ước lượng:** 4 giờ (1 SP)
+- **Traceability:** US-001 / RAW-002 / AC 3–4; BE-02, DB-02
+- **Layer Impact:** DTO / Service / Controller
+- **Prerequisites:** #05, #19
+- **Acceptance Criteria (Checklist):**
+  - [ ] Tạo/cập nhật hồ sơ chủ hộ: họ tên bắt buộc, CCCD 12 chữ số, SĐT 10 chữ số, email hợp lệ nếu có.
+  - [ ] Thay chủ hộ ghi lịch sử và người/thời điểm đổi; giữ đúng một hộ ACTIVE, không sửa mất hồ sơ cũ.
+  - [ ] Dùng transaction để lỗi giữa chừng rollback cả đổi chủ và lịch sử; có unit test chính/biên, test rollback và cạnh tranh trên PostgreSQL ở #22.
+
+### Issue #21: `[Sprint 1][FE] Bổ sung form chủ hộ và màn hình lịch sử` (`FE-05`)
+
+- **Người phụ trách:** Đức Anh
+- **Ước lượng:** 4 giờ (1 SP)
+- **Traceability:** US-001 / RAW-002 / AC 3–4; FE-04
+- **Layer Impact:** View / DTO binding
+- **Prerequisites:** #14; hợp đồng form #20 (ghép dữ liệu sau #20)
+- **Acceptance Criteria (Checklist):**
+  - [ ] Form thêm/sửa căn hộ có hồ sơ chủ hộ, lỗi tiếng Việt từ server và CSRF.
+  - [ ] Màn hình lịch sử thể hiện chủ cũ/mới và thời điểm thay; không đưa tính toán nghiệp vụ vào view.
+  - [ ] Thao tác lưu hợp lệ, dữ liệu sai bị chặn phía server; test render/form và kiểm tra trình duyệt.
+
+### Issue #22: `[Sprint 1][QA] Kiểm thử hồ sơ và lịch sử chủ hộ` (`QA-05`)
+
+- **Người phụ trách:** Huy
+- **Ước lượng:** 4 giờ (1 SP)
+- **Traceability:** US-001 / RAW-002 / AC 3–4; NFR-03
+- **Layer Impact:** Service / Repository / Controller tests
+- **Prerequisites:** Soạn từ AC ngay; chạy sau #19–#21 và #15
+- **Acceptance Criteria (Checklist):**
+  - [ ] Bao phủ tạo/sửa hợp lệ, thiếu tên, CCCD/SĐT sai độ dài, CCCD trùng, email sai.
+  - [ ] Đổi chủ giữ lịch sử; cố tình gây lỗi để xác nhận rollback; hai lần đổi đồng thời không tạo hai hộ ACTIVE (PostgreSQL).
+  - [ ] Test web kiểm tra dữ liệu đã lưu và lịch sử hiển thị; ghi kết quả thực chạy, không thay bằng khung test rỗng.
+
+### Issue #23: `[Sprint 1][BA] Bổ sung kịch bản UAT chủ hộ` (`BA-03`)
+
+- **Người phụ trách:** Khánh
+- **Ước lượng:** 2 giờ (1 SP)
+- **Traceability:** US-001 / RAW-002 / AC 3–4; PM-02
+- **Layer Impact:** Docs / UAT
+- **Prerequisites:** AC đã chốt; thực thi cùng PM-02 sau #20–#22
+- **Acceptance Criteria (Checklist):**
+  - [ ] Thêm kịch bản hồ sơ hợp lệ, dữ liệu sai và thay chủ/lịch sử vào bộ 12 kịch bản nền; không giới hạn tổng UAT ở 12.
+  - [ ] Mỗi kịch bản ghi AC, dữ liệu giả, bước làm, kỳ vọng và kết quả thực chạy; chuẩn bị từ ngày 1.
+  - [ ] Khánh ghi lỗi/kết quả, Sơn nghiệm thu nội bộ khi đủ AC; không ghi khách hàng đã ký nếu chưa có bằng chứng.
+
+### Issue #24: `[Sprint 1][Review] Review chéo và nghiệm thu tích hợp Sprint` (`PM-03`)
+
+- **Người phụ trách:** Sơn
+- **Ước lượng:** 3 giờ (1 SP)
+- **Traceability:** US-001, US-SEC-01, US-SEC-02 / NFR-02, NFR-03; SEC-04
+- **Layer Impact:** Project Governance / Review
+- **Prerequisites:** Thực hiện xuyên tuần; nghiệm thu sau test/UAT
+- **Acceptance Criteria (Checklist):**
+  - [ ] PR Hoà do Sơn duyệt; PR Sơn do Hoà duyệt; PR khác có ít nhất một người duyệt, không tự duyệt.
+  - [ ] Kiểm tra CI, truy vết và bằng chứng kiểm thử; không coi CI xanh nền tảng là hoàn thành nghiệp vụ.
+  - [ ] Nghiệm thu chạy clean verify -Psprint1-quality và đủ AC/UAT, ghi giới hạn chưa kiểm tra.
+
+### Bảng tổng cập nhật
+
+| Thành viên | Giờ | SP | Gói cha |
+|---|---:|---:|---|
+| Khánh (BA/UAT) | 16 | 4 | PM-02, BA-03 |
+| Sơn (trưởng nhóm/DB/BE) | 42 | 13 | PM-01, PM-03, DB-01, BE-01, BE-02, DB-02, BE-03 |
+| Hoà (Tech Lead) | 28 | 8 | ARCH-01, SEC-01…04 |
+| Đức Anh (UI) | 28 | 7 | FE-01…05 |
+| Huy (QA) | 24 | 5 | QA-01…05 |
+| **Tổng** | **138** | **36** | **24 gói cha** |
+
+### Đơn vị giao việc 2–4 giờ
+
+Các hàng là phần việc con của gói cha, kế thừa người phụ trách, truy vết, layer và AC ở thẻ tương ứng. Không tạo issue cha 14h rồi đợi đến cuối tuần. SP đánh giá ở cấp gói, không quy đổi SP sang giờ.
+
+| Gói cha | Phần việc con (giờ) | Phụ thuộc bàn giao |
+|---|---|---|
+| PM-01 (6h) | Kanban/lịch họp (3); theo dõi tiến độ/review (3) | Ngày 1; xuyên tuần |
+| PM-02 (14h) | Kịch bản đăng nhập (4); căn hộ/tài khoản (4); thực thi UAT (3); kết quả/lỗi (3) | Soạn từ AC ngay; chạy khi chức năng sẵn sàng |
+| DB-01 (7h) | Review schema/migration hiện có (3); chạy PostgreSQL và ghi kết quả (4) | Trước ánh xạ JPA |
+| BE-01 (9h) | Apartment mapping/repository (3); Household/Resident (3); query/integration check (3) | DB-01; User mapping do Hoà phối hợp SEC-03 |
+| BE-02 (9h) | Quy tắc căn hộ/test (3); thêm/sửa và audit (3); web binding (3) | BE-01; chủ hộ chi tiết ở BE-03 |
+| ARCH-01 (5h) | Review cấu hình/build nền tảng (2); exception handler (3) | Cấu hình nền tảng được bàn giao trong đợt này |
+| SEC-01 (6h) | SecurityFilterChain/session (3); CSRF/role checks (3) | ARCH-01 |
+| SEC-02 (8h) | Auth/provider integration (4); lockout/Clock/đổi mật khẩu (4) | SEC-01; test QA-02 song song |
+| SEC-03 (6h) | User mapping/repository và validation (3); quản trị tài khoản/controller (3) | DB-01, SEC-01 |
+| SEC-04 (3h) | Review chéo của Hoà (3) | Xuyên tuần |
+| FE-01 (6h) | Layout/nav (3); responsive/fragments (3) | ARCH-01 |
+| FE-02 (6h) | Form login/lỗi chung (3); ghép Security/CSRF (3) | FE-01; hợp đồng SEC-01 |
+| FE-03 (6h) | Danh sách/form user (3); đổi mật khẩu/ghép backend (3) | FE-01, SEC-03 |
+| FE-04 (6h) | Danh sách/filter/dashboard (3); form căn hộ/ghép backend (3) | FE-01, BE-02 |
+| QA-01 (4h) | Fixtures và kiểm tra nền tảng test (4) | Smoke/CI/JaCoCo đã có cấu hình, bổ sung fixtures nghiệp vụ |
+| QA-02 (6h) | Thiết kế CFG/test từ AC (3); chạy và chốt CFG theo mã (3) | SEC-02 để chạy |
+| QA-03 (5h) | Decision table/biên (2); test tham số hóa (3) | BE-02 để chạy |
+| QA-04 (5h) | MockMvc bảo mật/form (3); coverage và test report (2) | SEC-01…03, BE-02, FE |
+| DB-02 (4h) | Hồ sơ/lịch sử chủ hộ và migration/ERD (4) | 01–02/11; DB-01 |
+| BE-03 (4h) | Transaction thay chủ hộ và truy vấn lịch sử (4) | 03–04/11; DB-02 |
+| FE-05 (4h) | Form chủ hộ/lịch sử và ghép dữ liệu (4) | 04–05/11; BE-03 |
+| QA-05 (4h) | Test chủ hộ, rollback và concurrent update (4) | Thiết kế sớm; chạy 04–05/11 |
+| BA-03 (2h) | Kịch bản UAT chủ hộ (2) | 31/10; thực thi trong PM-02 |
+| PM-03 (3h) | Review của Sơn và kiểm tra nghiệm thu nội bộ (3) | Xuyên tuần; chốt 06/11 |
+
+Tổng các phần việc con phải bằng 138h. Review không tự động thực hiện merge; chỉ cập nhật tài liệu trong đợt đồng bộ này, chưa tạo issue/PR trên GitHub.

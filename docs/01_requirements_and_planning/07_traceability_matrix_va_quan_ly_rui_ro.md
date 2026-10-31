@@ -10,6 +10,8 @@ Bảng ma trận truy xuất nguồn gốc yêu cầu của Team 13 ánh xạ t�
 
 | RAW ID | Epic | Feature | User Story | Acceptance Criteria (AC) |
 |---|:---:|---|:---:|---|
+| **NFR-02** | **E0** | Quản lý tài khoản BQT và phân quyền; Core Workflow 1 | **US-SEC-01** | AC US-SEC-01 (1–4) |
+| **NFR-02** | **E0** | Đăng nhập, khóa lần sai thứ 5 trong 15 phút, đổi mật khẩu | **US-SEC-02** | AC US-SEC-02 (1–4) |
 | **RAW-001, RAW-002, RAW-009, RAW-010** | **E1** | **1.** Thiết lập dữ liệu chuẩn xác về căn hộ và chủ hộ để làm căn cứ tính phí dịch vụ, quản lý tài chính và làm cơ sở gắn kết dữ liệu nhân khẩu thực tế.<br>**2.** Tra cứu nhanh dân cư và kết xuất báo cáo nhân khẩu học nộp cơ quan công an. | **US-001, US-004** | • AC US-001 (1-4)<br>• AC US-004 (1-4) |
 | **RAW-003, RAW-004, RAW-005, RAW-006, RAW-007, RAW-008** | **E6** | **1.** Nắm bắt chính xác ai đang ở trong căn hộ nào.<br>**2.** Ngăn chặn tuyệt đối tình trạng một CCCD đăng ký ở nhiều nơi.<br>**3.** Tự động hóa việc lọc độ tuổi và kiểm soát chặt chẽ thời hạn lưu trú (thường trú, tạm trú, tạm vắng chuẩn Luật Cư trú 2020). | **US-002, US-003** | • AC US-002 (1-4)<br>• AC US-003 (1-3) |
 | **RAW-011, RAW-012, RAW-013, RAW-014, RAW-015, RAW-016, RAW-020** | **E2** | **1.** BQT: Thiết lập & quản lý đơn giá các loại phí bắt buộc.<br>**2.** Kế toán: Tự động hóa công đoạn tính phí hàng tháng cho 24 tầng căn hộ & Penthouse.<br>**3.** Thủ quỹ: Ghi nhận thu tiền mặt tại văn phòng BQL, gạch nợ và in biên lai. | **US-005, US-006, US-007** | • AC US-005 (1-3)<br>• AC US-006 (1-3)<br>• AC US-007 (1-3) |
@@ -46,3 +48,7 @@ Nhóm phân tích nghiệp vụ Team 13 thống nhất giải pháp kiến trúc
 | **RSK-02** | **Rủi ro mất dữ liệu khi chuyển đổi:** Trong quá trình đưa dữ liệu vào phần mềm mới, dữ liệu lịch sử nộp tiền bị thất thoát hoặc ghi đè mất thông tin chủ hộ cũ. | **Cao** | Thiết kế bảng `AuditLog` và bảng `Apartment_Owner_History` trên CSDL. Cấm xóa cứng (Hard Delete) dữ liệu chủ hộ và giao dịch cũ; toàn bộ thay đổi đều được ghi vết vĩnh viễn. | TV 4 (Data Engineer) |
 | **RSK-03** | **Rủi ro trùng lặp số CCCD giữa các căn hộ:** Người thuê nhà chuyển phòng hoặc khai báo nhầm dẫn đến 1 số CCCD xuất hiện ở nhiều hộ khác nhau. | **Trung bình** | Lập trình thuật toán **Global Validation** quét trường `identity_card_number` trên toàn bộ bảng nhân khẩu. Hiển thị popup cảnh báo đỏ và chặn lưu nếu phát hiện trùng lặp. | TV 2 (System Analysis) |
 | **RSK-04** | **Rủi ro lệch tiền khi gạch nợ giao dịch:** Lỗi mạng hoặc sự cố hệ thống xảy ra giữa chừng khi thủ quỹ bấm gạch nợ khiến hóa đơn đổi trạng thái nhưng quỹ tiền mặt chưa ghi nhận. | **Rất cao** | Bắt buộc toàn bộ logic thanh toán và gạch nợ phải được thực thi trong một **Database Transaction (ACID)**. Nếu có bất kỳ lỗi nào xảy ra, hệ thống tự động `Rollback` toàn bộ về trạng thái trước đó. | TV 5 (QA Specialist) |
+
+## Truy vết Sprint 1 bổ sung
+
+US-001 / RAW-002 / AC 3–4 → DB-02 → BE-03 → FE-05 → QA-05 và BA-03 (UAT). Review PM-03 và CI nền tảng hỗ trợ US-001, US-SEC-01/02; không thay nghiệm thu nghiệp vụ. Xem [backlog](../sprints/sprint-1/github_issues_backlog.md).

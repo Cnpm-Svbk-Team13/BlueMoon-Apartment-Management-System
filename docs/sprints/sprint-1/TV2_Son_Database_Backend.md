@@ -1,5 +1,5 @@
 # 🗄️ CẨM NANG HÀNH ĐỘNG SPRINT 1 — THÀNH VIÊN 2: NGUYỄN XUÂN SƠN
-## Vai trò: Database Engineer & Backend Developer
+## Vai trò: Trưởng nhóm / Database Engineer & Backend Developer
 ### Dự án: BlueMoon BFMS (IT3180 - Team 13)
 
 ---
@@ -7,7 +7,7 @@
 ## 🎯 1. TỔNG QUAN VAI TRÒ & SẢN PHẨM BÀN GIAO (DELIVERABLES)
 
 - **Vai trò chính:** Quản trị cơ sở dữ liệu PostgreSQL, soạn thảo kịch bản migration CSDL `V1.1` khắc phục toàn bộ 7 lỗi DDL/DML đã phát hiện, ánh xạ tầng JPA Entity & Repository, và xây dựng toàn bộ backend CRUD Căn hộ 30 tầng (`US-001`).
-- **Tổng thời gian cam kết:** **25 giờ làm việc** (7 Story Points).
+- **Tổng thời gian cam kết:** **42 giờ ước lượng** (13 Story Points).
 - **Quyền quản trị mã nguồn:**
   - `database/migrations/V1.1__fix_schema_and_seed.sql`
   - Đồng quản trị file cấu hình `pom.xml` và `src/main/resources/application.yml` cùng Hoà (Tech Lead).
@@ -27,7 +27,7 @@
   3. Thêm ràng buộc XOR vào bảng `receipts`: Một phiếu thu chỉ được gắn với hóa đơn bắt buộc HOẶC đóng góp tự nguyện, không được cả hai (Bất biến 1: NĐ 93/2021/NĐ-CP).
   4. Đổi kiểu dữ liệu `apartments.area_sqm` sang `DECIMAL(12,2)` và thêm kiểm tra `area_sqm > 0`.
   5. Đổi khóa duy nhất `households.apartment_id` sang Partial Unique Index (`WHERE status = 'ACTIVE'`) để bảo toàn lịch sử chủ hộ cũ.
-  6. Thay toàn bộ mật khẩu giả lập trong seed data bằng mã băm BCrypt chuẩn cho `Password@123`:  
+  6. Thay toàn bộ mật khẩu giả lập trong seed data bằng mã băm BCrypt chuẩn cho `Password@123`:
      `$2a$10$ThEK5Lsf49T189/5nvFzwuYgdsmzBFWloKeb2FM2QSwB4JsNK2uTK`
   7. Nạp dữ liệu mẫu cho các căn hộ mẫu từ tầng 1 đến tầng 30 (Kiot, Thương mại, Căn hộ ở, Penthouse).
 
@@ -92,7 +92,11 @@ git add database/migrations/V1.1__fix_schema_and_seed.sql
 git commit -m "feat(#03): add v1.1 database migration script with all constraint fixes"
 git push origin feature/issue-03-db-migration-v1-1
 
-# 4. Tạo Pull Request trên GitHub và nhờ Sơn hoặc Hoà duyệt theo quy tắc không tự duyệt
+# 4. Tạo Pull Request trên GitHub và nhờ Hoà duyệt (PR của Sơn không tự duyệt)
 ```
 
 > Phân công/ước lượng hiện hành và task chủ hộ bổ sung: xem [quy chuẩn](../../PROJECT_CONVENTIONS.md) và phần “Điều chỉnh Sprint 1” trong [backlog](github_issues_backlog.md). Các task lớn trong cẩm nang là gói cha; giao các phần việc 2–4 giờ trong backlog.
+
+### Công việc bổ sung
+
+PM-01: điều phối 6h/2 SP; PM-03: review PR Hoà và nghiệm thu nội bộ 3h/1 SP. DB-02: hồ sơ/lịch sử chủ hộ 4h/1 SP (01–02/11); BE-03: transaction thay chủ và lịch sử 4h/1 SP (03–04/11). Xem #19/#20/#24 trong backlog để có AC và phụ thuộc. Thời lượng tăng phải được theo dõi hằng ngày.
