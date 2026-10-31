@@ -6,7 +6,7 @@
 
 ## 🎯 1. TỔNG QUAN VAI TRÒ & SẢN PHẨM BÀN GIAO (DELIVERABLES)
 
-- **Vai trò chính:** Thiết lập kiến trúc phần mềm Spring Boot 3.4.5 (Java 25 LTS), cấu hình bảo mật Spring Security 6, xây dựng phân hệ Đăng nhập/Khóa Brute-force (`US-SEC-02`), Quản lý tài khoản BQT (`US-SEC-01`), và giữ vai trò **Gatekeeper** kiểm duyệt 100% Pull Request của toàn đội.
+- **Vai trò chính:** Thiết lập kiến trúc phần mềm Spring Boot 3.5.16 (Java 25 LTS), cấu hình bảo mật Spring Security 6, xây dựng phân hệ Đăng nhập/Khóa Brute-force (`US-SEC-02`), Quản lý tài khoản BQT (`US-SEC-01`), và giữ vai trò **reviewer kỹ thuật cùng Sơn**, duyệt chéo và không tự duyệt PR.
 - **Tổng thời gian cam kết:** **28 giờ làm việc** (8 Story Points).
 - **Quyền quản trị mã nguồn:**
   - Đồng quản trị file cấu hình `pom.xml` và `src/main/resources/application.yml` cùng Sơn.
@@ -16,11 +16,11 @@
 
 ## 📌 2. DANH MỤC NHIỆM VỤ CHI TIẾT (TASK BREAKDOWN)
 
-### Thẻ Issue 6: `[Sprint 1][ARCH] Khởi tạo Khung Kiến trúc Spring Boot 3.4.5 & Pure Web` (`ARCH-01`)
+### Thẻ Issue 6: `[Sprint 1][ARCH] Khởi tạo Khung Kiến trúc Spring Boot 3.5.16 & Pure Web` (`ARCH-01`)
 - **Khối lượng:** 5 giờ (1 SP).
 - **Mã nhánh Git:** `feature/issue-06-architecture-framework-setup`
 - **Công việc cụ thể:**
-  1. Kiểm tra cấu hình `pom.xml` bảo đảm chạy mượt mà trên **Java 25 LTS** và Spring Boot 3.4.5.
+  1. Kiểm tra cấu hình `pom.xml` bảo đảm chạy mượt mà trên **Java 25 LTS** và Spring Boot 3.5.16.
   2. Cấu hình kết nối HikariCP tới CSDL PostgreSQL trong `src/main/resources/application.yml`.
   3. Viết `exception/GlobalExceptionHandler.java` sử dụng `@ControllerAdvice`:
      - Bắt ngoại lệ `@Valid` Bean Validation và trả thông báo lỗi thân thiện.
@@ -44,11 +44,11 @@
 ### Thẻ Issue 8: `[Sprint 1][SEC] Hiện thực hóa AuthService & Khóa 15 Phút sau 5 Lần Sai` (`SEC-02`)
 - **Khối lượng:** 8 giờ (2 SP).
 - **Mã nhánh Git:** `feature/issue-08-auth-service-and-lockout`
-- **Logic bất biến của `AuthService.java` (Khớp 100% với Đồ thị CFG $V(G)=5$):**
+- **Logic bất biến của `AuthService.java` (Khớp 100% với Đồ thị CFG theo mã nguồn đã chốt):**
   1. Kiểm tra user có tồn tại không $\rightarrow$ Nếu không: Báo `USER_NOT_FOUND`.
   2. Kiểm tra `is_active == false` $\rightarrow$ Ném ngoại lệ `DisabledException` ngay lập tức.
   3. Kiểm tra nếu `locked_until` đã quá hạn so với hiện tại $\rightarrow$ Tự động reset `failed_attempts = 0` và xóa `locked_until = null`.
-  4. Kiểm tra nếu tài khoản đang trong hạn khóa (`locked_until > now`) $\rightarrow$ Báo `ACCOUNT_LOCKED`.
+  4. Kiểm tra nếu tài khoản đang trong hạn khóa (`now < locked_until`) $\rightarrow$ Báo `ACCOUNT_LOCKED`.
   5. So khớp mật khẩu qua `passwordEncoder.matches(rawPassword, user.getPasswordHash())`:
      - *Nếu sai:* Tăng `failed_attempts`. Nếu chạm mốc $\ge 5$, gán `locked_until = now() + 15 phút` và báo `LOCKED_NOW`. Nếu $< 5$, báo `BAD_CREDENTIALS`.
      - *Nếu đúng:* Reset `failed_attempts = 0`, `locked_until = null`, lưu CSDL và trả về `SUCCESS`.
@@ -66,13 +66,13 @@
 
 ---
 
-### Thẻ Issue 10: `[Sprint 1][QA] Gatekeeping & Thẩm định 100% Pull Requests` (`SEC-04`)
+### Thẻ Issue 10: `[Sprint 1][QA] Gatekeeping & Review chéo cùng Sơn` (`SEC-04`)
 - **Khối lượng:** 3 giờ (1 SP) trải đều suốt 7 ngày.
-- **Trách nhiệm:** Review và duyệt toàn bộ Pull Request của Sơn (DB/BE), Đức Anh (UI), Huy (QA), Khánh (Docs).
+- **Trách nhiệm:** Hoà duyệt PR Sơn; PR Hoà do Sơn duyệt; PR khác có ít nhất một trong hai duyệt.
 - **Checklist Review khi duyệt PR:**
   - [ ] Không có câu lệnh SQL hoặc business logic nào bị viết trong Controller hoặc Thymeleaf View.
   - [ ] Không dùng kiểu `float`/`double` cho tiền tệ hoặc diện tích (bắt buộc dùng `BigDecimal`).
-  - [ ] Chạy lệnh `mvn test` trên máy local thấy pass 100% mới bấm **Merge**.
+  - [ ] Kiểm tra `verify`, CI và test liên quan trước review; không tự duyệt/merge, nghiệm thu thêm profile sprint1-quality.
 
 ---
 
@@ -106,3 +106,9 @@ git push origin feature/issue-08-auth-service-and-lockout
 # 4. Khi review PR của thành viên khác:
 # Kiểm tra code trên GitHub, nếu đạt chuẩn thì nhấn "Squash and merge" hoặc "Rebase and merge" vào develop.
 ```
+
+> Phân công/ước lượng hiện hành và task chủ hộ bổ sung: xem [quy chuẩn](../../PROJECT_CONVENTIONS.md) và phần “Điều chỉnh Sprint 1” trong [backlog](github_issues_backlog.md). Các task lớn trong cẩm nang là gói cha; giao các phần việc 2–4 giờ trong backlog.
+
+### Review và kiểm thử nền tảng
+
+PR của Hoà do Sơn duyệt; Hoà duyệt PR Sơn. Kiểm tra CI và profile sprint1-quality khi nghiệm thu. Boot/JaCoCo/smoke test là nền tảng đã cấu hình, không thay cho test đăng nhập/RBAC. Mở khóa khi now >= locked_until, không chỉ khi lớn hơn.

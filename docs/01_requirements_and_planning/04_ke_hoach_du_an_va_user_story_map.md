@@ -75,8 +75,8 @@ graph TD
 - **User Roles:** Quản trị viên (Admin), Kế toán, Thủ quỹ.
 - **User Goals:** Khởi tạo, cập nhật trạng thái tài khoản BQT; bảo vệ hệ thống trước tấn công Brute-force qua cơ chế khóa tài khoản tự động sau 5 lần đăng nhập thất bại liên tiếp; hỗ trợ người dùng tự đổi mật khẩu định kỳ.
 - **User Stories trực thuộc:**
-  - `US-SEC-01`: Quản lý Tài khoản Ban Quản trị & Phân quyền RBAC (`ROLE_ADMIN`, `ROLE_ACCOUNTANT`, `ROLE_CASHIER`). *(Tương ứng US-001 trong prompt Sprint 1)*.
-  - `US-SEC-02`: Xác thực Người dùng, Đăng nhập hệ thống, Khóa Brute-force và Đổi mật khẩu. *(Tương ứng US-002 trong prompt Sprint 1 / US-005 trong WBS cũ / Core Workflow 1 trong AGENTS.md)*.
+  - `US-SEC-01`: Quản lý Tài khoản Ban Quản trị & Phân quyền RBAC (`ROLE_ADMIN`, `ROLE_ACCOUNTANT`, `ROLE_CASHIER`). *(Ghi chú lịch sử: tương ứng US-001 trong prompt Sprint 1)*.
+  - `US-SEC-02`: Xác thực Người dùng, Đăng nhập hệ thống, Khóa Brute-force và Đổi mật khẩu. *(Ghi chú lịch sử: tương ứng US-002 trong prompt Sprint 1 / US-005 trong WBS cũ / Core Workflow 1 trong AGENTS.md)*.
 - **Priority:** **Highest Priority** | **Release Phase:** Sprint 1 Foundation.
 
 ---

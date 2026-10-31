@@ -8,7 +8,7 @@
 ---
 
 ## 1. Yêu cầu Tiền đề (Prerequisites)
-- **Java Development Kit (JDK):** Phiên bản 25 LTS (hoặc tối thiểu JDK 21 trở lên). Kiểm tra bằng lệnh:
+- **Java Development Kit (JDK):** Phiên bản 25 LTS. Kiểm tra bằng lệnh:
   ```bash
   java -version
   ```
@@ -81,7 +81,7 @@ $env:DB_PASSWORD="postgres"
   ./mvnw spring-boot:run
   ```
 
-Sau khi ứng dụng khởi động thành công (thông báo *Started BlueMoonBfmsApplication*), mở trình duyệt và truy cập:
+Sau khi khởi động thành công, các URL mục tiêu dưới đây cần controller/security hoàn chỉnh mới dùng được; scaffold hiện chưa có các route nghiệp vụ:
 - **Trang chủ / Cổng cư dân:** [http://localhost:8080/](http://localhost:8080/)
 - **Trang Đăng nhập BQT:** [http://localhost:8080/login](http://localhost:8080/login)
 - **Trang Quản trị (Admin Dashboard):** [http://localhost:8080/admin/dashboard](http://localhost:8080/admin/dashboard)
@@ -113,3 +113,9 @@ docker exec -t bluemoon-postgres pg_dump -U postgres bluemoon > backup_bluemoon.
 ```bash
 docker exec -i bluemoon-postgres psql -U postgres -d bluemoon < backup_bluemoon.sql
 ```
+
+## Kiểm tra và skills Sprint 1
+
+Xem [quy chuẩn](../PROJECT_CONVENTIONS.md). Chạy `.\mvnw.cmd --batch-mode --no-transfer-progress clean verify` để build, smoke test H2 và tạo báo cáo JaCoCo. Nghiệm thu chạy thêm `-Psprint1-quality`, kiểm tra >=85% line coverage gộp Service/Controller và đầy đủ UAT. Smoke test không cần PostgreSQL; test schema/migration vẫn cần PostgreSQL thật cô lập. Mockito được nạp sẵn bằng javaagent cùng JaCoCo để tránh tự attach khi test trên Java 25.
+
+Spring Boot hiện không tự nạp file `.env`; đặt biến môi trường qua PowerShell/IDE. Ba skill repo ở `.agents/skills/`, kéo Git rồi mở phiên Codex mới nếu chưa thấy. Không tự thực thi migration hoặc tạo issue trên GitHub.

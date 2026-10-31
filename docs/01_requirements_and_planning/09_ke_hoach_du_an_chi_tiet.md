@@ -6,7 +6,7 @@
 > **Nhóm thực hiện:** Nhóm 13 (Team 13)  
 > **Phiên bản tài liệu:** v1.1 | Ngày cập nhật: 25/10/2026  
 > **Căn cứ hướng dẫn:** **Bài 4.2 Lập kế hoạch dự án** trong `Huong dan xay dung Ke hoach du an.pdf` & Mẫu WBS chuẩn `Mau_cau_truc_phan_chia_cong_viec.xlsx`.  
-> *(Lưu ý: Phần Khởi tạo dự án - Bài 4.1 đã được nhóm hoàn thiện độc lập tại tài liệu [`docs/proposal/03_tuyen_ngon_du_an.md`](./03_tuyen_ngon_du_an.md)).*
+> *(Lưu ý: Phần Khởi tạo dự án - Bài 4.1 đã được nhóm hoàn thiện độc lập tại tài liệu [`docs/01_requirements_and_planning/03_tuyen_ngon_du_an.md`](./03_tuyen_ngon_du_an.md)).*
 
 ---
 
@@ -38,21 +38,21 @@ Bảng phân chia công việc chi tiết tuân thủ chính xác bố cục cá
 | 1 | 1.0 | Quản lý dự án (Project Management) | Khánh | 20/10/2026 | 15/12/2026 | Kế hoạch WBS, Risk Log, Báo cáo tiến độ | 4.500.000 |
 | 2 | 1.1 | Lập kế hoạch phân rã công việc WBS & Lịch trình | Khánh, Hoà | 25/10/2026 | 28/10/2026 | Bảng WBS & Biểu đồ Gantt Chart | 1.500.000 |
 | 2 | 1.2 | Lập kế hoạch quản lý rủi ro toàn diện (Bài 4.3) | Khánh, Huy | 26/10/2026 | 29/10/2026 | Ma trận rủi ro 3x3 & Risk Tracking Log | 1.000.000 |
-| 2 | 1.3 | Điều phối Scrum, kiểm soát phạm vi & họp Sprint | Khánh | 30/10/2026 | 15/12/2026 | Biên bản họp Daily Standup & Review | 2.000.000 |
+| 2 | 1.3 | Điều phối Scrum, kiểm soát phạm vi & họp Sprint | Sơn (Khánh hỗ trợ BA) | 31/10/2026 | 15/12/2026 | Biên bản họp Daily Standup & Review | 2.000.000 |
 | 1 | 2.0 | Module Quản lý Cư dân & Hộ gia đình | Sơn, Hoà | 28/10/2026 | 18/11/2026 | Phân hệ dữ liệu cư dân BlueMoon | 10.000.000 |
 | 2 | 2.1 | Quản lý căn hộ và thông tin chủ hộ (`US-001`) | Sơn | 28/10/2026 | 04/11/2026 | API/UI căn hộ, diện tích $m^2$, chủ hộ | 2.500.000 |
 | 2 | 2.2 | Quản lý thành viên nhân khẩu & quan hệ (`US-002`) | Sơn | 05/11/2026 | 11/11/2026 | CRUD nhân khẩu, quan hệ nhân thân | 2.500.000 |
 | 2 | 2.3 | Quản lý biến động cư trú tạm trú/tạm vắng (`US-003`) | Hoà, Sơn | 12/11/2026 | 18/11/2026 | Quản lý hồ sơ cư trú có thời hạn | 2.500.000 |
 | 2 | 2.4 | Xuất danh sách nhân khẩu báo cáo công an (`US-004`) | Đức Anh | 12/11/2026 | 18/11/2026 | Xuất file Excel/PDF chuẩn cơ quan | 2.500.000 |
 | 1 | 3.0 | Module Quản lý Thu phí & Đóng góp | Hoà, Sơn | 12/11/2026 | 02/12/2026 | Phân hệ lõi tài chính và công nợ | 12.000.000 |
-| 2 | 3.1 | Thiết lập danh mục & biểu phí theo $m^2$ (`US-006`) | Hoà | 12/11/2026 | 18/11/2026 | Cấu hình định mức phí DV & phí QL | 2.500.000 |
-| 2 | 3.2 | Tự động tạo bảng kê công nợ tháng (`US-007`) | Hoà, Sơn | 19/11/2026 | 25/11/2026 | Batch job phát sinh công nợ tự động | 3.000.000 |
-| 2 | 3.3 | Thu tiền tại quầy, gạch nợ & in biên lai (`US-008`) | Sơn, Đức Anh | 19/11/2026 | 25/11/2026 | Giao dịch gạch nợ ACID, mẫu in biên lai | 3.500.000 |
-| 2 | 3.4 | Quản lý các chiến dịch quỹ tự nguyện (`US-009`) | Hoà | 26/11/2026 | 02/12/2026 | Khởi tạo chiến dịch & đóng góp tùy tâm | 1.500.000 |
+| 2 | 3.1 | Thiết lập danh mục & biểu phí theo $m^2$ (`US-005`) | Hoà | 12/11/2026 | 18/11/2026 | Cấu hình định mức phí DV & phí QL | 2.500.000 |
+| 2 | 3.2 | Tự động tạo bảng kê công nợ tháng (`US-006`) | Hoà, Sơn | 19/11/2026 | 25/11/2026 | Batch job phát sinh công nợ tự động | 3.000.000 |
+| 2 | 3.3 | Thu tiền tại quầy, gạch nợ & in biên lai (`US-007`) | Sơn, Đức Anh | 19/11/2026 | 25/11/2026 | Giao dịch gạch nợ ACID, mẫu in biên lai | 3.500.000 |
+| 2 | 3.4 | Quản lý các chiến dịch quỹ tự nguyện (`US-008`, `US-009`) | Hoà | 26/11/2026 | 02/12/2026 | Khởi tạo chiến dịch & đóng góp tùy tâm | 1.500.000 |
 | 2 | 3.5 | Tra cứu công nợ & Lập báo cáo tài chính (`US-010`, `US-011`) | Hoà, Đức Anh | 26/11/2026 | 02/12/2026 | Dashboard thống kê, danh sách hộ nợ | 1.500.000 |
 | 1 | 4.0 | Module Quản trị Người dùng & Hệ thống | Đức Anh, Hoà | 28/10/2026 | 09/11/2026 | Phân hệ bảo mật & người dùng | 5.000.000 |
-| 2 | 4.1 | Xác thực đăng nhập & Phân quyền BQT/Kế toán (`US-005`) | Hoà | 28/10/2026 | 04/11/2026 | Security filter, Session, Phân quyền RBAC | 2.500.000 |
-| 2 | 4.2 | Quản lý tài khoản, đổi mật khẩu & Audit log | Đức Anh | 05/11/2026 | 09/11/2026 | Quản lý hồ sơ cá nhân, nhật ký hệ thống | 2.500.000 |
+| 2 | 4.1 | Xác thực đăng nhập & Phân quyền BQT/Kế toán (`US-SEC-02`) | Hoà | 28/10/2026 | 04/11/2026 | Security filter, Session, Phân quyền RBAC | 2.500.000 |
+| 2 | 4.2 | Quản lý tài khoản, đổi mật khẩu & Audit log (`US-SEC-01`, `US-SEC-02`) | Đức Anh | 05/11/2026 | 09/11/2026 | Quản lý hồ sơ cá nhân, nhật ký hệ thống | 2.500.000 |
 | 1 | 5.0 | Đảm bảo chất lượng & Chuyển giao sản phẩm | Huy, Khánh | 20/10/2026 | 15/12/2026 | Bộ hồ sơ nghiệm thu và kiểm thử | 5.000.000 |
 | 2 | 5.1 | Lập kế hoạch & thiết kế ca kiểm thử (Test Cases) | Huy | 05/11/2026 | 25/11/2026 | Tài liệu Test Plan, 85+ Test cases chi tiết | 2.000.000 |
 | 2 | 5.2 | Thực hiện kiểm thử chức năng, tích hợp & bảo mật | Huy | 26/11/2026 | 06/12/2026 | Báo cáo kiểm thử (Test Summary Report) | 1.500.000 |
@@ -89,11 +89,11 @@ graph TD
 
 ### Chi tiết phân rã nhiệm vụ và sản phẩm bàn giao 4 Sprint:
 
-#### Sprint 1 (20/10 - 02/11/2026): Khởi tạo Nền tảng, Phân quyền & Quản lý Căn hộ
+#### Sprint 1 (31/10 - 06/11/2026): Khởi tạo Nền tảng, Phân quyền & Quản lý Căn hộ
 - **Mục tiêu Sprint:** Thiết lập khung kiến trúc backend/frontend, cơ chế bảo mật xác thực (Epic 0) và phân hệ quản lý căn hộ (Epic 1).
 - **User Stories thực hiện:**
-  - `US-SEC-01`: Quản lý tài khoản Ban Quản trị & Phân quyền RBAC (`ROLE_ADMIN`, `ROLE_ACCOUNTANT`, `ROLE_CASHIER`). *(Tương ứng US-001 đề bài Sprint 1)*.
-  - `US-SEC-02`: Đăng nhập, xác thực Spring Security, khóa Brute-force 5 lần và đổi mật khẩu. *(Tương ứng US-002 đề bài Sprint 1 / Core Workflow 1)*.
+  - `US-SEC-01`: Quản lý tài khoản Ban Quản trị & Phân quyền RBAC (`ROLE_ADMIN`, `ROLE_ACCOUNTANT`, `ROLE_CASHIER`). *(Ghi chú lịch sử: tương ứng US-001 đề bài Sprint 1)*.
+  - `US-SEC-02`: Đăng nhập, xác thực Spring Security, khóa Brute-force 5 lần và đổi mật khẩu. *(Ghi chú lịch sử: tương ứng US-002 đề bài Sprint 1 / Core Workflow 1)*.
   - `US-001`: Khởi tạo và quản lý danh mục căn hộ (tầng 1 đến 30), lưu diện tích sàn $m^2 > 0$, thông tin chủ hộ.
 - **Sản phẩm bàn giao (Deliverable):** Bản dựng v0.1 có thể đăng nhập phân quyền, xem Dashboard và thao tác dữ liệu căn hộ.
 
@@ -134,20 +134,20 @@ Ma trận RACI phân định rõ vai trò và trách nhiệm của **5 thành vi
 - **C (Consulted):** Người được tham vấn ý kiến chuyên môn.
 - **I (Informed):** Người được cập nhật tiến độ và kết quả công việc.
 
-| Gói công việc / Sản phẩm bàn giao | Khánh (PM/BA) | Hoà (Tech Lead) | Đức Anh (Frontend) | Sơn (Database) | Huy (QA/Test) |
+| Gói công việc / Sản phẩm bàn giao | Khánh (BA) | Hoà (Tech Lead) | Đức Anh (Frontend) | Sơn (Trưởng nhóm/Database) | Huy (QA/Test) |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **1.1 Lập WBS, Phân rã Task & Tiến độ** | **A / R** | C | I | I | C |
-| **1.2 Lập Kế hoạch Quản lý Rủi ro SoICT** | **A / R** | C | I | I | C |
+| **1.1 Lập WBS, Phân rã Task & Tiến độ** | **R** | C | I | **A** | C |
+| **1.2 Lập Kế hoạch Quản lý Rủi ro SoICT** | **R** | C | I | **A** | C |
 | **2.1 Thiết kế Kiến trúc hệ thống & DB Schema (ERD)** | C | **A** | I | **R** | I |
 | **2.2 Thiết kế UI/UX Wireframe & Master Layout** | C | I | **A / R** | I | I |
-| **3.1 Sprint 1: Auth & Căn hộ (`US-SEC-01`, `US-SEC-02`, `US-001`)** | A | C | R | R | C |
-| **3.2 Sprint 2: Quản lý Cư dân & Cư trú (`US-002`, `US-003`, `US-004`)** | A | C | R | R | C |
-| **3.3 Sprint 3: Quản lý Thu phí & Gạch nợ (`US-005`, `US-006`, `US-007`)** | A | R | R | R | C |
-| **3.4 Sprint 4: Quỹ tự nguyện & Báo cáo (`US-008`, `US-009`, `US-010`, `US-011`)** | A | R | R | C | C |
+| **3.1 Sprint 1: Auth & Căn hộ (`US-SEC-01`, `US-SEC-02`, `US-001`)** | C | C | R | A / R | C |
+| **3.2 Sprint 2: Quản lý Cư dân & Cư trú (`US-002`, `US-003`, `US-004`)** | C | C | R | A / R | C |
+| **3.3 Sprint 3: Quản lý Thu phí & Gạch nợ (`US-005`, `US-006`, `US-007`)** | C | R | R | A / R | C |
+| **3.4 Sprint 4: Quỹ tự nguyện & Báo cáo (`US-008`, `US-009`, `US-010`, `US-011`)** | C | R | R | A | C |
 | **4.1 Lập Test Plan & Thiết kế Test Cases** | C | I | I | I | **A / R** |
 | **4.2 Kiểm thử tích hợp, kiểm thử hiệu năng & bảo mật** | I | C | C | C | **A / R** |
 | **5.1 Soạn tài liệu Hướng dẫn sử dụng & Cài đặt** | A | C | **R** | C | I |
-| **5.2 Tổ chức kiểm thử chấp nhận người dùng (UAT) & Nghiệm thu** | **A / R** | C | I | I | C |
+| **5.2 Tổ chức kiểm thử chấp nhận người dùng (UAT) & Nghiệm thu** | **R** | C | I | **A** | C |
 
 ---
 
@@ -167,7 +167,7 @@ gantt
     Thiết kế Kiến trúc và DB Schema       :crit,    p3, 2026-10-28, 2026-10-31
 
     section Giai đoạn 2 - Sprint 1 (v0.1)
-    Auth BQT và Đăng nhập (US-SEC-01, 02) :         s1_1, 2026-10-30, 2026-11-03
+    Auth BQT và Đăng nhập (US-SEC-01, 02) :         s1_1, 2026-10-31, 2026-11-03
     Quản lý Căn hộ và Chủ hộ (US-001)     :         s1_2, 2026-11-01, 2026-11-05
     Sprint 1 Review và Testing            :         s1_3, 2026-11-04, 2026-11-06
 
@@ -198,7 +198,9 @@ gantt
 | Giai đoạn / Sprint | Thời gian thực hiện | Mục tiêu & Sản phẩm bàn giao chính | Trạng thái |
 |---|:---:|---|:---:|
 | **Giai đoạn 1: Chuẩn bị & WBS** | 20/10/2026 – 31/10/2026 | Hoàn thành bộ hồ sơ WBS, Kế hoạch quản lý rủi ro 3x3, Kiến trúc & DDL Schema PostgreSQL. | **Hoàn thành** |
-| **Giai đoạn 2: Sprint 1 (v0.1)** | 30/10/2026 – 06/11/2026 | Quản lý tài khoản BQT, Xác thực Spring Security, Quản lý Căn hộ 30 tầng (`US-SEC-01`, `US-SEC-02`, `US-001`), Unit Test Sprint 1. | **Đang tiến hành** |
+| **Giai đoạn 2: Sprint 1 (v0.1)** | 31/10/2026 – 06/11/2026 | Quản lý tài khoản BQT, Xác thực Spring Security, Quản lý Căn hộ 30 tầng (`US-SEC-01`, `US-SEC-02`, `US-001`), Unit Test Sprint 1. | **Đang tiến hành** |
 | **Giai đoạn 3: Sprint 2 (v0.2)** | 05/11/2026 – 18/11/2026 | Quản lý Sổ hộ khẩu, Nhân khẩu, Biến động cư trú, Báo cáo Công an (`US-002`, `US-003`, `US-004`). | *Kế hoạch* |
 | **Giai đoạn 4: Sprint 3 (v0.3)** | 17/11/2026 – 30/11/2026 | Cấu hình biểu phí theo m², Batch job bảng kê nợ phí, Quầy thu ngân & In biên lai (`US-005`, `US-006`, `US-007`). | *Kế hoạch* |
 | **Giai đoạn 5: Sprint 4 (v1.0)** | 28/11/2026 – 15/12/2026 | Vận động Quỹ tự nguyện (`US-008`, `US-009`), Public Mode & Báo cáo công khai (`US-010`), Tra cứu nợ & Dashboard (`US-011`), UAT & Nghiệm thu. | *Kế hoạch* |
+
+> Điều chỉnh 31/10/2026: Sơn là trưởng nhóm, Khánh giữ BA/UAT. Lịch và backlog chi tiết Sprint 1 theo [quy chuẩn hiện hành](../PROJECT_CONVENTIONS.md). Các mốc Sprint sau vẫn là kế hoạch tổng thể, chưa tái lập lịch trong đợt này.

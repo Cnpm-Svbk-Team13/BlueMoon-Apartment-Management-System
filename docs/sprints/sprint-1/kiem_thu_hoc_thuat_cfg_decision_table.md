@@ -1,124 +1,59 @@
-# 📐 TÀI LIỆU CHỨNG MINH HỌC THUẬT KIỂM THỬ SPRINT 1
-## Học phần: Nhập môn Công nghệ Phần mềm (IT3180) — SoICT / HUST
-### Cơ sở Lý thuyết: Chương 8 (Kiểm thử Hộp trắng CFG) & Chương 9 (Kiểm thử Hộp đen Bảng Quyết định)
+# Thiết kế kiểm thử Sprint 1 — CFG và Decision Table
 
----
+Truy vết: US-SEC-02 / NFR-02; US-001 / RAW-001, RAW-002.
 
-## 1. KIỂM THỬ HỘP TRẮNG: ĐỒ THỊ DÒNG ĐIỀU KHIỂN (CFG) CHO PHƯƠNG THỨC XÁC THỰC ĐĂNG NHẬP (`US-SEC-02`)
+## 1. CFG đăng nhập — thiết kế chờ đối chiếu mã triển khai
 
-### 1.1. Đoạn Mã Nguồn Nghiệp vụ Xác thực (`AuthService.java`)
-```java
-public LoginResult authenticate(String username, String password) {
-    // Nút 1: Bắt đầu, tìm kiếm người dùng theo username
-    User user = userRepository.findByUsername(username).orElse(null);
-    if (user == null) { // Nút 2: Rẽ nhánh kiểm tra user tồn tại
-        return LoginResult.USER_NOT_FOUND; // Nút 3: Thoát - Không tìm thấy
-    }
+`AuthService` chưa được triển khai. Sơ đồ dưới đây mô tả hành vi yêu cầu, không phải minh chứng coverage đã đo. Khi có mã, Huy và Hoà đánh số nút/cạnh, chốt cách tính short-circuit, tính V(G) và lập tập basis paths tương ứng. Không giữ kết luận V(G)=5 hoặc Rank=5 của bản cũ.
 
-    // Kiểm tra trạng thái hoạt động (Chống cán bộ bị đình chỉ/vô hiệu hóa truy cập trái phép)
-    if (!user.getIsActive()) throw new DisabledException("Tài khoản đã bị vô hiệu hóa");
+### 1.1. Thứ tự xử lý và CFG dự kiến
 
-    // Xử lý tự động giải phóng khóa khi hết thời hạn (Reset counter on lockout expiry)
-    ZonedDateTime now = ZonedDateTime.now();
-    if (user.getLockedUntil() != null && user.getLockedUntil().isBefore(now)) {
-        user.setFailedAttempts(0);
-        user.setLockedUntil(null);
-    }
-    
-    // Nút 4: Kiểm tra tài khoản có đang trong thời gian bị khóa hay không
-    if (user.getLockedUntil() != null && user.getLockedUntil().isAfter(now)) {
-        return LoginResult.ACCOUNT_LOCKED; // Nút 5: Thoát - Tài khoản bị khóa
-    }
-    
-    // Nút 6: So khớp mật khẩu băm BCrypt
-    if (!passwordEncoder.matches(password, user.getPasswordHash())) {
-        // Nút 7: Mật khẩu sai, tăng biến đếm
-        int attempts = user.getFailedAttempts() + 1;
-        user.setFailedAttempts(attempts);
-        if (attempts >= 5) { // Nút 8: Rẽ nhánh kiểm tra mốc 5 lần sai
-            user.setLockedUntil(now.plusMinutes(15)); // Nút 9: Khóa 15 phút
-            userRepository.save(user);
-            return LoginResult.LOCKED_NOW; // Nút 10: Thoát - Bị khóa ngay lập tức
-        } else {
-            userRepository.save(user);
-            return LoginResult.BAD_CREDENTIALS; // Nút 11: Thoát - Sai mật khẩu
-        }
-    }
-    
-    // Nút 12: Mật khẩu đúng, đặt lại số lần sai
-    user.setFailedAttempts(0);
-    user.setLockedUntil(null);
-    userRepository.save(user);
-    return LoginResult.SUCCESS; // Nút 13: Thoát - Thành công
-}
+```mermaid
+flowchart TD
+    A[Tra tài khoản] --> B{Tồn tại?}
+    B -->|Không| F[Thất bại nội bộ: USER_NOT_FOUND]
+    B -->|Có| C{Đang hoạt động?}
+    C -->|Không| D[Chặn tài khoản vô hiệu hóa]
+    C -->|Có| E{Có locked_until?}
+    E -->|Không| H{Mật khẩu đúng?}
+    E -->|Có| G{now nhỏ hơn locked_until?}
+    G -->|Có| L[Chặn: ACCOUNT_LOCKED; không gia hạn khóa]
+    G -->|Không| R[Xóa khóa; reset failed_attempts về 0]
+    R --> H
+    H -->|Có| S[Reset bộ đếm; đăng nhập thành công]
+    H -->|Không| I[Tăng failed_attempts]
+    I --> J{failed_attempts đạt 5?}
+    J -->|Có| K[Khóa ngay 15 phút]
+    J -->|Không| M[Thất bại: BAD_CREDENTIALS]
 ```
 
----
+Đúng thời điểm hết hạn (`now == locked_until`) đi qua nhánh mở khóa. Một lần thử sau khi mở khóa được tính từ 0. Kết quả nội bộ không được dùng để tiết lộ username trên giao diện; UI trả thông báo thất bại chung.
 
-### 1.2. Vẽ Đồ thị Dòng Điều khiển (Control Flow Graph - CFG)
-```
-             (1)
-              |
-             (2) [user == null?]
-            /   \
-       True/     \False
-          v       v
-        (3)*     (4) [lockedUntil != null && lockedUntil > now?]
-                /   \
-           True/     \False
-              v       v
-            (5)*     (6) [!passwordEncoder.matches(...)?]
-                    /   \
-               True/     \False
-                  v       v
-                 (7)     (12)
-                  |        |
-                 (8)     (13)*
-                /   \
-           True/     \False
-              v       v
-             (9)     (11)*
-              |
-            (10)*
-(* biểu thị nút kết thúc/return)
-```
+### 1.2. Cách hoàn thiện chứng minh CFG
 
----
+1. Lấy phương thức Java cuối cùng sau review, kể cả nhánh vô hiệu hóa và reset khóa.
+2. Chuẩn hóa một điểm vào/một điểm ra của đồ thị, ghi N nút, E cạnh và tính V(G)=E−N+2 cho một đồ thị liên thông.
+3. Ghi rõ điều kiện ghép có tách short-circuit thành từng nhánh hay không; dùng nhất quán khi vẽ và tính.
+4. Lập basis paths độc lập theo CFG đó; gắn từng đường tới test ID. Không suy ra số đường từ số test nghiệp vụ.
+5. Chạy test và ghi coverage thực tế. Chỉ đưa khẳng định hạng ma trận nếu kèm đúng ma trận, cách lập và kết quả tính có thể kiểm tra.
 
-### 1.3. Tính toán Độ phức tạp Chu trình (Cyclomatic Complexity - McCabe)
-Đồ thị dòng điều khiển CFG của luồng xác thực và khóa tài khoản có:
-- $N = 13$ nút (Nút 1 đến Nút 13).
-- $E = 12$ cạnh có hướng.
-- $P = 4$ nút vị từ rẽ nhánh (Nút 2, Nút 4, Nút 6, Nút 8).
-- $e = 5$ nút thoát/return (Nút 3, Nút 5, Nút 10, Nút 11, Nút 13).
+### 1.3. Danh mục ca kiểm thử bắt buộc
 
-Độ phức tạp chu trình $V(G)$ được tính toán theo 2 phương pháp chuẩn mực (SoICT Chapter 8):
-1. **Theo số nút vị từ rẽ nhánh:**  
-   $$V(G) = P + 1 = 4 + 1 = 5$$
-   *(với $P=4$ là 4 nút điều kiện: `user == null`, `lockedUntil != null && isAfter(...)`, `!passwordEncoder.matches(...)`, `attempts >= 5`)*.
-2. **Theo công thức đồ thị đa điểm thoát (Multi-exit Graph):**  
-   $$V(G) = E - N + e + 1 = 12 - 13 + 5 + 1 = 5$$
-3. **Thực nghiệm ma trận:** Ma trận liên thuộc các cạnh đạt $\text{Rank} = 5$, bảo đảm 5 Đường dẫn cơ sở độc lập tuyến tính.
+| ID | Đầu vào / trạng thái | Kỳ vọng |
+|---|---|---|
+| TC_LOGIN_BP_01 | Username không tồn tại | Thất bại nội bộ; UI lỗi chung |
+| TC_LOGIN_BP_02 | Khóa còn hạn, kể cả mật khẩu đúng | Chặn; giữ nguyên locked_until |
+| TC_LOGIN_BP_03 | Đã sai 4 lần, tiếp tục sai | Bộ đếm 5; khóa ngay now+15 phút |
+| TC_LOGIN_BP_04 | Sai dưới ngưỡng | Tăng bộ đếm; chưa khóa |
+| TC_LOGIN_BP_05 | Đúng mật khẩu, tài khoản hợp lệ | Thành công; bộ đếm về 0 |
+| TC_LOGIN_EDGE_01 | is_active=false | Chặn cả khi mật khẩu đúng |
+| TC_LOGIN_EDGE_02 | Vừa trước thời điểm hết khóa | Vẫn chặn |
+| TC_LOGIN_EDGE_03 | Đúng thời điểm hết khóa, mật khẩu sai | Xóa khóa; bộ đếm mới bằng 1 |
+| TC_LOGIN_EDGE_04 | Sau thời điểm hết khóa, mật khẩu đúng | Thành công; xóa khóa, bộ đếm 0 |
+| TC_LOGIN_EDGE_05 | Sau thời điểm hết khóa, mật khẩu sai | Bộ đếm mới bằng 1 |
+| TC_LOGIN_EDGE_06 | Đúng mật khẩu sau vài lần sai chưa khóa | Thành công; bộ đếm 0 |
 
-$\Rightarrow$ Bắt buộc thiết kế **5 Đường dẫn Cơ sở Độc lập (Basis Paths)** để đạt 100% độ bao phủ nhánh rẽ.
-
----
-
-### 1.4. Tập 5 Đường dẫn Cơ sở Độc lập & Ca Kiểm thử
-1. **Path 1 (Không tìm thấy user):** `1 -> 2 -> 3`  
-   - *Test Case TC_LOGIN_BP_01:* Nhập `username = "unknown_user"`, `password = "any"`. Kỳ vọng: Trả về `USER_NOT_FOUND`.
-2. **Path 2 (Tài khoản đang bị khóa tạm thời 15 phút):** `1 -> 2 -> 4 -> 5`  
-   - *Test Case TC_LOGIN_BP_02:* Nhập `username = "locked_user"` (có `locked_until = now() + 10m`). Kỳ vọng: Trả về `ACCOUNT_LOCKED`.
-3. **Path 3 (Sai mật khẩu chạm mốc 5 lần $\rightarrow$ Khóa ngay lập tức):** `1 -> 2 -> 4 -> 6 -> 7 -> 8 -> 9 -> 10`  
-   - *Test Case TC_LOGIN_BP_03:* Nhập `username = "admin"`, sai mật khẩu khi `failedAttempts = 4`. Kỳ vọng: `failedAttempts` tăng lên 5, gán `locked_until = now() + 15m`, trả về `LOCKED_NOW`.
-4. **Path 4 (Sai mật khẩu dưới 5 lần):** `1 -> 2 -> 4 -> 6 -> 7 -> 8 -> 11`  
-   - *Test Case TC_LOGIN_BP_04:* Nhập `username = "admin"`, sai mật khẩu khi `failedAttempts = 2`. Kỳ vọng: `failedAttempts` tăng lên 3, `locked_until` vẫn NULL, trả về `BAD_CREDENTIALS`.
-5. **Path 5 (Đăng nhập thành công):** `1 -> 2 -> 4 -> 6 -> 12 -> 13`  
-   - *Test Case TC_LOGIN_BP_05:* Nhập `username = "admin"`, đúng mật khẩu `'Password@123'`. Kỳ vọng: `failedAttempts` reset về 0, `locked_until = null`, trả về `SUCCESS`.
-
-**Các ca kiểm thử biên bổ trợ:**
-- `TC_LOGIN_EDGE_01`: Cán bộ bị vô hiệu hóa (`is_active = false`) đăng nhập đúng mật khẩu $\rightarrow$ Chặn ngay, ném `DisabledException`.
-- `TC_LOGIN_EDGE_02`: Tài khoản hết hạn khóa 15 phút gõ sai lần đầu $\rightarrow$ Tự động reset bộ đếm về 0, ghi nhận lần sai mới là 1.
+Dùng `Clock` cố định/thay thế trong test; không chờ 15 phút thật. Các ID BP cũ được giữ để truy vết, chưa có nghĩa chúng là tập basis paths đầy đủ của mã cuối cùng.
 
 ---
 

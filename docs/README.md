@@ -94,3 +94,7 @@ Mọi thành phần trong mã nguồn và kiểm thử đều được truy vế
 - **User Stories & Acceptance Criteria:** `US-001` $\rightarrow$ `US-011` (Chi tiết tại [`05_chi_tiet_us_va_acceptance_criteria.md`](./01_requirements_and_planning/05_chi_tiet_us_va_acceptance_criteria.md))
 - **Yêu cầu Phi chức năng:** `NFR-01` $\rightarrow$ `NFR-05` (Chi tiết tại [`06_client_wishlist_as_is_to_be_nfr.md`](./01_requirements_and_planning/06_client_wishlist_as_is_to_be_nfr.md))
 - **Rủi ro Dự án:** `RSK-01` $\rightarrow$ `RSK-13` (Chi tiết tại [`10_ke_hoach_quan_ly_rui_ro_toan_dien.md`](./01_requirements_and_planning/10_ke_hoach_quan_ly_rui_ro_toan_dien.md))
+
+## Quy chuẩn và vận hành Sprint 1
+
+[PROJECT_CONVENTIONS.md](PROJECT_CONVENTIONS.md) là nguồn hiện hành về vai trò Sơn/Khánh, mã truy vết, khóa đăng nhập, review chéo, CI, coverage và skills.

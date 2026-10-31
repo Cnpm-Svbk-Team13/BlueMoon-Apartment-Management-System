@@ -33,7 +33,7 @@ docs/02_design_and_architecture/
 |---|---|---|
 | [DE_BAI_GOC.md](./DE_BAI_GOC.md) | Toàn văn đề bài bài tập lớn; phân loại phí dịch vụ (2.500 - 16.500 đ/m2), phí quản lý (>= 7.000 đ/m2), các quỹ tự nguyện; phân tích chi tiết ảnh chụp sổ thu viết tay Hình 1-1. | Giảng viên, Toàn bộ thành viên |
 | [SRS.md](./SRS.md) | Tài liệu Đặc tả Yêu cầu Phần mềm chính thức: các tác nhân (Actors), phân hệ chức năng v1.0, yêu cầu phi chức năng (NFRs), và tiêu chí nghiệm thu. | BA, QA Tester, Dev Lead |
-| [architecture.md](./architecture.md) | Kiến trúc hệ thống phân tầng (Presentation $\rightarrow$ Security $\rightarrow$ Service $\rightarrow$ Persistence $\rightarrow$ Database); các nguyên tắc thiết kế và quyết định công nghệ then chốt (Java 25 LTS, Spring Boot 3.4.5, PostgreSQL). | Backend Dev, Tech Lead |
+| [architecture.md](./architecture.md) | Kiến trúc hệ thống phân tầng (Presentation $\rightarrow$ Security $\rightarrow$ Service $\rightarrow$ Persistence $\rightarrow$ Database); các nguyên tắc thiết kế và quyết định công nghệ then chốt (Java 25 LTS, Spring Boot 3.5.16, PostgreSQL). | Backend Dev, Tech Lead |
 | [erd.md](./erd.md) | Mô hình CSDL quan hệ gồm 11 bảng chuẩn: `users`, `apartments`, `households`, `residents`, `fee_types`, `campaign_funds`, `invoices`, `invoice_items`, `fund_contributions`, `receipts`, `audit_logs`. | Data Engineer, Backend Dev |
 | [workflows.md](./workflows.md) | Biểu đồ tuần tự (Sequence Diagram) và lưu đồ (Flowchart) của **4 luồng nghiệp vụ chính**: Đăng ký/đăng nhập, Tạo khoản thu, Thu phí & phát hành biên lai, Thống kê báo cáo. | Frontend Dev, Tester, BA |
 

@@ -6,12 +6,12 @@
 
 ## 🎯 1. TỔNG QUAN VAI TRÒ & SẢN PHẨM BÀN GIAO (DELIVERABLES)
 
-- **Vai trò chính:** Thiết lập môi trường kiểm thử tự động, áp dụng phương pháp luận **Shift-Left Testing** (chuẩn bị khung test và dữ liệu giả lập ngay từ Ngày 1 song song với Dev), lập trình bộ ca kiểm thử đơn vị theo đồ thị CFG (5 Basis Paths), ca kiểm thử tham số hóa theo Bảng quyết định (6 Rules), kiểm thử tích hợp `MockMvc` và đo lường độ bao phủ mã nguồn $\ge 85\%$ nộp cho Bộ môn CNPM (SoICT / HUST).
-- **Tổng thời gian cam kết:** **20 giờ làm việc** (4 Story Points).
+- **Vai trò chính:** Thiết lập môi trường kiểm thử tự động, áp dụng phương pháp luận **Shift-Left Testing** (chuẩn bị khung test và dữ liệu giả lập ngay từ Ngày 1 song song với Dev), lập trình bộ ca kiểm thử đơn vị theo đồ thị CFG (các Basis Paths theo CFG đã chốt), ca kiểm thử tham số hóa theo Bảng quyết định (6 Rules), kiểm thử tích hợp `MockMvc` và đo lường độ bao phủ mã nguồn $\ge 85\%$ nộp cho Bộ môn CNPM (SoICT / HUST).
+- **Tổng thời gian cam kết:** **24 giờ ước lượng** (5 Story Points).
 - **Quyền quản trị mã nguồn:**
   - `src/test/java/com/bluemoon/bfms/` (Toàn bộ các lớp kiểm thử JUnit 5 & Mockito).
   - `src/test/resources/application-test.yml` (Cấu hình môi trường test độc lập).
-  - Báo cáo chất lượng: [`docs/SPRINT_1_TEST_REPORT.md`](../SPRINT_1_TEST_REPORT.md).
+  - Báo cáo chất lượng: `docs/sprints/sprint-1/SPRINT_1_TEST_REPORT.md` (sản phẩm dự kiến).
 
 ---
 
@@ -32,14 +32,14 @@
 - **Mã nhánh Git:** `feature/issue-16-auth-cfg-basis-path-tests`
 - **File cần tạo:** `src/test/java/com/bluemoon/bfms/service/AuthServiceTest.java`
 - **Quy trình thực thi:**
-  1. **Ngày 2:** Tạo trước khung kiểm thử (Test Stubs) chứa sẵn 5 hàm `@Test` rỗng tương ứng 5 Basis Paths đã chứng minh trong [`kiem_thu_hoc_thuat_cfg_decision_table.md`](./kiem_thu_hoc_thuat_cfg_decision_table.md):
+  1. **Ngày 2:** Tạo trước khung kiểm thử (Test Stubs) chứa sẵn các khung test có kỳ vọng rõ ràng tương ứng các tình huống yêu cầu; chốt Basis Paths theo mã cuối như hướng dẫn trong [`kiem_thu_hoc_thuat_cfg_decision_table.md`](./kiem_thu_hoc_thuat_cfg_decision_table.md):
      - `testPath1_UserNotFound()`
      - `testPath2_AccountLocked()`
      - `testPath3_WrongPassword5Times_LockedNow()`
      - `testPath4_WrongPasswordUnder5Times_BadCredentials()`
      - `testPath5_LoginSuccess_ResetAttempts()`
   2. **Ngày 3:** Ngay khi Hoà vừa push code `AuthService.java`, Huy ráp code vào khung test stubs và chạy kiểm thử ngay lập tức (phản hồi bug cho Hoà fix ngay trong ngày).
-  3. Bổ sung 2 ca kiểm thử biên: Tài khoản bị vô hiệu hóa (`is_active = false`) và tự động giải phóng khóa khi hết 15 phút.
+  3. Bổ sung đầy đủ ca biên: vô hiệu hóa, reset, trước/đúng/sau thời điểm hết khóa theo tài liệu CFG.
 
 ---
 
@@ -64,7 +64,7 @@
 - **File cần tạo:**
   - `src/test/java/com/bluemoon/bfms/controller/AuthControllerIntegrationTest.java`: Dùng `MockMvc` gửi request đăng nhập POST form, kiểm tra mã HTTP 302 chuyển hướng thành công.
   - Chạy đo lường độ bao phủ (Line Coverage $\ge 85\%$).
-  - Đóng gói báo cáo đo lường chất lượng: `docs/SPRINT_1_TEST_REPORT.md`.
+  - Đóng gói báo cáo đo lường chất lượng: `docs/sprints/sprint-1/SPRINT_1_TEST_REPORT.md`.
 
 ---
 
@@ -72,7 +72,7 @@
 
 - [ ] **Ngày 1 (31/10):** Cấu hình `application-test.yml` và bộ dữ liệu fixture mẫu (Shift-Left khởi động).
 - [ ] **Ngày 2 (01/11):** Vẽ đồ thị CFG và dựng trước khung Test Stubs rỗng cho `AuthServiceTest`.
-- [ ] **Ngày 3 (02/11):** Ráp test thật vào `AuthService` của Hoà vừa push. Xác nhận 5 Basis Paths pass xanh.
+- [ ] **Ngày 3 (02/11):** Ráp test thật vào `AuthService` của Hoà vừa push. Xác nhận các Basis Paths theo CFG đã chốt pass xanh.
 - [ ] **Ngày 4 (03/11):** Thiết kế Bảng quyết định 6 Rules cho Căn hộ; viết trước khung `@ParameterizedTest`.
 - [ ] **Ngày 5 (04/11):** Chạy bộ test Bảng quyết định trên `ApartmentService` của Sơn; bắt và báo các lỗi biên.
 - [ ] **Ngày 6 (05/11):** Viết `MockMvc` Integration Test cho Controller; kiểm tra form đăng nhập và route bảo mật.
@@ -95,5 +95,11 @@ git add src/test/
 git commit -m "test(#15): setup independent test environment and mock fixtures"
 git push origin feature/issue-15-test-setup-shift-left
 
-# 4. Tạo Pull Request trên GitHub để Hoà duyệt
+# 4. Tạo PR để Sơn hoặc Hoà duyệt; không tự duyệt
 ```
+
+> Phân công/ước lượng hiện hành và task chủ hộ bổ sung: xem [quy chuẩn](../../PROJECT_CONVENTIONS.md) và phần “Điều chỉnh Sprint 1” trong [backlog](github_issues_backlog.md). Các task lớn trong cẩm nang là gói cha; giao các phần việc 2–4 giờ trong backlog.
+
+### QA-05 và nghiệm thu coverage
+
+Bổ sung 4h/1 SP ngày 04–05/11: kiểm tra hồ sơ, CCCD/SĐT, lịch sử, rollback và hai lần đổi chủ đồng thời trên PostgreSQL (backlog #22). Nghiệm thu chạy `clean verify -Psprint1-quality`, ngưỡng line coverage >=85% gộp Service/Controller; đính kèm báo cáo và UAT.

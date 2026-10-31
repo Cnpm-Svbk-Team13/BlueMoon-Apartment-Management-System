@@ -7,7 +7,7 @@
 ## 🎯 1. TỔNG QUAN VAI TRÒ & SẢN PHẨM BÀN GIAO (DELIVERABLES)
 
 - **Vai trò chính:** Thiết kế và xây dựng toàn bộ giao diện người dùng Thymeleaf đồng bộ, hiện đại, responsive theo nhận diện thương hiệu BlueMoon, bao gồm Master Layout, màn hình Đăng nhập (tích hợp CSRF & thông báo lỗi), màn hình Quản lý Tài khoản BQT và màn hình Quản lý Căn hộ 30 tầng.
-- **Tổng thời gian cam kết:** **24 giờ làm việc** (6 Story Points).
+- **Tổng thời gian cam kết:** **28 giờ ước lượng** (7 Story Points).
 - **Quyền quản trị mã nguồn:**
   - `src/main/resources/templates/` (Toàn bộ các file HTML Thymeleaf).
   - `src/main/resources/static/` (CSS, JavaScript, hình ảnh logo).
@@ -37,9 +37,9 @@
   1. Tích hợp Form POST chuẩn mực với Spring Security: `th:action="@{/login}"`.
   2. Bắt buộc có token chống tấn công CSRF: `<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>`.
   3. Xử lý thông báo lỗi bằng tiếng Việt rõ ràng qua Thymeleaf:
-     - Sai tài khoản hoặc mật khẩu: Hiển thị cảnh báo số lần thử còn lại (ví dụ: *"Bạn đã nhập sai 2/5 lần"*).
-     - Tài khoản bị khóa 15 phút: Hiển thị banner màu đỏ cảnh báo tài khoản bị tạm khóa vì nhập sai 5 lần liên tiếp.
-     - Tài khoản bị vô hiệu hóa: Thông báo *"Tài khoản đã bị đình chỉ hoạt động"*.
+     - Sai tài khoản hoặc mật khẩu: hiển thị lỗi chung "Tên đăng nhập hoặc mật khẩu không chính xác".
+     - Tài khoản bị khóa: trả thông báo thất bại chung; backend vẫn khóa 15 phút sau lần sai thứ 5.
+     - Tài khoản vô hiệu hóa: chặn đăng nhập và trả thông báo thất bại chung.
 
 ---
 
@@ -93,5 +93,11 @@ git add src/main/resources/templates/fragments/layout.html src/main/resources/st
 git commit -m "feat(#11): create responsive thymeleaf master layout with sidebar and header"
 git push origin feature/issue-11-master-layout-thymeleaf
 
-# 4. Mở Pull Request trên GitHub để Hoà duyệt
+# 4. Mở PR để Sơn hoặc Hoà duyệt; không tự duyệt
 ```
+
+> Phân công/ước lượng hiện hành và task chủ hộ bổ sung: xem [quy chuẩn](../../PROJECT_CONVENTIONS.md) và phần “Điều chỉnh Sprint 1” trong [backlog](github_issues_backlog.md). Các task lớn trong cẩm nang là gói cha; giao các phần việc 2–4 giờ trong backlog.
+
+### FE-05 — hồ sơ/lịch sử chủ hộ
+
+Bổ sung 4h/1 SP ngày 04–05/11: form họ tên, CCCD, SĐT, email và danh sách lịch sử; hợp đồng dữ liệu theo BE-03, tiêu chí #21 trong backlog. Thông báo login trả lỗi chung, không hiển thị thông tin để dò username.

@@ -8,8 +8,8 @@
 
 | Mã US | Tên User Story | Ưu tiên | Ước lượng | Phụ thuộc | Giải quyết RAW / NFR |
 |:---:|---|:---:|:---:|:---:|---|
-| **US-SEC-01** | Quản lý Tài khoản Ban Quản trị & Phân quyền RBAC | **HIGH** | 4 Story Points | Không có | NFR-001, Bất biến 1 (Core Workflow 1) |
-| **US-SEC-02** | Xác thực Người dùng, Đăng nhập hệ thống & Đổi mật khẩu | **HIGH** | 4 Story Points | US-SEC-01 | NFR-001, Bất biến 1 (Core Workflow 1) |
+| **US-SEC-01** | Quản lý Tài khoản Ban Quản trị & Phân quyền RBAC | **HIGH** | 4 Story Points | Không có | NFR-02, Core Workflow 1 (quản lý tài khoản/xác thực) |
+| **US-SEC-02** | Xác thực Người dùng, Đăng nhập hệ thống & Đổi mật khẩu | **HIGH** | 4 Story Points | US-SEC-01 | NFR-02, Core Workflow 1 (quản lý tài khoản/xác thực) |
 | **US-001** | Quản lý Thông tin Căn hộ và Chủ hộ | **HIGH** | 5 Story Points | Không có | RAW-001, RAW-002 |
 | **US-002** | Thêm mới và Quản lý Chi tiết Nhân khẩu | **HIGH** | 6 Story Points | US-001 | RAW-003, RAW-004, RAW-005, RAW-007, RAW-008 |
 | **US-003** | Quản lý Trạng thái và Biến động Cư trú | **MEDIUM** | 4 Story Points | US-002 | RAW-006 (Luật Cư trú 2020) |
@@ -31,7 +31,7 @@
   > Là một Quản trị viên Ban Quản trị (Admin), tôi muốn tạo mới, cập nhật thông tin và phân quyền vai trò cho các thành viên BQT (`ROLE_ADMIN`, `ROLE_ACCOUNTANT`, `ROLE_CASHIER`, `ROLE_RESIDENT`) để bảo đảm hệ thống kiểm soát quyền truy cập chặt chẽ theo nguyên tắc đặc quyền tối thiểu.
 - **Mô tả (Description):** Phân hệ quản trị tài khoản nội bộ BQT, kích hoạt/vô hiệu hóa tài khoản và thiết lập quyền hạn cho từng nhân sự vận hành.
 - **Ưu tiên:** **HIGH** | **Ước lượng:** **4 story points** | **Phụ thuộc:** Không có
-- **Ghi chú (Notes):** Thuộc Epic 0 (System Administration & Security). Tương ứng US-001 trong đề bài Sprint 1.
+- **Ghi chú (Notes):** Thuộc Epic 0 (System Administration & Security). Ghi chú lịch sử: từng được gọi US-001 trong đề bài Sprint 1; mã hiện hành là US-SEC-01.
 - **Acceptance Criteria (AC):**
   1. Chỉ tài khoản có vai trò `ROLE_ADMIN` mới có quyền truy cập vào chức năng Quản lý tài khoản.
   2. Bắt buộc nhập đầy đủ: Tên đăng nhập (duy nhất, không trùng lặp), Họ và tên, Email hợp lệ, Số điện thoại (10 số) và Vai trò.
@@ -49,10 +49,10 @@
   > Là một Thành viên Ban Quản trị hoặc Cư dân, tôi muốn đăng nhập vào hệ thống bằng tài khoản và mật khẩu được cấp, được bảo vệ khỏi tấn công brute-force và có thể đổi mật khẩu cá nhân để bảo vệ an toàn thông tin tài khoản.
 - **Mô tả (Description):** Module xác thực an ninh cốt lõi (Core Workflow 1), xử lý đăng nhập, quản lý phiên làm việc (Session), kiểm soát số lần đăng nhập sai và cung cấp form đổi mật khẩu.
 - **Ưu tiên:** **HIGH** | **Ước lượng:** **4 story points** | **Phụ thuộc:** US-SEC-01
-- **Ghi chú (Notes):** Thuộc Epic 0. Tương ứng US-002 trong đề bài Sprint 1 / US-005 trong WBS cũ / Core Workflow 1 trong AGENTS.md.
+- **Ghi chú (Notes):** Thuộc Epic 0. Ghi chú lịch sử: US-002 trong đề bài Sprint 1 / US-005 trong WBS cũ. Mã hiện hành US-SEC-02, thuộc Core Workflow 1 trong AGENTS.md.
 - **Acceptance Criteria (AC):**
   1. Đăng nhập thành công với thông tin chính xác, chuyển hướng tới Dashboard tương ứng với vai trò của người dùng.
-  2. Nếu nhập sai mật khẩu quá 5 lần liên tiếp, hệ thống tự động khóa tài khoản tạm thời trong 15 phút (`locked_until`) để chống tấn công vét cạn (Brute-force).
+  2. Lần nhập sai mật khẩu thứ 5 liên tiếp khóa ngay 15 phút (`locked_until`). Trong hạn khóa chặn cả mật khẩu đúng, không gia hạn khóa; khi now >= locked_until xóa khóa và reset bộ đếm trước lần thử mới. Đăng nhập đúng reset bộ đếm về 0.
   3. Khi đăng nhập thất bại, hiển thị thông báo lỗi bảo mật chung ("Tên đăng nhập hoặc mật khẩu không chính xác"), không tiết lộ username có tồn tại hay không.
   4. Cung cấp chức năng Đổi mật khẩu: Yêu cầu nhập đúng mật khẩu hiện tại, mật khẩu mới tối thiểu 8 ký tự và xác nhận mật khẩu mới trùng khớp.
 - **Definition of Done (DoD):**
@@ -257,3 +257,5 @@
   2. Kiểm thử hiển thị lịch sử giao dịch chính xác.
   3. Kiểm thử xuất file Excel/PDF định dạng báo cáo.
   4. Phê duyệt kết quả UAT trực tiếp với BQT.
+
+> Quy chuẩn Sprint 1: [nguồn quyết định hiện hành](../PROJECT_CONVENTIONS.md). Mã US/AC trong tài liệu này là nguồn truy vết; ghi chú mã cũ chỉ dành cho lịch sử. US-001 bao gồm hồ sơ chủ hộ và lịch sử, không chỉ danh mục căn hộ.

@@ -7,9 +7,9 @@
 ## 📌 THÔNG TIN TỔNG QUAN SPRINT 1
 
 - **Thời gian thực hiện:** Đúng **7 ngày liên tục** (Từ **31/10/2026** đến **06/11/2026**).
-- **Dung lượng cam kết:** **30 Story Points (117 giờ làm việc)**.
-- **Sprint Goal:**  
-  > *Thiết lập hoàn chỉnh khung kiến trúc dự án **Spring Boot 3.4.5 (Java 25 LTS)** theo mô hình Pure Web, kết nối và nạp kịch bản CSDL **PostgreSQL** (vá triệt để các lỗi thiếu `start_date`/`end_date` và `version`), hiện thực hóa thành công phân hệ **Xác thực Đăng nhập, Cơ chế khóa Brute-force 15 phút sau 5 lần sai, Quản lý Tài khoản BQT & Phân quyền RBAC**, kết hợp phân hệ **Quản lý Căn hộ 30 tầng & Chủ hộ** nền tảng, đáp ứng 100% tiêu chí kiểm thử Shift-Left và chuẩn mực học thuật của Viện CNTT&TT (SoICT / HUST).*
+- **Dung lượng cam kết:** **36 Story Points (138 giờ ước lượng)**.
+- **Sprint Goal:**
+  > *Thiết lập hoàn chỉnh khung kiến trúc dự án **Spring Boot 3.5.16 (Java 25 LTS)** theo mô hình Pure Web, kết nối và nạp kịch bản CSDL **PostgreSQL** (vá triệt để các lỗi thiếu `start_date`/`end_date` và `version`), hiện thực hóa thành công phân hệ **Xác thực Đăng nhập, Cơ chế khóa Brute-force 15 phút sau 5 lần sai, Quản lý Tài khoản BQT & Phân quyền RBAC**, kết hợp phân hệ **Quản lý Căn hộ 30 tầng & Chủ hộ** nền tảng, đáp ứng 100% tiêu chí kiểm thử Shift-Left và chuẩn mực học thuật của Viện CNTT&TT (SoICT / HUST).*
 
 ---
 
@@ -19,14 +19,14 @@ Mỗi thành viên chỉ cần mở đúng tệp tài liệu hướng dẫn riê
 
 | Thành viên | Vai trò Sprint 1 | Trách nhiệm cốt lõi | Cẩm nang hành động riêng | Khối lượng |
 |---|---|---|---|:---:|
-| **TV1: Khánh** | Product Owner & Lead BA | Quản trị tiến độ Kanban, soạn 12 kịch bản UAT, trực tiếp nghiệm thu web | 📄 [**`TV1_Khanh_PO_BA.md`**](./TV1_Khanh_PO_BA.md) | 5 SP (~20h) |
-| **TV2: Sơn** | Database & Backend Dev | Kịch bản DB `V1.1`, ánh xạ Entity JPA, CRUD Căn hộ 30 tầng (`US-001`) | 📄 [**`TV2_Son_Database_Backend.md`**](./TV2_Son_Database_Backend.md) | 7 SP (~25h) |
-| **TV3: Hoà** | Tech Lead & Core Backend | Khung Spring Boot 3.4.5, Security 6, API Đăng nhập/Khóa 15 phút, Gatekeeper PR | 📄 [**`TV3_Hoa_TechLead_Security.md`**](./TV3_Hoa_TechLead_Security.md) | 8 SP (~28h) |
-| **TV4: Đức Anh** | Frontend Dev & Data Eng | Master Layout Thymeleaf, Giao diện Login, UI Căn hộ & Quản lý User | 📄 [**`TV4_DucAnh_Frontend_UI.md`**](./TV4_DucAnh_Frontend_UI.md) | 6 SP (~24h) |
-| **TV5: Huy** | QA Lead & Test Engineer | Shift-Left testing, Unit test CFG Basis Path, Decision Table, MockMvc | 📄 [**`TV5_Huy_QA_Automation.md`**](./TV5_Huy_QA_Automation.md) | 4 SP (~20h) |
+| **TV1: Khánh** | Lead BA & UAT | Hỗ trợ Kanban, soạn kịch bản và thực thi UAT; Sơn nghiệm thu nội bộ | 📄 [**`TV1_Khanh_PO_BA.md`**](./TV1_Khanh_PO_BA.md) | 4 SP (~16h) |
+| **TV2: Sơn** | Trưởng nhóm / Database & Backend Dev | Kịch bản DB `V1.1`, ánh xạ Entity JPA, CRUD Căn hộ 30 tầng (`US-001`) | 📄 [**`TV2_Son_Database_Backend.md`**](./TV2_Son_Database_Backend.md) | 13 SP (~42h) |
+| **TV3: Hoà** | Tech Lead & Core Backend | Khung Spring Boot 3.5.16, Security 6, API Đăng nhập/Khóa 15 phút, Gatekeeper PR | 📄 [**`TV3_Hoa_TechLead_Security.md`**](./TV3_Hoa_TechLead_Security.md) | 8 SP (~28h) |
+| **TV4: Đức Anh** | Frontend Dev & Data Eng | Master Layout Thymeleaf, Giao diện Login, UI Căn hộ & Quản lý User | 📄 [**`TV4_DucAnh_Frontend_UI.md`**](./TV4_DucAnh_Frontend_UI.md) | 7 SP (~28h) |
+| **TV5: Huy** | QA Lead & Test Engineer | Shift-Left testing, Unit test CFG Basis Path, Decision Table, MockMvc | 📄 [**`TV5_Huy_QA_Automation.md`**](./TV5_Huy_QA_Automation.md) | 5 SP (~24h) |
 
-> 📋 **Danh mục Thẻ Công việc Backlog:** [**`github_issues_backlog.md`**](./github_issues_backlog.md) (18 thẻ sẵn sàng đưa lên GitHub Kanban).  
-> 📐 **Chứng minh Học thuật Kiểm thử:** [**`kiem_thu_hoc_thuat_cfg_decision_table.md`**](./kiem_thu_hoc_thuat_cfg_decision_table.md) (Đồ thị CFG $V(G)=5$ và Bảng quyết định 6 Rules).
+> 📋 **Danh mục Thẻ Công việc Backlog:** [**`github_issues_backlog.md`**](./github_issues_backlog.md) (24 gói cha sẵn sàng đưa lên GitHub Kanban).
+> 📐 **Chứng minh Học thuật Kiểm thử:** [**`kiem_thu_hoc_thuat_cfg_decision_table.md`**](./kiem_thu_hoc_thuat_cfg_decision_table.md) (Thiết kế CFG chờ mã nguồn và Bảng quyết định 6 Rules).
 
 ---
 
@@ -88,14 +88,14 @@ git checkout -b feature/issue-<ID>-<mo-ta-ngan>
 Cú pháp commit bắt buộc phải gắn mã thẻ Issue:
 ```bash
 git commit -m "feat(#05): implement ApartmentService with 30 floors validation"
-git commit -m "test(#11): add 5 basis paths unit test for AuthService"
+git commit -m "test(#11): add basis paths theo CFG đã chốt unit test for AuthService"
 git commit -m "docs(#02): draft 12 uat test scenarios for sprint 1"
 ```
 
 ### 3. Đóng tác vụ qua Pull Request (Gatekeeper Protocol)
 1. Đẩy nhánh lên GitHub: `git push origin feature/issue-<ID>-<mo-ta-ngan>`.
 2. Mở Pull Request trỏ đích vào nhánh `develop`.
-3. **Người duyệt (Reviewer):** Bắt buộc là **Hoà (Tech Lead)** kiểm tra tuân thủ kiến trúc Pure Web, chạy lệnh `mvn test` pass xanh rồi mới nhấn nút **Merge**.
+3. **Người duyệt (Reviewer):** Bắt buộc là **Sơn hoặc Hoà** theo quy tắc: PR Sơn do Hoà duyệt, PR Hoà do Sơn duyệt; PR khác có ít nhất một trong hai duyệt. Không tự duyệt. Kiểm tra kiến trúc, test và CI trước khi merge; không tự động merge.
 
 ---
 
@@ -103,10 +103,14 @@ git commit -m "docs(#02): draft 12 uat test scenarios for sprint 1"
 
 | Ngày | Hoạt động Toàn đội | Sản phẩm Cuối ngày |
 |:---:|---|---|
-| **Ngày 1 (31/10)** | Họp Planning 45p. Hoà làm khung App, Sơn làm SQL `V1.1`, Huy setup test, Khánh dựng Kanban & phác thảo UAT. | App biên dịch sạch, DB `V1.1` sẵn sàng, test setup xong. |
+| **Ngày 1 (31/10)** | Họp Planning 45p. Hoà làm khung App, Sơn làm SQL `V1.1`, Huy setup test, Sơn điều phối; Khánh hỗ trợ Kanban & phác thảo UAT. | App biên dịch sạch, DB `V1.1` sẵn sàng, test setup xong. |
 | **Ngày 2 (01/11)** | Sơn nạp DB & ánh xạ JPA Entity; Hoà cấu hình Security 6; Đức Anh làm Master Layout; Huy dựng khung test stubs. | Kết nối DB PostgreSQL thành công; Layout HTML chuẩn; Security filter chạy. |
-| **Ngày 3 (02/11)** | Hoà viết `AuthService` khóa 15 phút sau 5 lần sai; Đức Anh làm UI Login; Huy ráp test 5 Basis Paths chạy thật. | Logic Đăng nhập pass 100% test; Màn hình Login HTML sẵn sàng. |
+| **Ngày 3 (02/11)** | Hoà viết `AuthService` khóa 15 phút sau 5 lần sai; Đức Anh làm UI Login; Huy ráp test các Basis Paths theo CFG đã chốt chạy thật. | Logic Đăng nhập pass 100% test; Màn hình Login HTML sẵn sàng. |
 | **Ngày 4 (03/11)** | Đức Anh & Hoà ghép UI Login với Security; Khánh kiểm thử đăng nhập trên web; Sơn bắt đầu code `ApartmentService`. | Đăng nhập trên web thành công; Sơn bắt đầu logic Căn hộ. |
 | **Ngày 5 (04/11)** | Sơn hoàn thành CRUD Căn hộ 30 tầng; Đức Anh làm UI Căn hộ; Huy chạy test Bảng quyết định bắt lỗi biên. | Backend Căn hộ hoàn tất; Giao diện Căn hộ sẵn sàng; Test biên pass 100%. |
 | **Ngày 6 (05/11)** | Đức Anh ghép nối UI Căn hộ với Controller; Khánh test UAT trên web; Huy viết `MockMvc` Integration Test. | Thao tác Thêm/Sửa Căn hộ chạy mượt trên web; Integration test pass. |
-| **Ngày 7 (06/11)** | **Code Freeze lúc 12:00 trưa**. Huy đo Coverage $\ge 85\%$. Khánh tổng kết biên bản UAT. Họp Demo Sprint Review & Retrospective. | 100% ca kiểm thử pass xanh; Biên bản nghiệm thu hoàn tất; Đóng gói Deliverables D1–D5. |
+| **Ngày 7 (06/11)** | **Code Freeze lúc 12:00 trưa**. Huy đo Coverage $\ge 85\%$. Khánh tổng kết UAT; Sơn nghiệm thu nội bộ và chủ trì Demo Sprint Review & Retrospective. | 100% ca kiểm thử pass xanh; Biên bản nghiệm thu hoàn tất; Đóng gói Deliverables D1–D5. |
+
+## Quyết định hiện hành
+
+Xem [quy chuẩn](../../PROJECT_CONVENTIONS.md) và phần điều chỉnh backlog: Sơn là trưởng nhóm; Khánh BA/UAT. Bổ sung DB-02, BE-03, FE-05, QA-05, BA-03 và PM-03. Tổng 138h/36 SP, gồm 24 gói cha chia thành phần việc 2–4h. Ngày 31/10 soạn UAT chủ hộ; 01–04/11 hoàn thành dữ liệu/nghiệp vụ; 04–05/11 ghép UI/test; 06/11 nghiệm thu toàn bộ US-001. CI nền tảng xanh chưa phải hoàn thành Sprint.

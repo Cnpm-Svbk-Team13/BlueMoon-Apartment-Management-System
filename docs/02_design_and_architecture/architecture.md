@@ -80,7 +80,7 @@ flowchart TD
 ## 4. Quyết định Thiết kế Kỹ thuật Then chốt (Key Architectural Decisions)
 
 1. **Nền tảng Ngôn ngữ & Framework:** 
-   - **Java 25 LTS** cùng **Spring Boot 3.4.5**: Tối ưu hiệu năng, bảo mật lâu dài và tận dụng tính năng Virtual Threads cho tải I/O cao.
+   - **Java 25 LTS** cùng **Spring Boot 3.5.16**: Tối ưu hiệu năng, bảo mật lâu dài và tận dụng tính năng Virtual Threads cho tải I/O cao.
 2. **Cơ sở dữ liệu:**
    - **PostgreSQL 16/17** triển khai linh hoạt trên **Google Cloud Console** (hỗ trợ nhóm làm việc từ xa) kết hợp **Docker Compose** (cho phép dev offline độc lập).
    - Kiểm thử tự động độc lập với **H2 In-Memory Database**.
