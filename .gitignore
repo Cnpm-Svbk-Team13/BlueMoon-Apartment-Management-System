@@ -26,7 +26,7 @@ Thumbs.db
 # Logs
 *.log
 
-# Local agent configuration
-.agents/
+# Share repository skills; keep local agent history and plugins private.
+.agents/*
+!.agents/skills/
 docs/source_files/
-AGENTS.md

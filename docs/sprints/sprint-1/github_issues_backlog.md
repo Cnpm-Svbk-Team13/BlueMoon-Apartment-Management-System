@@ -3,12 +3,12 @@
 ### Định dạng chuẩn hóa theo Quy tắc Quản trị Dự án `AGENTS.md` (Mục 7)
 
 > **Hướng dẫn sử dụng:**  
-> Thành viên phụ trách (hoặc Khánh - PM) copy từng mục dưới đây để tạo Issue mới trong tab **Issues** trên GitHub repository của nhóm, sau đó gắn thẻ tương ứng lên cột **To Do** trên bảng **GitHub Projects (Kanban)**.
+> Thành viên phụ trách (Sơn điều phối, Khánh hỗ trợ BA) copy từng mục dưới đây để tạo Issue mới trong tab **Issues** trên GitHub repository của nhóm, sau đó gắn thẻ tương ứng lên cột **To Do** trên bảng **GitHub Projects (Kanban)**.
 
 ---
 
 ### Issue #01: `[Sprint 1][PM] Vận hành Sprint 1 & Quản trị Tiến độ Kanban`
-- **Người phụ trách (Assignee):** Phạm Nam Khánh (TV1)
+- **Người phụ trách (Assignee):** Nguyễn Xuân Sơn (TV2; Khánh hỗ trợ Kanban)
 - **Ước lượng:** 6 giờ (2 SP)
 - **Mã nhánh Git:** `feature/issue-01-scrum-kanban-setup`
 - **Traceability:** Links to `PRJ-BLUEMOON-2026` / WBS Task 1.3
@@ -16,19 +16,19 @@
 - **Prerequisites:** Không có
 - **Acceptance Criteria (Checklist):**
   - [ ] Bảng GitHub Projects được thiết lập đầy đủ 4 cột: `Backlog`, `To Do`, `In Progress`, `Done`.
-  - [ ] Toàn bộ 18 issues từ backlog được nạp lên bảng và gán Assignee chính xác cho 5 thành viên.
+  - [ ] Toàn bộ gói cha và phần việc 2–4 giờ từ backlog được nạp lên bảng và gán Assignee chính xác cho 5 thành viên.
   - [ ] Tổ chức Daily Standup 10 phút hàng ngày, ghi nhận tiến độ theo Burndown Chart.
   - [ ] Biên bản họp Sprint Review và Retrospective được lập đầy đủ vào ngày 06/11.
 
 ---
 
 ### Issue #02: `[Sprint 1][BA] Xây dựng 12 Kịch bản UAT & Báo cáo Nghiệm thu Web`
-- **Người phụ trách (Assignee):** Phạm Nam Khánh (TV1)
+- **Người phụ trách (Assignee):** Phạm Nam Khánh (TV1; BA/UAT, Sơn nghiệm thu nội bộ)
 - **Ước lượng:** 14 giờ (3 SP)
 - **Mã nhánh Git:** `feature/issue-02-uat-scenarios-and-testing`
 - **Traceability:** Links to `RAW-001`, `RAW-002`, `NFR-02`, `US-001`, `US-SEC-02`
 - **Layer Impact:** Docs / UAT Testing
-- **Prerequisites:** Giao diện hoàn thành từ Issue #12 và Issue #14
+- **Prerequisites:** AC đã chốt để soạn kịch bản ngay; thực thi UAT sau #12, #14, #20, #21, #22
 - **Acceptance Criteria (Checklist):**
   - [ ] Tệp `docs/sprints/sprint-1/UAT_SCENARIOS_SPRINT_1.md` gồm 12 kịch bản chi tiết được commit lên Git.
   - [ ] Thực hiện kiểm thử thủ công trực tiếp trên trình duyệt web cho chức năng Đăng nhập và CRUD Căn hộ.
@@ -84,7 +84,7 @@
 
 ---
 
-### Issue #06: `[Sprint 1][ARCH] Khởi tạo Khung Kiến trúc Spring Boot 3.4.5 & Pure Web`
+### Issue #06: `[Sprint 1][ARCH] Khởi tạo Khung Kiến trúc Spring Boot 3.5.16 & Pure Web`
 - **Người phụ trách (Assignee):** Phạm Thái Hoà (TV3)
 - **Ước lượng:** 5 giờ (1 SP)
 - **Mã nhánh Git:** `feature/issue-06-architecture-framework-setup`
@@ -122,7 +122,7 @@
 - **Layer Impact:** Service / Security
 - **Prerequisites:** Issue #07 (Security Config)
 - **Acceptance Criteria (Checklist):**
-  - [ ] Khớp 100% logic Đồ thị CFG $V(G)=5$ và 5 Basis Paths.
+  - [ ] Khớp 100% logic Đồ thị CFG theo mã nguồn đã chốt và các Basis Paths theo CFG đã chốt.
   - [ ] Nhập sai liên tiếp 5 lần $\rightarrow$ Tự động gán `locked_until = now() + 15m`.
   - [ ] Khi hết hạn 15 phút $\rightarrow$ Tự động reset bộ đếm `failed_attempts = 0`.
   - [ ] Tài khoản có `is_active = false` bị chặn ngay lập tức, không băm BCrypt mật khẩu.
@@ -238,16 +238,16 @@
 - **Mã nhánh Git:** `feature/issue-16-auth-cfg-basis-path-tests`
 - **Traceability:** Links to `US-SEC-02`, SoICT Chapter 8
 - **Layer Impact:** Unit Test (JUnit 5 / Mockito)
-- **Prerequisites:** Issue #08 (AuthService) & Issue #15 (Test Setup)
+- **Prerequisites:** Thiết kế test từ AC ngay; chạy test sau #08 và #15
 - **Acceptance Criteria (Checklist):**
   - [ ] Dựng trước khung Test Stubs từ Ngày 2.
-  - [ ] Bao phủ 100% 5 Basis Paths của phương thức `authenticate()`:
+  - [ ] Bao phủ 100% các Basis Paths theo CFG đã chốt của phương thức `authenticate()`:
     * `TC_LOGIN_BP_01`: User không tồn tại $\rightarrow$ `USER_NOT_FOUND`.
     * `TC_LOGIN_BP_02`: Đang bị khóa $\rightarrow$ `ACCOUNT_LOCKED`.
     * `TC_LOGIN_BP_03`: Sai lần thứ 5 $\rightarrow$ `LOCKED_NOW`.
     * `TC_LOGIN_BP_04`: Sai dưới 5 lần $\rightarrow$ `BAD_CREDENTIALS`.
     * `TC_LOGIN_BP_05`: Đúng mật khẩu $\rightarrow$ `SUCCESS`.
-  - [ ] Bao phủ 2 ca kiểm thử biên: Tài khoản vô hiệu hóa và tự động giải phóng khóa sau 15 phút.
+  - [ ] Bao phủ tài khoản vô hiệu hóa, reset bộ đếm, thử trước/đúng/sau hạn khóa theo tài liệu CFG.
   - [ ] 100% ca kiểm thử pass xanh.
 
 ---
@@ -279,4 +279,4 @@
 - **Acceptance Criteria (Checklist):**
   - [ ] Bộ ca kiểm thử `MockMvc` cho form đăng nhập và chặn các route yêu cầu xác thực.
   - [ ] Đo lường độ bao phủ dòng lệnh (Line Coverage) đạt $\ge 85\%$ cho tầng Service và Controller.
-  - [ ] Xuất báo cáo tổng kết chất lượng Sprint 1: `docs/SPRINT_1_TEST_REPORT.md`.
+  - [ ] Xuất báo cáo tổng kết chất lượng Sprint 1: `docs/sprints/sprint-1/SPRINT_1_TEST_REPORT.md`.

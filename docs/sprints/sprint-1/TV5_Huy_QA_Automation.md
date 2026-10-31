@@ -6,12 +6,12 @@
 
 ## 🎯 1. TỔNG QUAN VAI TRÒ & SẢN PHẨM BÀN GIAO (DELIVERABLES)
 
-- **Vai trò chính:** Thiết lập môi trường kiểm thử tự động, áp dụng phương pháp luận **Shift-Left Testing** (chuẩn bị khung test và dữ liệu giả lập ngay từ Ngày 1 song song với Dev), lập trình bộ ca kiểm thử đơn vị theo đồ thị CFG (5 Basis Paths), ca kiểm thử tham số hóa theo Bảng quyết định (6 Rules), kiểm thử tích hợp `MockMvc` và đo lường độ bao phủ mã nguồn $\ge 85\%$ nộp cho Bộ môn CNPM (SoICT / HUST).
+- **Vai trò chính:** Thiết lập môi trường kiểm thử tự động, áp dụng phương pháp luận **Shift-Left Testing** (chuẩn bị khung test và dữ liệu giả lập ngay từ Ngày 1 song song với Dev), lập trình bộ ca kiểm thử đơn vị theo đồ thị CFG (các Basis Paths theo CFG đã chốt), ca kiểm thử tham số hóa theo Bảng quyết định (6 Rules), kiểm thử tích hợp `MockMvc` và đo lường độ bao phủ mã nguồn $\ge 85\%$ nộp cho Bộ môn CNPM (SoICT / HUST).
 - **Tổng thời gian cam kết:** **20 giờ làm việc** (4 Story Points).
 - **Quyền quản trị mã nguồn:**
   - `src/test/java/com/bluemoon/bfms/` (Toàn bộ các lớp kiểm thử JUnit 5 & Mockito).
   - `src/test/resources/application-test.yml` (Cấu hình môi trường test độc lập).
-  - Báo cáo chất lượng: [`docs/SPRINT_1_TEST_REPORT.md`](../SPRINT_1_TEST_REPORT.md).
+  - Báo cáo chất lượng: [`docs/sprints/sprint-1/SPRINT_1_TEST_REPORT.md`](./SPRINT_1_TEST_REPORT.md).
 
 ---
 
@@ -32,7 +32,7 @@
 - **Mã nhánh Git:** `feature/issue-16-auth-cfg-basis-path-tests`
 - **File cần tạo:** `src/test/java/com/bluemoon/bfms/service/AuthServiceTest.java`
 - **Quy trình thực thi:**
-  1. **Ngày 2:** Tạo trước khung kiểm thử (Test Stubs) chứa sẵn 5 hàm `@Test` rỗng tương ứng 5 Basis Paths đã chứng minh trong [`kiem_thu_hoc_thuat_cfg_decision_table.md`](./kiem_thu_hoc_thuat_cfg_decision_table.md):
+  1. **Ngày 2:** Tạo trước khung kiểm thử (Test Stubs) chứa sẵn 5 hàm `@Test` rỗng tương ứng các Basis Paths theo CFG đã chốt đã chứng minh trong [`kiem_thu_hoc_thuat_cfg_decision_table.md`](./kiem_thu_hoc_thuat_cfg_decision_table.md):
      - `testPath1_UserNotFound()`
      - `testPath2_AccountLocked()`
      - `testPath3_WrongPassword5Times_LockedNow()`
@@ -64,7 +64,7 @@
 - **File cần tạo:**
   - `src/test/java/com/bluemoon/bfms/controller/AuthControllerIntegrationTest.java`: Dùng `MockMvc` gửi request đăng nhập POST form, kiểm tra mã HTTP 302 chuyển hướng thành công.
   - Chạy đo lường độ bao phủ (Line Coverage $\ge 85\%$).
-  - Đóng gói báo cáo đo lường chất lượng: `docs/SPRINT_1_TEST_REPORT.md`.
+  - Đóng gói báo cáo đo lường chất lượng: `docs/sprints/sprint-1/SPRINT_1_TEST_REPORT.md`.
 
 ---
 
@@ -72,7 +72,7 @@
 
 - [ ] **Ngày 1 (31/10):** Cấu hình `application-test.yml` và bộ dữ liệu fixture mẫu (Shift-Left khởi động).
 - [ ] **Ngày 2 (01/11):** Vẽ đồ thị CFG và dựng trước khung Test Stubs rỗng cho `AuthServiceTest`.
-- [ ] **Ngày 3 (02/11):** Ráp test thật vào `AuthService` của Hoà vừa push. Xác nhận 5 Basis Paths pass xanh.
+- [ ] **Ngày 3 (02/11):** Ráp test thật vào `AuthService` của Hoà vừa push. Xác nhận các Basis Paths theo CFG đã chốt pass xanh.
 - [ ] **Ngày 4 (03/11):** Thiết kế Bảng quyết định 6 Rules cho Căn hộ; viết trước khung `@ParameterizedTest`.
 - [ ] **Ngày 5 (04/11):** Chạy bộ test Bảng quyết định trên `ApartmentService` của Sơn; bắt và báo các lỗi biên.
 - [ ] **Ngày 6 (05/11):** Viết `MockMvc` Integration Test cho Controller; kiểm tra form đăng nhập và route bảo mật.
@@ -97,3 +97,5 @@ git push origin feature/issue-15-test-setup-shift-left
 
 # 4. Tạo Pull Request trên GitHub để Hoà duyệt
 ```
+
+> Phân công/ước lượng hiện hành và task chủ hộ bổ sung: xem [quy chuẩn](../../PROJECT_CONVENTIONS.md) và phần “Điều chỉnh Sprint 1” trong [backlog](github_issues_backlog.md). Các task lớn trong cẩm nang là gói cha; giao các phần việc 2–4 giờ trong backlog.

@@ -2,20 +2,20 @@
 
 **BlueMoon BFMS** (BlueMoon Facility Management System) là phần mềm web hỗ trợ quản lý thu phí và vận hành chung cư, phục vụ Ban quản trị, bộ phận Kế toán và cư dân.
 
-> **Trạng thái dự án:** Khung xương mã nguồn (Scaffold), tài liệu đặc tả (SRS, Proposals, Workflows) và cấu hình môi trường đã được hoàn tất trên nền tảng **Java 25 LTS**, **Spring Boot 3.4.5** và **PostgreSQL**.
+> **Trạng thái dự án:** Khung xương mã nguồn (Scaffold), tài liệu đặc tả (SRS, Proposals, Workflows) và cấu hình môi trường đã được hoàn tất trên nền tảng **Java 25 LTS**, **Spring Boot 3.5.16** và **PostgreSQL**.
 
 ## Mục tiêu
 
 - Cung cấp **Trang Quản trị** để quản lý căn hộ, cư dân, khoản phí, hóa đơn và báo cáo.
-- Cung cấp **Cổng Cư dân** để tra cứu công nợ/hóa đơn và gửi phản ánh (ticket).
+- Định hướng v2.0: cung cấp **Cổng Cư dân** để tra cứu công nợ/hóa đơn và gửi phản ánh (ticket).
 - Tập trung nghiệp vụ và dữ liệu trong một ứng dụng web có phân tầng rõ ràng (Controller → Service → Repository).
 
 ## Công nghệ nền tảng
 
 | Thành phần | Công nghệ |
 |---|---|
-| Ngôn ngữ | Java 25 LTS (tương thích JDK 21+) |
-| Framework Backend | Spring Boot 3.4.5, Spring MVC |
+| Ngôn ngữ | Java 25 LTS |
+| Framework Backend | Spring Boot 3.5.16, Spring MVC |
 | Giao diện máy chủ | Thymeleaf |
 | Xác thực & Bảo mật | Spring Security (RBAC, BCrypt) |
 | Persistence | Spring Data JPA / Hibernate |
@@ -43,25 +43,25 @@ Cổng Cư dân ───────┘                            │
 
 ## Trạng thái triển khai
 
-- [x] Thống nhất công nghệ nền tảng (Java 25 LTS, Spring Boot 3.4.5, PostgreSQL).
+- [x] Thống nhất công nghệ nền tảng (Java 25 LTS, Spring Boot 3.5.16, PostgreSQL).
 - [x] Tạo cấu trúc Maven chuẩn, Maven Wrapper và Spring Boot application scaffold.
 - [x] Cấu hình DataSource linh hoạt hỗ trợ biến môi trường Google Cloud và Docker Compose.
 - [x] Tích hợp cấu hình kiểm thử độc lập với H2 In-Memory Database.
-- [ ] Xây dựng Database Schema và migration scripts cho 30 tầng căn hộ & cư dân.
-- [ ] Phát triển các luồng nghiệp vụ Quản trị (Admin) và Cổng Cư dân (Portal).
+- [x] Soạn Database Schema và migration scripts (chưa xác nhận chạy PostgreSQL thực tế) cho 30 tầng căn hộ & cư dân.
+- [ ] Phát triển các luồng nghiệp vụ Quản trị (Admin); Portal để v2.0.
 - [ ] Bổ sung kiểm thử tự động (Unit Test / Integration Test) và hoàn thiện giao diện.
 
 ## Bắt đầu phát triển
 
 ### 1. Yêu cầu môi trường
 
-- JDK 25 LTS (hoặc JDK 21 trở lên).
+- JDK 25 LTS.
 - Maven Wrapper (`mvnw` / `mvnw.cmd`) có sẵn trong repository.
 - Cơ sở dữ liệu PostgreSQL (kết nối tới Google Cloud instance của nhóm hoặc chạy qua Docker).
 
 ### 2. Cấu hình biến môi trường
 
-Copy tệp [`.env.example`](./.env.example) và cấu hình thông tin kết nối database (xem chi tiết tại [docs/local-development.md](./docs/local-development.md)):
+Copy tệp [`.env.example`](./.env.example) và cấu hình thông tin kết nối database (xem chi tiết tại [docs/local-development.md](./docs/03_operations_and_guides/local-development.md)):
 
 ```bash
 DB_URL=jdbc:postgresql://<GCP_HOST>:5432/bluemoon?sslmode=prefer
@@ -102,3 +102,7 @@ Hệ thống tài liệu được tổ chức chuẩn mực theo 3 giai đoạn 
 ## Đóng góp và Quy ước
 
 Trước khi triển khai tính năng, hãy đọc [BLUEMOON.md](./BLUEMOON.md), tuân thủ phân tầng Controller → Service → Repository và cập nhật tests/tài liệu liên quan.
+
+## Quy chuẩn và kiểm tra Sprint 1
+
+Xem [quy chuẩn hiện hành](docs/PROJECT_CONVENTIONS.md) về vai trò, truy vết, review chéo Sơn/Hoà, CI, coverage và ba skill chia sẻ. Smoke test H2 không chứng minh hoàn thành chức năng. Nghiệm thu Sprint chạy `verify -Psprint1-quality`, có >=85% line coverage Service/Controller và UAT.

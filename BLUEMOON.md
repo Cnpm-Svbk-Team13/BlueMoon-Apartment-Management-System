@@ -7,7 +7,7 @@
 ## 1. Tổng quan
 
 - **Trang Quản trị (Admin Panel):** dành cho Kế toán/Ban quản trị đăng nhập, quản lý nhân khẩu và căn hộ, thiết lập/tính phí, theo dõi hóa đơn và xuất báo cáo PDF.
-- **Cổng Cư dân (Web Portal):** cư dân tra cứu công nợ, hóa đơn và gửi phản ánh (ticket) qua trình duyệt.
+- **Cổng Cư dân (Web Portal), roadmap v2.0:** cư dân tra cứu công nợ, hóa đơn và gửi phản ánh (ticket) qua trình duyệt.
 - **Backend:** Spring Boot và Spring MVC tiếp nhận request, kiểm tra quyền, điều phối nghiệp vụ và render trang Thymeleaf.
 - **Database:** PostgreSQL chạy như database server; ứng dụng truy cập qua JDBC và Spring Data JPA/Hibernate.
 
@@ -123,7 +123,7 @@ Không bắt buộc tạo mọi thư mục rỗng ngay từ đầu. Chỉ thêm 
 
 ## 4. Yêu cầu môi trường
 
-- **JDK 25 LTS** (hoặc tối thiểu JDK 21 trở lên).
+- **JDK 25 LTS**.
 - **Apache Maven 3.9 trở lên**, hoặc dùng Maven Wrapper (`mvnw`/`mvnw.cmd`) để chuẩn hóa phiên bản Maven trong nhóm.
 - Git và terminal.
 - Cài đặt và khởi chạy PostgreSQL server local hoặc sử dụng một instance PostgreSQL được cấp cho nhóm.
@@ -267,3 +267,7 @@ Hệ thống tài liệu được tổ chức theo 3 giai đoạn chính (chi ti
 - `database/`: Database as Code — DDL Schema và dữ liệu mẫu.
 
 
+
+## Quyết định hiện hành
+
+Áp dụng [PROJECT_CONVENTIONS.md](docs/PROJECT_CONVENTIONS.md) cho Sprint 1, phân công trưởng nhóm Sơn, BA Khánh, review chéo Sơn/Hoà và kiểm tra chất lượng.

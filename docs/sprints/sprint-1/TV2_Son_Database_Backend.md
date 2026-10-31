@@ -92,5 +92,7 @@ git add database/migrations/V1.1__fix_schema_and_seed.sql
 git commit -m "feat(#03): add v1.1 database migration script with all constraint fixes"
 git push origin feature/issue-03-db-migration-v1-1
 
-# 4. Tạo Pull Request trên GitHub và nhờ Hoà duyệt
+# 4. Tạo Pull Request trên GitHub và nhờ Sơn hoặc Hoà duyệt theo quy tắc không tự duyệt
 ```
+
+> Phân công/ước lượng hiện hành và task chủ hộ bổ sung: xem [quy chuẩn](../../PROJECT_CONVENTIONS.md) và phần “Điều chỉnh Sprint 1” trong [backlog](github_issues_backlog.md). Các task lớn trong cẩm nang là gói cha; giao các phần việc 2–4 giờ trong backlog.

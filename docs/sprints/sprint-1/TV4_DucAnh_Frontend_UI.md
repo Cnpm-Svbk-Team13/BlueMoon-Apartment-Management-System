@@ -95,3 +95,5 @@ git push origin feature/issue-11-master-layout-thymeleaf
 
 # 4. Mở Pull Request trên GitHub để Hoà duyệt
 ```
+
+> Phân công/ước lượng hiện hành và task chủ hộ bổ sung: xem [quy chuẩn](../../PROJECT_CONVENTIONS.md) và phần “Điều chỉnh Sprint 1” trong [backlog](github_issues_backlog.md). Các task lớn trong cẩm nang là gói cha; giao các phần việc 2–4 giờ trong backlog.

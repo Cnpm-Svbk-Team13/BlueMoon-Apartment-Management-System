@@ -1,5 +1,5 @@
 # 📋 CẨM NANG HÀNH ĐỘNG SPRINT 1 — THÀNH VIÊN 1: PHẠM NAM KHÁNH
-## Vai trò: Product Owner (PO) & Lead Business Analyst (BA)
+## Vai trò: Lead Business Analyst (BA) & UAT
 ### Dự án: BlueMoon BFMS (IT3180 - Team 13)
 
 ---
@@ -81,3 +81,5 @@ git commit -m "docs(#02): add 12 uat test scenarios for sprint 1"
 # 4. Đẩy nhánh lên GitHub và tạo Pull Request
 git push origin feature/issue-02-uat-scenarios
 ```
+
+> Phân công/ước lượng hiện hành và task chủ hộ bổ sung: xem [quy chuẩn](../../PROJECT_CONVENTIONS.md) và phần “Điều chỉnh Sprint 1” trong [backlog](github_issues_backlog.md). Các task lớn trong cẩm nang là gói cha; giao các phần việc 2–4 giờ trong backlog.
