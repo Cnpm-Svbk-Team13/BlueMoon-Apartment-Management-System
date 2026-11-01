@@ -1,6 +1,6 @@
 # Quy chuẩn hiện hành — BlueMoon BFMS
 
-Ngày chốt: 31/10/2026. Tài liệu này ghi quyết định hiện hành; hồ sơ khai phá cũ là nguồn lịch sử, không tự thay đổi phân công Sprint.
+Ngày cập nhật: 01/11/2026 (điều chỉnh phân công Sprint 1). Tài liệu này ghi quyết định hiện hành; hồ sơ khai phá cũ là nguồn lịch sử, không tự thay đổi phân công Sprint.
 
 ## Nguồn chuẩn và truy vết
 
@@ -13,8 +13,11 @@ Ngày chốt: 31/10/2026. Tài liệu này ghi quyết định hiện hành; h�
 
 ## Vai trò và review
 
-- Nguyễn Xuân Sơn: trưởng nhóm, điều phối Sprint, quyết định phạm vi/nghiệm thu nội bộ; vẫn phụ trách Database/Backend.
-- Phạm Nam Khánh: BA, chuẩn hóa yêu cầu, kịch bản UAT, thực hiện UAT và hỗ trợ cập nhật Kanban.
+- Nguyễn Xuân Sơn: trưởng nhóm, phụ trách Database/Backend, căn hộ và chủ hộ; chốt thay đổi phạm vi/ưu tiên sau khi trao đổi với nhóm, xử lý vấn đề vượt thẩm quyền điều phối và xác nhận nghiệm thu nội bộ dựa trên AC, test, UAT.
+- Phạm Nam Khánh: điều phối Sprint, BA/UAT; phụ trách PM-01 (6h/2 SP), Kanban, daily, theo dõi phụ thuộc/chậm tiến độ, chủ trì Sprint Review/Retrospective; chuẩn hóa yêu cầu, chuẩn bị/thực hiện UAT và tổng hợp hồ sơ nghiệm thu.
+- Mỗi thành viên tự cập nhật task và báo trở ngại cho Khánh. Khánh kết nối người bàn giao/nhận, chuyển vướng kỹ thuật cho Sơn/Hoà theo phân hệ và chuyển đề xuất đổi phạm vi/ưu tiên cho Sơn. Khánh theo dõi thỏa thuận đầu vào/đầu ra; Sơn, Hoà và Đức Anh chịu trách nhiệm nội dung kỹ thuật của phần mình.
+- PM-01 là vận hành Sprint, bao gồm tổ chức Sprint Review; không phải review mã nguồn. PM-03 (3h/1 SP) vẫn do Sơn review PR Hoà và kiểm tra bằng chứng trước nghiệm thu; Huy cung cấp test, Khánh tổng hợp UAT/hồ sơ, Sơn không làm lại báo cáo. Task thiếu bằng chứng vẫn mở. Người triển khai trình bày sản phẩm tại Sprint Review do Khánh tổ chức.
+- Phân bổ hiện hành: Sơn 36h/10 SP, Khánh 22h/6 SP, Hoà 28h/8 SP, Đức Anh 28h/7 SP, Huy 24h/5 SP; tổng 138h/36 SP, 24 gói cha/44 phần việc. Đây là ước lượng, chưa xác nhận phù hợp với thời gian thực tế của từng người.
 - Hoà: Tech Lead/Backend; Đức Anh: giao diện; Huy: QA. Giữ các mã TV hiện có.
 - PR của Sơn cần Hoà duyệt; PR của Hoà cần Sơn duyệt. PR tác giả khác cần ít nhất một trong hai duyệt. Không tự duyệt; mỗi task có một người chịu trách nhiệm chính.
 - Review kiểm tra truy vết, phân tầng, test liên quan và CI. Các cài đặt branch protection/required reviewers trên GitHub cần thiết lập riêng; file trong repo không tự bật chúng.

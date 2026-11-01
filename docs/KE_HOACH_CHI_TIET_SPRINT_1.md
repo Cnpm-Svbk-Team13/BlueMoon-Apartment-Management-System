@@ -3,7 +3,7 @@
 ### Học phần: Nhập môn Công nghệ Phần mềm (IT3180) — SoICT / HUST
 **Nhóm thực hiện:** Nhóm 13 (Team 13)
 **Thời gian thực hiện Sprint 1:** 7 ngày liên tục (Từ Thứ Bảy 31/10/2026 đến Thứ Sáu 06/11/2026)
-**Phiên bản kế hoạch:** 2.1 (đồng bộ quyết định 31/10/2026)
+**Phiên bản kế hoạch:** 2.2 (điều chỉnh phân công 01/11/2026)
 **Tiêu chuẩn áp dụng:** Hướng dẫn Đồ án Công nghệ Phần mềm SoICT (Chương 8 & 9), Bất biến Nghiệp vụ `AGENTS.md`
 
 > [!NOTE]
@@ -50,8 +50,8 @@ Nhóm 13 gồm 5 thành viên được phân công giữ nguyên vẹn chuyên m
 
 | Thành viên | Vai trò Sprint 1 | Trách nhiệm chính trong 7 ngày | Mã nhiệm vụ (Task IDs) | Story Points | Giờ ước lượng | Tỷ trọng |
 |---|---|---|---|:---:|:---:|:---:|
-| **TV1: Phạm Nam Khánh** | Lead BA & UAT | Hỗ trợ Kanban, chuẩn hóa kịch bản UAT, thực hiện kiểm thử UAT giao diện và lập biên bản nghiệm thu BQT | `PM-02`, `BA-03` | 4 SP | 16h | 11.59% |
-| **TV2: Nguyễn Xuân Sơn** | Trưởng nhóm / Database Engineer & Backend Dev | Khắc phục Schema CSDL `V1.1`, Entity JPA, Backend CRUD Căn hộ & Chủ hộ (`US-001`) | `PM-01`, `PM-03`, `DB-01`, `BE-01`, `BE-02`, `DB-02`, `BE-03` | 13 SP | 42h | 30.43% |
+| **TV1: Phạm Nam Khánh** | Điều phối Sprint / BA & UAT | Vận hành Kanban/daily, theo dõi phụ thuộc, chủ trì Review/Retro; chuẩn hóa yêu cầu, thực hiện UAT và tổng hợp hồ sơ | `PM-01`, `PM-02`, `BA-03` | 6 SP | 22h | 15.94% |
+| **TV2: Nguyễn Xuân Sơn** | Trưởng nhóm / Database Engineer & Backend Dev | Khắc phục Schema CSDL `V1.1`, Entity JPA, Backend CRUD Căn hộ & Chủ hộ (`US-001`) | `PM-03`, `DB-01`, `BE-01`, `BE-02`, `DB-02`, `BE-03` | 10 SP | 36h | 26.09% |
 | **TV3: Phạm Thái Hoà** | Technical Lead & Core Backend Dev | Kiến trúc hệ thống, Spring Security 6, API Đăng nhập (`US-SEC-02`), Quản lý User (`US-SEC-01`), Code Review & Gatekeeping | `ARCH-01`, `SEC-01`, `SEC-02`, `SEC-03`, `SEC-04` | 8 SP | 28h | 20.29% |
 | **TV4: Nghiêm Đức Anh** | Frontend Developer & UI/UX Specialist | Dựng Master Layout Thymeleaf, Giao diện Login, UI Quản lý tài khoản, UI Căn hộ 30 tầng | `FE-01`, `FE-02`, `FE-03`, `FE-04`, `FE-05` | 7 SP | 28h | 20.29% |
 | **TV5: Nguyễn Hợp Huy** | QA Lead & Test Automation Engineer | Áp dụng Shift-Left: Cấu hình Test Framework, Unit Test CFG Basis Path, MockMvc Integration Test, Decision Table | `QA-01`, `QA-02`, `QA-03`, `QA-04`, `QA-05` | 5 SP | 24h | 17.39% |
@@ -61,14 +61,15 @@ Nhóm 13 gồm 5 thành viên được phân công giữ nguyên vẹn chuyên m
 
 ### 2.2. Chi tiết Nhiệm vụ & Tiêu chí Nghiệm thu Từng Thành viên
 
-#### THÀNH VIÊN 1: PHẠM NAM KHÁNH — LEAD BUSINESS ANALYST & UAT
-- **Trách nhiệm trọng tâm:** Hỗ trợ trưởng nhóm theo dõi tiến độ, kiểm soát chất lượng hồ sơ đặc tả, trực tiếp soạn thảo kịch bản kiểm thử nghiệm thu (UAT) và thực hiện nghiệm thu chức năng trên giao diện web do Đức Anh xây dựng.
+#### THÀNH VIÊN 1: PHẠM NAM KHÁNH — ĐIỀU PHỐI SPRINT / BUSINESS ANALYST & UAT
+- **Trách nhiệm trọng tâm:** Vận hành Kanban/daily, theo dõi phụ thuộc và trở ngại, chủ trì Sprint Review/Retrospective, kiểm soát chất lượng hồ sơ đặc tả, trực tiếp soạn thảo kịch bản kiểm thử nghiệm thu (UAT) và thực hiện nghiệm thu chức năng trên giao diện web do Đức Anh xây dựng.
 - **Sản phẩm đóng góp cụ thể trên Git:** File kịch bản `docs/sprints/sprint-1/UAT_SCENARIOS_SPRINT_1.md` và biên bản kết quả kiểm thử `docs/sprints/sprint-1/UAT_REPORT_SPRINT_1.md`.
 - **Danh mục Nhiệm vụ Chi tiết:**
 
 | Mã Task | Tên Nhiệm vụ | Mô tả Chi tiết Công việc | Ước lượng | Tiêu chí Hoàn thành (Acceptance Criteria) |
 |---|---|---|:---:|---|
 
+| **PM-01** | Vận hành Sprint 1 & Quản trị Tiến độ Scrum | • Thiết lập bảng Kanban Sprint 1 trên GitHub Projects / Trello.<br>• Tổ chức Daily Standup 10 phút hàng ngày.<br>• Theo dõi Burndown Chart 7 ngày.<br>• Tổ chức Demo Sprint Review và họp Retrospective ngày 06/11. | 6 giờ (2 SP) | • 100% thành viên cập nhật trạng thái task hàng ngày.<br>• Biên bản họp Sprint Review & Retrospective đầy đủ. |
 | **PM-02** | Xây dựng Bộ Kịch bản UAT & Trực tiếp Nghiệm thu Giao diện | • Soạn thảo tài liệu `docs/sprints/sprint-1/UAT_SCENARIOS_SPRINT_1.md` gồm 12 kịch bản nền và các kịch bản chủ hộ BA-03 thực tế tại chung cư Văn Phú (đăng nhập đúng/sai, tài khoản bị khóa 15 phút, thêm căn hộ các tầng 1, 2-5, 6-29, 30).<br>• Trực tiếp thao tác kiểm thử thủ công trên giao diện web Thymeleaf do Đức Anh xây dựng.<br>• Lập nhật ký lỗi (Bug Log) chuyển cho Dev sửa.<br>• Đóng gói Báo cáo Nghiệm thu UAT (`docs/sprints/sprint-1/UAT_REPORT_SPRINT_1.md`). | 14 giờ (3 SP) | • File Markdown kịch bản UAT được commit lên repo Git.<br>• 100% các màn hình Login, Căn hộ, Quản lý tài khoản được kiểm thử và ký xác nhận đạt chuẩn. |
 
 ---
@@ -79,7 +80,6 @@ Nhóm 13 gồm 5 thành viên được phân công giữ nguyên vẹn chuyên m
 
 | Mã Task | Tên Nhiệm vụ | Mô tả Chi tiết Công việc | Ước lượng | Tiêu chí Hoàn thành (Acceptance Criteria) |
 |---|---|---|:---:|---|
-| **PM-01** | Vận hành Sprint 1 & Quản trị Tiến độ Scrum | • Thiết lập bảng Kanban Sprint 1 trên GitHub Projects / Trello.<br>• Tổ chức Daily Standup 10 phút hàng ngày.<br>• Theo dõi Burndown Chart 7 ngày.<br>• Tổ chức Demo Sprint Review và họp Retrospective ngày 06/11. | 6 giờ (2 SP) | • 100% thành viên cập nhật trạng thái task hàng ngày.<br>• Biên bản họp Sprint Review & Retrospective đầy đủ. |
 | **DB-01** | Soạn thảo Kịch bản Migration CSDL `V1.1__fix_schema_and_seed.sql` | • Bổ sung `start_date`, `end_date` vào `residents` kèm check constraint ngày.<br>• Bổ sung `version BIGINT NOT NULL DEFAULT 0` vào `invoices`.<br>• Thêm ràng buộc XOR cho bảng `receipts`.<br>• Chuyển `apartments.area_sqm` sang `DECIMAL(12,2)`.<br>• Đổi khóa `households.apartment_id` sang Partial Unique Index (`status = 'ACTIVE'`).<br>• Cập nhật hash BCrypt chuẩn (`$2a$10$ThEK5Lsf49T189/5nvFzwuYgdsmzBFWloKeb2FM2QSwB4JsNK2uTK`) cho `Password@123` và bổ sung seed data cho `TAM_TRU`, `TAM_VANG`. | 7 giờ (2 SP) | • Kịch bản SQL chạy trơn tru không lỗi trên PostgreSQL 17 (Docker chuẩn nhóm).<br>• Toàn bộ 7 lỗi DDL và DML được vá 100%. |
 | **BE-01** | Xây dựng Tầng Entity JPA & Repositories | • Ánh xạ JPA Entity chuẩn cho `User`, `Apartment`, `Household`, `Resident`.<br>• Khai báo `@Version` trên `Invoice` entity.<br>• Viết các Repository Interface kế thừa `JpaRepository` kèm custom JPQL query tìm kiếm căn hộ theo tầng, mã căn. | 9 giờ (2 SP) | • Entity ánh xạ chính xác 100% bảng CSDL.<br>• Không dùng `float`/`double`, toàn bộ diện tích dùng `BigDecimal`. |
 | **BE-02** | Hiện thực hóa Backend CRUD Căn hộ (`US-001`) | • Viết `ApartmentService` và `ApartmentController`.<br>• Kiểm tra ràng buộc diện tích thông thủy strictly positive ($m^2 > 0$).<br>• Xử lý thêm/sửa/xóa logic căn hộ (30 tầng) và gán hồ sơ chủ hộ đại diện.<br>• Ghi nhật ký kiểm toán vào `AuditLog`. | 9 giờ (3 SP) | • Thỏa mãn AC 1–2 của US-001; AC 3–4 nghiệm thu kết hợp DB-02/BE-03/FE-05/QA-05.<br>• Chặn thành công diện tích $\le 0$ và mã căn trùng lặp.<br>• Phối hợp BE-03 để lưu lịch sử chủ hộ cũ an toàn. |
@@ -379,13 +379,13 @@ gantt
 
 | Ngày làm việc | Hoạt động Trọng tâm Toàn đội | Output Kỳ vọng Cuối ngày |
 |---|---|---|
-| **Ngày 1 (Thứ Bảy, 31/10)** | • Sáng: Họp Sprint Planning 45 phút, Sơn chốt backlog 36 SP / 138h.<br>• Hoà: Thiết lập khung Spring Boot 3.5.16 (`ARCH-01`).<br>• Sơn: Hoàn tất script CSDL migration `V1.1` (`DB-01`).<br>• Huy (Shift-Left): Cấu hình môi trường test `application-test.yml`, JUnit 5, Mockito (`QA-01`).<br>• Sơn điều phối; Khánh hỗ trợ Kanban và bắt đầu phác thảo 12 kịch bản UAT (`PM-02`, `BA-03`). | Mã nguồn khung biên dịch sạch; script migration `V1.1` sẵn sàng; môi trường test sẵn sàng. |
+| **Ngày 1 (Thứ Bảy, 31/10)** | • Sáng: Họp Sprint Planning 45 phút, Sơn chốt backlog 36 SP / 138h.<br>• Hoà: Thiết lập khung Spring Boot 3.5.16 (`ARCH-01`).<br>• Sơn: Hoàn tất script CSDL migration `V1.1` (`DB-01`).<br>• Huy (Shift-Left): Cấu hình môi trường test `application-test.yml`, JUnit 5, Mockito (`QA-01`).<br>• Khánh điều phối, quản lý Kanban và bắt đầu phác thảo 12 kịch bản UAT (`PM-02`, `BA-03`). | Mã nguồn khung biên dịch sạch; script migration `V1.1` sẵn sàng; môi trường test sẵn sàng. |
 | **Ngày 2 (Chủ Nhật, 01/11)** | • Sơn & Hoà: Nạp migration CSDL, chạy seed data hash BCrypt chuẩn; Hoà cấu hình Security Filter (`SEC-01`); Sơn ánh xạ JPA Entity (`BE-01`).<br>• Đức Anh: Xây dựng Master Layout Thymeleaf (`FE-01`).<br>• Huy & Khánh: Huy vẽ đồ thị CFG và dựng khung test stubs; Khánh hoàn thiện kịch bản UAT cho Đăng nhập. | Kết nối DB PostgreSQL thành công; Security filter hoạt động; Master layout sẵn sàng; khung test stubs sẵn sàng. |
 | **Ngày 3 (Thứ Hai, 02/11)** | • Hoà: Hoàn thành `AuthService` xử lý khóa 15 phút sau 5 lần sai (`SEC-02`).<br>• Đức Anh: Hoàn thành giao diện màn hình Đăng nhập `login.html` (`FE-02`).<br>• Huy: Ráp `AuthServiceTest` vào code của Hoà vừa push, chạy kiểm thử các Basis Paths theo CFG đã chốt ngay trong ngày (Continuous Feedback). | Logic xác thực pass các Basis Paths theo CFG đã chốt; giao diện Login sẵn sàng. |
 | **Ngày 4 (Thứ Ba, 03/11)** | • Đức Anh & Hoà: Ghép nối Form Login Thymeleaf với Spring Security.<br>• Khánh: Trực tiếp đăng nhập thử nghiệm trên giao diện web, kiểm tra thông báo lỗi tiếng Việt theo kịch bản UAT.<br>• Sơn: Bắt đầu code `ApartmentService` (`BE-02`).<br>• Huy: Thiết kế Bảng quyết định và viết sẵn khung kiểm thử tham số hóa cho Căn hộ (`QA-03`). | Đăng nhập trên giao diện web thành công; khung test Bảng quyết định căn hộ sẵn sàng. |
 | **Ngày 5 (Thứ Tư, 04/11)** | • Sơn: Hoàn thành Backend CRUD Căn hộ (ràng buộc 30 tầng và diện tích $>0$).<br>• Đức Anh: Xây dựng giao diện Quản lý Căn hộ và Quản lý tài khoản BQT (`FE-03`, `FE-04`).<br>• Huy: Thực thi bộ test Bảng quyết định trên `ApartmentService`, xác nhận bắt đúng 100% các lỗi biên. | Backend Căn hộ hoàn thành; UI Căn hộ và User sẵn sàng; kiểm thử biên pass 100%. |
 | **Ngày 6 (Thứ Năm, 05/11)** | • Đức Anh & Sơn: Ghép nối Controller với màn hình Căn hộ.<br>• Khánh: Thực hiện kiểm thử chấp nhận (UAT) trên màn hình Căn hộ, lập danh sách lỗi gửi Dev sửa.<br>• Huy: Viết bộ kiểm thử tích hợp `MockMvc` cho Controller (`QA-04`). | Thao tác Thêm/Sửa Căn hộ hoạt động mượt mà trên giao diện; bộ kiểm thử tích hợp hoàn tất. |
-| **Ngày 7 (Thứ Sáu, 06/11)** | • Toàn đội: Code Freeze lúc 12:00 trưa. Sửa các lỗi tồn đọng cuối cùng.<br>• Huy: Đo lường độ bao phủ JaCoCo/Test Coverage đạt $\ge 85\%$, xuất `SPRINT_1_TEST_REPORT.md`.<br>• Khánh tổng hợp UAT; Sơn nghiệm thu nội bộ và chủ trì buổi Demo Sprint Review và Retrospective tổng kết Sprint 1. | 100% ca kiểm thử pass xanh; biên bản nghiệm thu UAT hoàn chỉnh; đóng gói 5 Deliverables sẵn sàng cho Sprint 2. |
+| **Ngày 7 (Thứ Sáu, 06/11)** | • Toàn đội: Code Freeze lúc 12:00 trưa. Sửa các lỗi tồn đọng cuối cùng.<br>• Huy: Đo lường độ bao phủ JaCoCo/Test Coverage đạt $\ge 85\%$, xuất `SPRINT_1_TEST_REPORT.md`.<br>• Khánh tổng hợp UAT và chủ trì Demo Sprint Review/Retrospective; người triển khai trình bày sản phẩm, Sơn kiểm tra bằng chứng và xác nhận nghiệm thu nội bộ. | 100% ca kiểm thử pass xanh; biên bản nghiệm thu UAT hoàn chỉnh; đóng gói 5 Deliverables sẵn sàng cho Sprint 2. |
 
 ---
 
@@ -397,21 +397,21 @@ gantt
 | **RSK-S1-02** | Xung đột phiên bản Java giữa máy các thành viên (Java 17 vs Java 25). | **TRUNG BÌNH** | Chốt cứng Java 25 LTS trong `pom.xml` và tài liệu; yêu cầu cài đặt bản JDK Temurin 25 đồng nhất. |
 | **RSK-S1-03** | Khóa tài khoản sau 5 lần sai không tự động mở sau 15 phút. | **TRUNG BÌNH** | So sánh thời gian dựa trên `ZonedDateTime.now()` với múi giờ chuẩn UTC/GMT+7, viết Unit Test bao phủ mốc thời gian. |
 | **RSK-S1-04** | Trùng lặp mã căn hộ khi nhập đồng thời danh mục căn hộ 30 tầng. | **THẤP** | Cài đặt Unique constraint tại CSDL và kiểm tra `existsByRoomNumber` tại Service trước khi lưu. |
-| **RSK-S1-05** | Nghẽn cổ chai kiểm thử do bàn giao muộn và áp lực vai trò lên thành viên mới. | **CAO** | Áp dụng quy trình **Shift-Left Testing**: Huy viết test stubs từ Ngày 1; Khánh tập trung đúng chuyên môn BA/UAT (viết 12 kịch bản UAT và trực tiếp nghiệm thu web); Đức Anh chủ trì xây dựng giao diện Thymeleaf. |
+| **RSK-S1-05** | Nghẽn cổ chai kiểm thử do bàn giao muộn và áp lực vai trò lên thành viên mới. | **CAO** | Áp dụng quy trình **Shift-Left Testing**: Huy viết test stubs từ Ngày 1; Khánh vận hành Sprint, theo dõi bàn giao và phụ trách BA/UAT (viết 12 kịch bản UAT và trực tiếp nghiệm thu web); Đức Anh chủ trì xây dựng giao diện Thymeleaf. |
 
 ---
 
 ## 9. KẾT LUẬN & CAM KẾT HOÀN THÀNH
 
-Kế hoạch chi tiết Sprint 1 (Phiên bản v2.0) của Nhóm 13 đã thiết lập một lộ trình kỹ thuật chuẩn xác, bảo toàn trọn vẹn chuyên môn của từng thành viên, tối ưu hóa thời lượng 7 ngày liên tục (31/10 – 06/11/2026) với 36 Story Points / 138 giờ ước lượng cần kiểm soát hằng ngày. Toàn bộ 5 thành viên cam kết tuân thủ nghiêm ngặt Definition of Done, 4 Bất biến nghiệp vụ trong `AGENTS.md` và hoàn thành 100% các Deliverables cam kết đúng hạn vào ngày **06/11/2026**.
+Kế hoạch chi tiết Sprint 1 (Phiên bản v2.2) của Nhóm 13 đã thiết lập một lộ trình kỹ thuật chuẩn xác, bảo toàn trọn vẹn chuyên môn của từng thành viên, tối ưu hóa thời lượng 7 ngày liên tục (31/10 – 06/11/2026) với 36 Story Points / 138 giờ ước lượng cần kiểm soát hằng ngày. Toàn bộ 5 thành viên cam kết tuân thủ nghiêm ngặt Definition of Done, 4 Bất biến nghiệp vụ trong `AGENTS.md` và hoàn thành 100% các Deliverables cam kết đúng hạn vào ngày **06/11/2026**.
 
 ## 9. Điều chỉnh Sprint 1 — nguồn hiện hành
 
-Áp dụng [quy chuẩn](PROJECT_CONVENTIONS.md) về vai trò, khóa đăng nhập, CI, coverage và review. Sơn là trưởng nhóm, Khánh giữ BA/UAT. PR Sơn do Hoà duyệt, PR Hoà do Sơn duyệt; tác giả khác cần một trong hai duyệt, không tự duyệt.
+Áp dụng [quy chuẩn](PROJECT_CONVENTIONS.md) về vai trò, khóa đăng nhập, CI, coverage và review. Sơn là trưởng nhóm/DB/Backend, Khánh vận hành Sprint và phụ trách BA/UAT. PR Sơn do Hoà duyệt, PR Hoà do Sơn duyệt; tác giả khác cần một trong hai duyệt, không tự duyệt.
 
-Backlog có thêm DB-02, BE-03, FE-05, QA-05, BA-03 và PM-03: [24 gói cha và phần việc 2–4 giờ](sprints/sprint-1/github_issues_backlog.md). PM-01 chuyển cho Sơn, Khánh hỗ trợ. Các số giờ gốc ở bảng task là ước lượng từng gói, tổng đã cập nhật gồm các gói bổ sung.
+Backlog có thêm DB-02, BE-03, FE-05, QA-05, BA-03 và PM-03: [24 gói cha và phần việc 2–4 giờ](sprints/sprint-1/github_issues_backlog.md). PM-01 (6h/2 SP) giao Khánh; PM-03 (3h/1 SP) giữ Sơn để review PR Hoà và kiểm tra nghiệm thu, không tổ chức họp hoặc làm lại báo cáo test/UAT. Các số giờ gốc ở bảng task là ước lượng từng gói, tổng đã cập nhật gồm các gói bổ sung.
 
-Lịch chủ hộ: 31/10 Khánh làm BA-03; 01–02/11 Sơn làm DB-02; 03–04/11 làm BE-03; 04–05/11 Đức Anh làm FE-05, Huy làm QA-05; 05–06/11 Khánh UAT và Sơn nghiệm thu. Chia nhỏ review PM-03 trong tuần. Sơn có nhu cầu 42h/tuần, phải theo dõi khả năng thực tế mỗi ngày; không ghi Done khi chưa đủ AC.
+Lịch chủ hộ: 31/10 Khánh làm BA-03; 01–02/11 Sơn làm DB-02; 03–04/11 làm BE-03; 04–05/11 Đức Anh làm FE-05, Huy làm QA-05; 05–06/11 Khánh UAT và Sơn nghiệm thu. Chia nhỏ review PM-03 trong tuần. Sơn có nhu cầu 36h/10 SP, Khánh 22h/6 SP; chưa xác nhận tải phù hợp khi chưa biết thời gian thực tế mỗi người có thể dành; không ghi Done khi chưa đủ AC.
 
 Nghiệm thu US-001 bao gồm hồ sơ chủ hộ (họ tên, CCCD 12 số, SĐT 10 số, email theo RAW-002), một hộ ACTIVE/căn hộ, lịch sử thay chủ hộ không xóa cứng, audit và UAT. Không đẩy phần này sang Sprint sau để báo hoàn thành US-001.
 

@@ -9,7 +9,7 @@ Find the repository root from Git. Read `docs/PROJECT_CONVENTIONS.md` first; res
 
 - Compare requested documents with canonical US/AC, traceability, Sprint plan/backlog, schema and actual source. Search before concluding something is absent.
 - Keep US-001…011 for business; US-SEC-01/02 for accounts/authentication (NFR-02). Core Workflow 1 is authentication; Business Invariant 1 is voluntary funds.
-- Check roles, dates, estimates, lock boundaries, claim status, links and technical versions. Keep TV codes; Sơn leads, Khánh remains BA/UAT.
+- Check roles, dates, estimates, lock boundaries, claim status, links and technical versions. Keep TV codes; Sơn leads/DB/Backend, decides scope/priority after team discussion and confirms internal acceptance; Khánh owns Sprint operations/BA/UAT (PM-01), including Kanban/daily and Sprint Review/Retrospective. Do not confuse meeting organization with PR review; PM-03 stays with Sơn. Check totals: Sơn 36h/10 SP, Khánh 22h/6 SP; total 138h/36 SP, 24 packages/44 units. Preserve historical reports with an explicit supersession note.
 - Missing planned UAT/test reports are future deliverables. Historical `.agents/teamwork` records are not current policy.
 - Return findings with file/line, evidence, impact and correction. Separate observed mismatches, decisions needing owner input and unverified external facts.
 - When corrections are authorized, update canonical definitions and consumers together; preserve useful comments and explain changes. Never rewrite RAW wishes merely to match code.

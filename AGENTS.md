@@ -117,7 +117,10 @@ You are an expert pair programmer assisting Team 13 in designing and implementin
   Adapt checks to the layer: documentation/configuration tasks do not need artificial DTOs or business tests.
 
 ### 8. CURRENT SOURCES, REVIEW AND VERIFICATION
-- Team leader: Nguyễn Xuân Sơn; Khánh remains BA and prepares requirements/UAT. Technical lead: Hoà.
+- Team leader: Nguyễn Xuân Sơn, primarily Database/Backend; decides scope/priority changes after team discussion and confirms internal acceptance from AC/test/UAT evidence. Technical lead: Hoà.
+- Khánh owns Sprint operations (PM-01, 6h/2 SP), BA/UAT, Kanban, daily, dependencies/blockers and Sprint Review/Retrospective. Members update their own tasks and report blockers to Khánh; technical issues go to Sơn/Hoà by module. Khánh tracks handoff agreements; Sơn/Hoà/Đức Anh own their technical content. Do not infer daily project management ownership from Sơn being team leader.
+- PM-01 Sprint Review means meeting organization, not code review. PM-03 stays with Sơn (3h/1 SP): review Hoà PRs and inspect acceptance evidence. Huy supplies test results, Khánh compiles UAT/evidence; Sơn does not duplicate their reports. Missing evidence leaves tasks open.
+- Sprint 1 estimates: Sơn 36h/10 SP, Khánh 22h/6 SP, Hoà 28h/8 SP, Đức Anh 28h/7 SP, Huy 24h/5 SP; total 138h/36 SP, 24 parent packages/44 work units. Estimates do not establish actual availability.
 - Canonical decisions: `docs/PROJECT_CONVENTIONS.md`. Stories/AC: `docs/01_requirements_and_planning/05_chi_tiet_us_va_acceptance_criteria.md`; traceability: `07_traceability_matrix_va_quan_ly_rui_ro.md` in the same directory.
 - Schema: `database/schema.sql`; Sprint: `docs/KE_HOACH_CHI_TIET_SPRINT_1.md`; issue/task details: `docs/sprints/sprint-1/github_issues_backlog.md`.
 - Sơn and Hoà review each other's PRs. Other authors need approval by at least one of them. No self-approval; CI passing does not replace human review.

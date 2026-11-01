@@ -1,16 +1,16 @@
 # 📋 DANH MỤC THẺ GITHUB ISSUES BACKLOG — SPRINT 1
 
-> **Điều chỉnh 31/10/2026:** Có 24 gói cha, **138 giờ / 36 SP**; bảng phần việc cuối tài liệu là đơn vị giao 2–4 giờ. `Issue #xx` là số đề xuất nội bộ, chưa phải ID GitHub thực. Sơn là trưởng nhóm/điều phối, Khánh giữ BA/UAT. Review theo [quy chuẩn hiện hành](../../PROJECT_CONVENTIONS.md).
+> **Điều chỉnh 01/11/2026:** Có 24 gói cha, **138 giờ / 36 SP**; bảng phần việc cuối tài liệu là đơn vị giao 2–4 giờ. `Issue #xx` là số đề xuất nội bộ, chưa phải ID GitHub thực. Sơn là trưởng nhóm/DB/Backend; Khánh vận hành Sprint và phụ trách BA/UAT. Review theo [quy chuẩn hiện hành](../../PROJECT_CONVENTIONS.md).
 ## Dự án: BlueMoon BFMS (IT3180 - Team 13)
 ### Định dạng chuẩn hóa theo Quy tắc Quản trị Dự án `AGENTS.md` (Mục 7)
 
 > **Hướng dẫn sử dụng:**
-> Thành viên phụ trách (Sơn điều phối, Khánh hỗ trợ BA) copy từng mục dưới đây để tạo Issue mới trong tab **Issues** trên GitHub repository của nhóm, sau đó gắn thẻ tương ứng lên cột **To Do** trên bảng **GitHub Projects (Kanban)**.
+> Khánh phụ trách điều phối (mỗi thành viên tự cập nhật task của mình) copy từng mục dưới đây để tạo Issue mới trong tab **Issues** trên GitHub repository của nhóm, sau đó gắn thẻ tương ứng lên cột **To Do** trên bảng **GitHub Projects (Kanban)**.
 
 ---
 
 ### Issue #01: `[Sprint 1][PM] Vận hành Sprint 1 & Quản trị Tiến độ Kanban`
-- **Người phụ trách (Assignee):** Nguyễn Xuân Sơn (TV2; Khánh hỗ trợ Kanban)
+- **Người phụ trách (Assignee):** Phạm Nam Khánh (TV1; điều phối Sprint/BA/UAT)
 - **Ước lượng:** 6 giờ (2 SP)
 - **Mã nhánh Git:** `feature/issue-01-scrum-kanban-setup`
 - **Traceability:** Links to `PRJ-BLUEMOON-2026` / WBS Task 1.3
@@ -19,8 +19,8 @@
 - **Acceptance Criteria (Checklist):**
   - [ ] Bảng GitHub Projects được thiết lập đầy đủ 4 cột: `Backlog`, `To Do`, `In Progress`, `Done`.
   - [ ] Toàn bộ gói cha và phần việc 2–4 giờ từ backlog được nạp lên bảng và gán Assignee chính xác cho 5 thành viên.
-  - [ ] Tổ chức Daily Standup 10 phút hàng ngày, ghi nhận tiến độ theo Burndown Chart.
-  - [ ] Biên bản họp Sprint Review và Retrospective được lập đầy đủ vào ngày 06/11.
+  - [ ] Tổ chức Daily Standup 10 phút hàng ngày, ghi nhận tiến độ và phụ thuộc/trở ngại theo Burndown Chart; mỗi thành viên tự cập nhật task. Khánh chuyển vướng kỹ thuật cho Sơn/Hoà và đề xuất đổi phạm vi/ưu tiên cho Sơn chốt sau trao đổi với nhóm.
+  - [ ] Khánh chủ trì Sprint Review/Retrospective và lập biên bản ngày 06/11; người triển khai trình bày sản phẩm. Sprint Review ở PM-01 là tổ chức họp, không phải review mã nguồn.
 
 ---
 
@@ -286,7 +286,7 @@
 
 ## Điều chỉnh Sprint 1: chủ hộ, review và ước lượng
 
-PM-01 (6h/2 SP) chuyển từ Khánh sang Sơn; Khánh hỗ trợ Kanban và giữ PM-02 (14h/3 SP). SEC-04 của Hoà vẫn 3h/1 SP; PM-03 bổ sung 3h review của Sơn. Thêm 18h/5 SP chủ hộ, tổng 138h/36 SP. Đây là nhu cầu ước lượng, cần theo dõi năng lực mỗi ngày để hoàn thành trong 31/10–06/11.
+PM-01 (6h/2 SP) do Khánh phụ trách vận hành Sprint, bên cạnh PM-02 (14h/3 SP) và BA-03 (2h/1 SP). Sơn tập trung DB/Backend, chốt phạm vi/ưu tiên sau trao đổi nhóm và xác nhận nghiệm thu nội bộ. SEC-04 của Hoà vẫn 3h/1 SP; PM-03 bổ sung 3h review của Sơn. Thêm 18h/5 SP chủ hộ, tổng 138h/36 SP. Đây là nhu cầu ước lượng, cần theo dõi năng lực mỗi ngày để hoàn thành trong 31/10–06/11.
 
 ### Issue #19: `[Sprint 1][DB] Chuẩn bị dữ liệu hồ sơ và lịch sử chủ hộ` (`DB-02`)
 
@@ -353,19 +353,21 @@ PM-01 (6h/2 SP) chuyển từ Khánh sang Sơn; Khánh hỗ trợ Kanban và gi�
 - **Người phụ trách:** Sơn
 - **Ước lượng:** 3 giờ (1 SP)
 - **Traceability:** US-001, US-SEC-01, US-SEC-02 / NFR-02, NFR-03; SEC-04
-- **Layer Impact:** Project Governance / Review
+- **Layer Impact:** Technical Review / Internal Acceptance
 - **Prerequisites:** Thực hiện xuyên tuần; nghiệm thu sau test/UAT
 - **Acceptance Criteria (Checklist):**
   - [ ] PR Hoà do Sơn duyệt; PR Sơn do Hoà duyệt; PR khác có ít nhất một người duyệt, không tự duyệt.
-  - [ ] Kiểm tra CI, truy vết và bằng chứng kiểm thử; không coi CI xanh nền tảng là hoàn thành nghiệp vụ.
-  - [ ] Nghiệm thu chạy clean verify -Psprint1-quality và đủ AC/UAT, ghi giới hạn chưa kiểm tra.
+  - [ ] Sơn kiểm tra CI, truy vết và bằng chứng kiểm thử do Huy cung cấp, hồ sơ/UAT do Khánh tổng hợp; không làm lại báo cáo của Huy/Khánh và không coi CI xanh nền tảng là hoàn thành nghiệp vụ.
+  - [ ] Xác nhận nghiệm thu dựa trên clean verify -Psprint1-quality và đủ AC/test/UAT; ghi giới hạn chưa kiểm tra, task thiếu bằng chứng vẫn mở.
 
 ### Bảng tổng cập nhật
 
+Lưu ý kiểm tổng ngày 01/11/2026: các gói của Sơn là DB-01 (2 SP), BE-01 (2 SP), BE-02 (3 SP), DB-02 (1 SP), BE-03 (1 SP), PM-03 (1 SP), tổng **10 SP**. Con số 11 SP trong phương án chuyển PM-01 là lỗi cộng kế thừa từ bảng cũ; giữ nguyên SP từng gói để tổng đội đúng 36 SP.
+
 | Thành viên | Giờ | SP | Gói cha |
 |---|---:|---:|---|
-| Khánh (BA/UAT) | 16 | 4 | PM-02, BA-03 |
-| Sơn (trưởng nhóm/DB/BE) | 42 | 13 | PM-01, PM-03, DB-01, BE-01, BE-02, DB-02, BE-03 |
+| Khánh (điều phối/BA/UAT) | 22 | 6 | PM-01, PM-02, BA-03 |
+| Sơn (trưởng nhóm/DB/BE) | 36 | 10 | PM-03, DB-01, BE-01, BE-02, DB-02, BE-03 |
 | Hoà (Tech Lead) | 28 | 8 | ARCH-01, SEC-01…04 |
 | Đức Anh (UI) | 28 | 7 | FE-01…05 |
 | Huy (QA) | 24 | 5 | QA-01…05 |
@@ -377,7 +379,7 @@ Các hàng là phần việc con của gói cha, kế thừa người phụ trá
 
 | Gói cha | Phần việc con (giờ) | Phụ thuộc bàn giao |
 |---|---|---|
-| PM-01 (6h) | Kanban/lịch họp (3); theo dõi tiến độ/review (3) | Ngày 1; xuyên tuần |
+| PM-01 (6h) | Kanban/lịch họp (3); theo dõi tiến độ/tổ chức Sprint Review và Retrospective (3) | Ngày 1; xuyên tuần |
 | PM-02 (14h) | Kịch bản đăng nhập (4); căn hộ/tài khoản (4); thực thi UAT (3); kết quả/lỗi (3) | Soạn từ AC ngay; chạy khi chức năng sẵn sàng |
 | DB-01 (7h) | Review schema/migration hiện có (3); chạy PostgreSQL và ghi kết quả (4) | Trước ánh xạ JPA |
 | BE-01 (9h) | Apartment mapping/repository (3); Household/Resident (3); query/integration check (3) | DB-01; User mapping do Hoà phối hợp SEC-03 |
@@ -402,4 +404,4 @@ Các hàng là phần việc con của gói cha, kế thừa người phụ trá
 | BA-03 (2h) | Kịch bản UAT chủ hộ (2) | 31/10; thực thi trong PM-02 |
 | PM-03 (3h) | Review của Sơn và kiểm tra nghiệm thu nội bộ (3) | Xuyên tuần; chốt 06/11 |
 
-Tổng các phần việc con phải bằng 138h. Review không tự động thực hiện merge; chỉ cập nhật tài liệu trong đợt đồng bộ này, chưa tạo issue/PR trên GitHub.
+Tổng các phần việc con phải bằng 138h. Chuyển PM-01 không đổi tổng 36 SP/24 gói/44 phần việc; chưa xác nhận tải phù hợp khi chưa biết thời gian thực tế từng người có thể dành. Review không tự động thực hiện merge; chỉ cập nhật tài liệu trong đợt đồng bộ này, chưa tạo issue/PR trên GitHub.

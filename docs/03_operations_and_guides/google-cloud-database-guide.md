@@ -250,10 +250,10 @@ Em có thể tải nhanh các file SQL trực tiếp từ repository của dự 
 cd /opt/bluemoon-db
 mkdir -p sql_init
 
-# Clone hoặc tải các file schema từ repo
-curl -fsSL https://raw.githubusercontent.com/xuan-son/IT3180_BlueMoon-Management/develop/database/schema.sql -o sql_init/schema.sql
-curl -fsSL https://raw.githubusercontent.com/xuan-son/IT3180_BlueMoon-Management/develop/database/seed_data.sql -o sql_init/seed_data.sql
-curl -fsSL https://raw.githubusercontent.com/xuan-son/IT3180_BlueMoon-Management/develop/database/migrations/V1.1__fix_schema_and_seed.sql -o sql_init/v1.1.sql
+# Clone hoặc tải các file schema từ repo chính thức của nhóm
+curl -fsSL https://raw.githubusercontent.com/PhamHoa2006/BlueMoon-Apartment-Management-System/main/database/schema.sql -o sql_init/schema.sql
+curl -fsSL https://raw.githubusercontent.com/PhamHoa2006/BlueMoon-Apartment-Management-System/main/database/seed_data.sql -o sql_init/seed_data.sql
+curl -fsSL https://raw.githubusercontent.com/PhamHoa2006/BlueMoon-Apartment-Management-System/main/database/migrations/V1.1__fix_schema_and_seed.sql -o sql_init/v1.1.sql
 ```
 *(Nếu repo của nhóm là Private, Sơn chỉ cần dùng lệnh `cat << 'EOF' > sql_init/schema.sql` rồi dán nội dung từ máy local lên).*
 

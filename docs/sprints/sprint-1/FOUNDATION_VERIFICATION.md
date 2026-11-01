@@ -2,6 +2,8 @@
 
 Ngày kiểm tra: 31/10/2026. Truy vết: US-001 / RAW-001, RAW-002; US-SEC-01/02 / NFR-02; nền tảng NFR-05. Báo cáo này không thay `SPRINT_1_TEST_REPORT.md` hoặc UAT nghiệp vụ.
 
+> Phân công/ước lượng dưới đây ghi nhận tại ngày kiểm tra 31/10/2026, đã được thay thế ngày 01/11/2026: PM-01 về Khánh; Sơn 36h/10 SP, Khánh 22h/6 SP. Xem [quy chuẩn hiện hành](../../PROJECT_CONVENTIONS.md). Các bằng chứng build/test lịch sử giữ nguyên; không phải kết quả chạy lại.
+
 ## Thay đổi
 
 - Boot 3.5.16, Java 25; JaCoCo 0.8.16; Mockito nạp bằng javaagent khi test để tránh tự attach JVM.

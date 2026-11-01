@@ -38,7 +38,7 @@ Bảng phân chia công việc chi tiết tuân thủ chính xác bố cục cá
 | 1 | 1.0 | Quản lý dự án (Project Management) | Khánh | 20/10/2026 | 15/12/2026 | Kế hoạch WBS, Risk Log, Báo cáo tiến độ | 4.500.000 |
 | 2 | 1.1 | Lập kế hoạch phân rã công việc WBS & Lịch trình | Khánh, Hoà | 25/10/2026 | 28/10/2026 | Bảng WBS & Biểu đồ Gantt Chart | 1.500.000 |
 | 2 | 1.2 | Lập kế hoạch quản lý rủi ro toàn diện (Bài 4.3) | Khánh, Huy | 26/10/2026 | 29/10/2026 | Ma trận rủi ro 3x3 & Risk Tracking Log | 1.000.000 |
-| 2 | 1.3 | Điều phối Scrum, kiểm soát phạm vi & họp Sprint | Sơn (Khánh hỗ trợ BA) | 31/10/2026 | 15/12/2026 | Biên bản họp Daily Standup & Review | 2.000.000 |
+| 2 | 1.3 | Điều phối Scrum & họp Sprint (Khánh); chốt phạm vi sau trao đổi nhóm (Sơn) | Khánh (vận hành), Sơn (chốt phạm vi) | 31/10/2026 | 15/12/2026 | Biên bản họp Daily Standup & Review | 2.000.000 |
 | 1 | 2.0 | Module Quản lý Cư dân & Hộ gia đình | Sơn, Hoà | 28/10/2026 | 18/11/2026 | Phân hệ dữ liệu cư dân BlueMoon | 10.000.000 |
 | 2 | 2.1 | Quản lý căn hộ và thông tin chủ hộ (`US-001`) | Sơn | 28/10/2026 | 04/11/2026 | API/UI căn hộ, diện tích $m^2$, chủ hộ | 2.500.000 |
 | 2 | 2.2 | Quản lý thành viên nhân khẩu & quan hệ (`US-002`) | Sơn | 05/11/2026 | 11/11/2026 | CRUD nhân khẩu, quan hệ nhân thân | 2.500.000 |
@@ -134,9 +134,10 @@ Ma trận RACI phân định rõ vai trò và trách nhiệm của **5 thành vi
 - **C (Consulted):** Người được tham vấn ý kiến chuyên môn.
 - **I (Informed):** Người được cập nhật tiến độ và kết quả công việc.
 
-| Gói công việc / Sản phẩm bàn giao | Khánh (BA) | Hoà (Tech Lead) | Đức Anh (Frontend) | Sơn (Trưởng nhóm/Database) | Huy (QA/Test) |
+| Gói công việc / Sản phẩm bàn giao | Khánh (Điều phối/BA) | Hoà (Tech Lead) | Đức Anh (Frontend) | Sơn (Trưởng nhóm/Database) | Huy (QA/Test) |
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | **1.1 Lập WBS, Phân rã Task & Tiến độ** | **R** | C | I | **A** | C |
+| **1.3 Vận hành Sprint 1: Kanban/daily, phụ thuộc, Review/Retro (PM-01)** | **A / R** | C | I | C | I |
 | **1.2 Lập Kế hoạch Quản lý Rủi ro SoICT** | **R** | C | I | **A** | C |
 | **2.1 Thiết kế Kiến trúc hệ thống & DB Schema (ERD)** | C | **A** | I | **R** | I |
 | **2.2 Thiết kế UI/UX Wireframe & Master Layout** | C | I | **A / R** | I | I |
@@ -203,4 +204,4 @@ gantt
 | **Giai đoạn 4: Sprint 3 (v0.3)** | 17/11/2026 – 30/11/2026 | Cấu hình biểu phí theo m², Batch job bảng kê nợ phí, Quầy thu ngân & In biên lai (`US-005`, `US-006`, `US-007`). | *Kế hoạch* |
 | **Giai đoạn 5: Sprint 4 (v1.0)** | 28/11/2026 – 15/12/2026 | Vận động Quỹ tự nguyện (`US-008`, `US-009`), Public Mode & Báo cáo công khai (`US-010`), Tra cứu nợ & Dashboard (`US-011`), UAT & Nghiệm thu. | *Kế hoạch* |
 
-> Điều chỉnh 31/10/2026: Sơn là trưởng nhóm, Khánh giữ BA/UAT. Lịch và backlog chi tiết Sprint 1 theo [quy chuẩn hiện hành](../PROJECT_CONVENTIONS.md). Các mốc Sprint sau vẫn là kế hoạch tổng thể, chưa tái lập lịch trong đợt này.
+> Điều chỉnh 01/11/2026: Sơn là trưởng nhóm/DB/Backend; Khánh vận hành Sprint 1 (PM-01), BA/UAT. Khánh chủ trì Review/Retro; Sơn chốt thay đổi phạm vi/ưu tiên sau trao đổi nhóm và xác nhận nghiệm thu nội bộ từ AC/test/UAT. Lịch và backlog chi tiết Sprint 1 theo [quy chuẩn hiện hành](../PROJECT_CONVENTIONS.md). Các mốc Sprint sau vẫn là kế hoạch tổng thể, chưa tái lập lịch trong đợt này.

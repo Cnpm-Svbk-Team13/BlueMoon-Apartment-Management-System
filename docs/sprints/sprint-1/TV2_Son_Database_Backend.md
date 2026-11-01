@@ -7,7 +7,7 @@
 ## 🎯 1. TỔNG QUAN VAI TRÒ & SẢN PHẨM BÀN GIAO (DELIVERABLES)
 
 - **Vai trò chính:** Quản trị cơ sở dữ liệu PostgreSQL, soạn thảo kịch bản migration CSDL `V1.1` khắc phục toàn bộ 7 lỗi DDL/DML đã phát hiện, ánh xạ tầng JPA Entity & Repository, và xây dựng toàn bộ backend CRUD Căn hộ 30 tầng (`US-001`).
-- **Tổng thời gian cam kết:** **42 giờ ước lượng** (13 Story Points).
+- **Tổng thời gian cam kết:** **36 giờ ước lượng** (10 Story Points).
 - **Quyền quản trị mã nguồn:**
   - `database/migrations/V1.1__fix_schema_and_seed.sql`
   - Đồng quản trị file cấu hình `pom.xml` và `src/main/resources/application.yml` cùng Hoà (Tech Lead).
@@ -99,4 +99,4 @@ git push origin feature/issue-03-db-migration-v1-1
 
 ### Công việc bổ sung
 
-PM-01: điều phối 6h/2 SP; PM-03: review PR Hoà và nghiệm thu nội bộ 3h/1 SP. DB-02: hồ sơ/lịch sử chủ hộ 4h/1 SP (01–02/11); BE-03: transaction thay chủ và lịch sử 4h/1 SP (03–04/11). Xem #19/#20/#24 trong backlog để có AC và phụ thuộc. Thời lượng tăng phải được theo dõi hằng ngày.
+PM-01 thuộc Khánh (6h/2 SP); Sơn tập trung dữ liệu/backend. PM-03 giữ Sơn (3h/1 SP): review PR Hoà, kiểm tra bằng chứng test của Huy và hồ sơ/UAT Khánh tổng hợp trước khi xác nhận nghiệm thu nội bộ; không làm lại báo cáo. Task thiếu bằng chứng vẫn mở. Sơn chốt thay đổi phạm vi/ưu tiên sau trao đổi nhóm; Khánh vận hành Kanban/daily, theo dõi bàn giao và chủ trì Review/Retro. DB-02: hồ sơ/lịch sử chủ hộ 4h/1 SP (01–02/11); BE-03: transaction thay chủ và lịch sử 4h/1 SP (03–04/11). Xem #19/#20/#24 trong backlog để có AC và phụ thuộc. Đây là ước lượng, cần đối chiếu thời gian thực tế có thể dành; không tự suy ra đủ năng lực.
