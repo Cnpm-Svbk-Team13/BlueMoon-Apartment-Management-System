@@ -106,3 +106,7 @@ Trước khi triển khai tính năng, hãy đọc [BLUEMOON.md](./BLUEMOON.md),
 ## Quy chuẩn và kiểm tra Sprint 1
 
 Xem [quy chuẩn hiện hành](docs/PROJECT_CONVENTIONS.md) về vai trò, truy vết, review chéo Sơn/Hoà, CI, coverage và ba skill chia sẻ. Smoke test H2 không chứng minh hoàn thành chức năng. Nghiệm thu Sprint chạy `verify -Psprint1-quality`, có >=85% line coverage Service/Controller và UAT.
+
+## Bắt đầu công việc Sprint 1
+
+[Đồ thị luồng công việc và bàn giao](docs/sprints/sprint-1/WORKFLOW_GUIDE.md) — xem tổng quan trước, mở luồng của mình rồi nhận phần việc 2–4h. Khánh điều phối Sprint/BA/UAT; Sơn DB/Backend, quyết định phạm vi và nghiệm thu. Tổng 138h/36 SP, 24 gói/44 phần việc.

@@ -16,6 +16,8 @@
 
 ---
 
+> **Đọc luồng trước khi nhận việc:** [đồ thị chung và năm luồng cá nhân](sprints/sprint-1/WORKFLOW_GUIDE.md). Khánh vận hành Sprint; Sơn phụ trách DB/Backend và nghiệm thu; review kỹ thuật theo quy tắc Sơn–Hoà.
+
 ## 1. THÔNG TIN TỔNG QUAN SPRINT 1 (SPRINT OVERVIEW)
 
 ### 1.1. Thông tin Cơ bản
@@ -96,7 +98,7 @@ Nhóm 13 gồm 5 thành viên được phân công giữ nguyên vẹn chuyên m
 | **SEC-01** | Cấu hình Spring Security 6 & Quản trị Phiên (Session) | • Thiết lập `SecurityFilterChain` quản lý phân quyền theo Role (`ROLE_ADMIN`, `ROLE_ACCOUNTANT`, `ROLE_CASHIER`, `ROLE_RESIDENT`).<br>• Cấu hình bảo mật Form Login, Logout, Cookie Session, bảo vệ CSRF và Header XSS Protection.<br>• Khai báo Bean `BCryptPasswordEncoder` (10 rounds). | 6 giờ (2 SP) | • Truy cập các route nội bộ bị chặn khi chưa đăng nhập.<br>• Phân quyền route chuẩn xác theo vai trò. |
 | **SEC-02** | Hiện thực hóa Service Xác thực & Đăng nhập (`US-SEC-02`) | • Lập trình `CustomUserDetailsService` và `AuthService`.<br>• Hiện thực hóa cơ chế đếm `failed_attempts` và tự động khóa tài khoản tạm thời 15 phút sau 5 lần nhập sai mật khẩu liên tiếp.<br>• Bổ sung kiểm tra cờ `is_active` ngăn tài khoản bị vô hiệu hóa đăng nhập; tự động reset biến đếm khi hết hạn khóa.<br>• Lập trình tính năng Đổi mật khẩu chủ động. | 8 giờ (2 SP) | • Đăng nhập thành công với tài khoản mẫu.<br>• Khóa tài khoản chính xác 15 phút sau lần thứ 5 đăng nhập sai.<br>• Mật khẩu mới được băm BCrypt trước khi lưu. |
 | **SEC-03** | Hiện thực hóa Quản lý Tài khoản BQT (`US-SEC-01`) | • Lập trình `UserService` và `AdminController`.<br>• API/Web Controller tạo tài khoản mới cho cán bộ BQT, kích hoạt/khóa tài khoản.<br>• Kiểm tra trùng lặp `username`, `email`.<br>• Bọc toàn bộ thao tác trong `@Transactional(rollbackFor = Exception.class)`. | 6 giờ (2 SP) | • Chỉ Admin mới có quyền tạo và phân quyền tài khoản.<br>• Không thể tạo 2 tài khoản trùng username/email. |
-| **SEC-04** | Code Review, PR Review & Architecture Gatekeeping | • Thẩm định và duyệt 100% Pull Requests từ TV2 (DB/Entity), TV4 (Thymeleaf/UI), TV5 (Test harnesses).<br>• Kiểm soát tuân thủ kiến trúc Pure Web (không để lọt SQL/business logic vào Controller hay View).<br>• Gatekeeper chất lượng: Đảm bảo không merge code có mùi mã (Code smells) hoặc vi phạm quy chuẩn SoICT. | 3 giờ (1 SP) | • 100% PR được review và approve trước khi merge vào nhánh develop.<br>• Không xảy ra xung đột merge hoặc suy thoái kiến trúc. |
+| **SEC-04** | Code Review, PR Review & Architecture Gatekeeping | • Hoà review PR Sơn; PR Hoà do Sơn review; PR thành viên khác có ít nhất một trong Sơn/Hoà duyệt, không tự duyệt.<br>• Kiểm soát tuân thủ kiến trúc Pure Web (không để lọt SQL/business logic vào Controller hay View).<br>• Gatekeeper chất lượng: Đảm bảo không merge code có mùi mã (Code smells) hoặc vi phạm quy chuẩn SoICT. | 3 giờ (1 SP) | • 100% PR được review và approve trước khi merge vào nhánh develop.<br>• Không xảy ra xung đột merge hoặc suy thoái kiến trúc. |
 
 ---
 

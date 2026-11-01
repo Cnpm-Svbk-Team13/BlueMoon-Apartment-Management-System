@@ -9,6 +9,8 @@
 
 ---
 
+<a id="pm-01"></a>
+
 ### Issue #01: `[Sprint 1][PM] Vận hành Sprint 1 & Quản trị Tiến độ Kanban`
 - **Người phụ trách (Assignee):** Phạm Nam Khánh (TV1; điều phối Sprint/BA/UAT)
 - **Ước lượng:** 6 giờ (2 SP)
@@ -24,6 +26,8 @@
 
 ---
 
+<a id="pm-02"></a>
+
 ### Issue #02: `[Sprint 1][BA] Xây dựng 12 Kịch bản UAT & Báo cáo Nghiệm thu Web`
 - **Người phụ trách (Assignee):** Phạm Nam Khánh (TV1; BA/UAT, Sơn nghiệm thu nội bộ)
 - **Ước lượng:** 14 giờ (3 SP)
@@ -38,6 +42,8 @@
   - [ ] Tệp biên bản nghiệm thu `docs/sprints/sprint-1/UAT_REPORT_SPRINT_1.md` được ký xác nhận đạt chuẩn.
 
 ---
+
+<a id="db-01"></a>
 
 ### Issue #03: `[Sprint 1][DB] Soạn thảo Kịch bản Migration CSDL V1.1`
 - **Người phụ trách (Assignee):** Nguyễn Xuân Sơn (TV2)
@@ -55,6 +61,8 @@
 
 ---
 
+<a id="be-01"></a>
+
 ### Issue #04: `[Sprint 1][BE] Xây dựng Tầng JPA Entities & Repositories`
 - **Người phụ trách (Assignee):** Nguyễn Xuân Sơn (TV2)
 - **Ước lượng:** 9 giờ (2 SP)
@@ -69,6 +77,8 @@
   - [ ] Các Repositories kế thừa `JpaRepository` có sẵn các query methods: `findByRoomNumber`, `existsByRoomNumber`, `findByFloorNumber`.
 
 ---
+
+<a id="be-02"></a>
 
 ### Issue #05: `[Sprint 1][BE] Hiện thực hóa Backend CRUD Căn hộ US-001`
 - **Người phụ trách (Assignee):** Nguyễn Xuân Sơn (TV2)
@@ -86,6 +96,8 @@
 
 ---
 
+<a id="arch-01"></a>
+
 ### Issue #06: `[Sprint 1][ARCH] Khởi tạo Khung Kiến trúc Spring Boot 3.5.16 & Pure Web`
 - **Người phụ trách (Assignee):** Phạm Thái Hoà (TV3)
 - **Ước lượng:** 5 giờ (1 SP)
@@ -101,6 +113,8 @@
 
 ---
 
+<a id="sec-01"></a>
+
 ### Issue #07: `[Sprint 1][SEC] Cấu hình Spring Security 6 & Quản trị Phiên`
 - **Người phụ trách (Assignee):** Phạm Thái Hoà (TV3)
 - **Ước lượng:** 6 giờ (2 SP)
@@ -115,6 +129,8 @@
   - [ ] Bật cờ bảo vệ CSRF trên các form POST.
 
 ---
+
+<a id="sec-02"></a>
 
 ### Issue #08: `[Sprint 1][SEC] Hiện thực hóa AuthService & Khóa 15 Phút sau 5 Lần Sai`
 - **Người phụ trách (Assignee):** Phạm Thái Hoà (TV3)
@@ -132,6 +148,8 @@
 
 ---
 
+<a id="sec-03"></a>
+
 ### Issue #09: `[Sprint 1][SEC] Hiện thực hóa UserService & Quản lý Tài khoản BQT`
 - **Người phụ trách (Assignee):** Phạm Thái Hoà (TV3)
 - **Ước lượng:** 6 giờ (2 SP)
@@ -147,7 +165,9 @@
 
 ---
 
-### Issue #10: `[Sprint 1][QA] Gatekeeping & Thẩm định 100% Pull Requests`
+<a id="sec-04"></a>
+
+### Issue #10: `[Sprint 1][QA] Review chéo cùng Sơn & Thẩm định chất lượng PR`
 - **Người phụ trách (Assignee):** Phạm Thái Hoà (TV3)
 - **Ước lượng:** 3 giờ (1 SP)
 - **Mã nhánh Git:** Duyệt trên GitHub PRs
@@ -160,6 +180,8 @@
   - [ ] Kiểm tra verify/CI/test liên quan trước review; không tự duyệt; nghiệm thu chạy profile sprint1-quality.
 
 ---
+
+<a id="fe-01"></a>
 
 ### Issue #11: `[Sprint 1][FE] Xây dựng Master Layout Thymeleaf Chuẩn mực`
 - **Người phụ trách (Assignee):** Nghiêm Đức Anh (TV4)
@@ -176,6 +198,8 @@
 
 ---
 
+<a id="fe-02"></a>
+
 ### Issue #12: `[Sprint 1][FE] Xây dựng Giao diện Màn hình Đăng nhập`
 - **Người phụ trách (Assignee):** Nghiêm Đức Anh (TV4)
 - **Ước lượng:** 6 giờ (1.5 SP)
@@ -191,6 +215,8 @@
 
 ---
 
+<a id="fe-03"></a>
+
 ### Issue #13: `[Sprint 1][FE] Xây dựng Màn hình Quản lý Tài khoản BQT`
 - **Người phụ trách (Assignee):** Nghiêm Đức Anh (TV4)
 - **Ước lượng:** 6 giờ (1.5 SP)
@@ -204,6 +230,8 @@
   - [ ] Nút đổi trạng thái Kích hoạt / Vô hiệu hóa hoạt động mượt mà.
 
 ---
+
+<a id="fe-04"></a>
 
 ### Issue #14: `[Sprint 1][FE] Xây dựng Màn hình Dashboard & Danh mục Căn hộ`
 - **Người phụ trách (Assignee):** Nghiêm Đức Anh (TV4)
@@ -220,6 +248,8 @@
 
 ---
 
+<a id="qa-01"></a>
+
 ### Issue #15: `[Sprint 1][QA] Thiết lập Môi trường Test & Dữ liệu Mẫu Shift-Left`
 - **Người phụ trách (Assignee):** Nguyễn Hợp Huy (TV5)
 - **Ước lượng:** 4 giờ (1 SP)
@@ -233,6 +263,8 @@
   - [ ] Dữ liệu fixture mẫu sẵn sàng cho các ca kiểm thử Service và Controller.
 
 ---
+
+<a id="qa-02"></a>
 
 ### Issue #16: `[Sprint 1][QA] Lập trình Ca Kiểm thử CFG Basis Path cho Đăng nhập`
 - **Người phụ trách (Assignee):** Nguyễn Hợp Huy (TV5)
@@ -254,6 +286,8 @@
 
 ---
 
+<a id="qa-03"></a>
+
 ### Issue #17: `[Sprint 1][QA] Lập trình Ca Kiểm thử Tham số hóa Bảng Quyết định Căn hộ`
 - **Người phụ trách (Assignee):** Nguyễn Hợp Huy (TV5)
 - **Ước lượng:** 5 giờ (1 SP)
@@ -270,6 +304,8 @@
   - [ ] Dữ liệu hợp lệ lưu thành công vào CSDL (R6).
 
 ---
+
+<a id="qa-04"></a>
 
 ### Issue #18: `[Sprint 1][QA] Kiểm thử Tích hợp MockMvc & Báo cáo Đo lường Chất lượng`
 - **Người phụ trách (Assignee):** Nguyễn Hợp Huy (TV5)
@@ -288,6 +324,8 @@
 
 PM-01 (6h/2 SP) do Khánh phụ trách vận hành Sprint, bên cạnh PM-02 (14h/3 SP) và BA-03 (2h/1 SP). Sơn tập trung DB/Backend, chốt phạm vi/ưu tiên sau trao đổi nhóm và xác nhận nghiệm thu nội bộ. SEC-04 của Hoà vẫn 3h/1 SP; PM-03 bổ sung 3h review của Sơn. Thêm 18h/5 SP chủ hộ, tổng 138h/36 SP. Đây là nhu cầu ước lượng, cần theo dõi năng lực mỗi ngày để hoàn thành trong 31/10–06/11.
 
+<a id="db-02"></a>
+
 ### Issue #19: `[Sprint 1][DB] Chuẩn bị dữ liệu hồ sơ và lịch sử chủ hộ` (`DB-02`)
 
 - **Người phụ trách:** Sơn
@@ -299,6 +337,8 @@ PM-01 (6h/2 SP) do Khánh phụ trách vận hành Sprint, bên cạnh PM-02 (14
   - [ ] Thiết kế trường họ tên, CCCD, SĐT, email chủ hộ và lịch sử có thời điểm/người thay đổi; cập nhật DDL/migration và ERD.
   - [ ] Giữ tối đa một hộ ACTIVE/căn hộ và CCCD duy nhất toàn cục; kiểm tra với PostgreSQL cô lập.
   - [ ] Giữ dữ liệu chủ hộ cũ khi thay chủ; không xóa cứng. Ghi rõ cách liên kết hồ sơ với households/residents, tránh hai nguồn định danh khác nhau.
+
+<a id="be-03"></a>
 
 ### Issue #20: `[Sprint 1][BE] Thay chủ hộ và lưu lịch sử trong một giao dịch` (`BE-03`)
 
@@ -312,6 +352,8 @@ PM-01 (6h/2 SP) do Khánh phụ trách vận hành Sprint, bên cạnh PM-02 (14
   - [ ] Thay chủ hộ ghi lịch sử và người/thời điểm đổi; giữ đúng một hộ ACTIVE, không sửa mất hồ sơ cũ.
   - [ ] Dùng transaction để lỗi giữa chừng rollback cả đổi chủ và lịch sử; có unit test chính/biên, test rollback và cạnh tranh trên PostgreSQL ở #22.
 
+<a id="fe-05"></a>
+
 ### Issue #21: `[Sprint 1][FE] Bổ sung form chủ hộ và màn hình lịch sử` (`FE-05`)
 
 - **Người phụ trách:** Đức Anh
@@ -323,6 +365,8 @@ PM-01 (6h/2 SP) do Khánh phụ trách vận hành Sprint, bên cạnh PM-02 (14
   - [ ] Form thêm/sửa căn hộ có hồ sơ chủ hộ, lỗi tiếng Việt từ server và CSRF.
   - [ ] Màn hình lịch sử thể hiện chủ cũ/mới và thời điểm thay; không đưa tính toán nghiệp vụ vào view.
   - [ ] Thao tác lưu hợp lệ, dữ liệu sai bị chặn phía server; test render/form và kiểm tra trình duyệt.
+
+<a id="qa-05"></a>
 
 ### Issue #22: `[Sprint 1][QA] Kiểm thử hồ sơ và lịch sử chủ hộ` (`QA-05`)
 
@@ -336,6 +380,8 @@ PM-01 (6h/2 SP) do Khánh phụ trách vận hành Sprint, bên cạnh PM-02 (14
   - [ ] Đổi chủ giữ lịch sử; cố tình gây lỗi để xác nhận rollback; hai lần đổi đồng thời không tạo hai hộ ACTIVE (PostgreSQL).
   - [ ] Test web kiểm tra dữ liệu đã lưu và lịch sử hiển thị; ghi kết quả thực chạy, không thay bằng khung test rỗng.
 
+<a id="ba-03"></a>
+
 ### Issue #23: `[Sprint 1][BA] Bổ sung kịch bản UAT chủ hộ` (`BA-03`)
 
 - **Người phụ trách:** Khánh
@@ -347,6 +393,8 @@ PM-01 (6h/2 SP) do Khánh phụ trách vận hành Sprint, bên cạnh PM-02 (14
   - [ ] Thêm kịch bản hồ sơ hợp lệ, dữ liệu sai và thay chủ/lịch sử vào bộ 12 kịch bản nền; không giới hạn tổng UAT ở 12.
   - [ ] Mỗi kịch bản ghi AC, dữ liệu giả, bước làm, kỳ vọng và kết quả thực chạy; chuẩn bị từ ngày 1.
   - [ ] Khánh ghi lỗi/kết quả, Sơn nghiệm thu nội bộ khi đủ AC; không ghi khách hàng đã ký nếu chưa có bằng chứng.
+
+<a id="pm-03"></a>
 
 ### Issue #24: `[Sprint 1][Review] Review chéo và nghiệm thu tích hợp Sprint` (`PM-03`)
 
@@ -372,6 +420,8 @@ Lưu ý kiểm tổng ngày 01/11/2026: các gói của Sơn là DB-01 (2 SP), B
 | Đức Anh (UI) | 28 | 7 | FE-01…05 |
 | Huy (QA) | 24 | 5 | QA-01…05 |
 | **Tổng** | **138** | **36** | **24 gói cha** |
+
+<a id="work-units"></a>
 
 ### Đơn vị giao việc 2–4 giờ
 

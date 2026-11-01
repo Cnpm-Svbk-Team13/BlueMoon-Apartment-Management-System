@@ -13,6 +13,12 @@
 
 ---
 
+## Bắt đầu từ luồng công việc
+
+Mở [đồ thị bàn giao chung và năm luồng cá nhân](WORKFLOW_GUIDE.md) để biết nhận việc ở đâu, giao gì cho ai và điều kiện hoàn thành. Backlog là nguồn task/AC, không suy ra Done từ sơ đồ. Khánh vận hành Sprint; Sơn tập trung DB/Backend và xác nhận nghiệm thu.
+
+> [Trang bản đồ tương tác](https://bluemoon-sprint-one-map.jetpin.chatgpt.site/) đang chờ xuất bản lại theo phân công 01/11/2026. Trước khi cập nhật trang, dùng đồ thị và backlog trong repository để giao việc.
+
 ## 🗺️ BẢN ĐỒ ĐIỀU HƯỚNG CẨM NANG THÀNH VIÊN
 
 Mỗi thành viên chỉ cần mở đúng tệp tài liệu hướng dẫn riêng của mình để xem chi tiết danh mục công việc, checklist từng ngày và tiêu chuẩn nghiệm thu:
@@ -20,10 +26,10 @@ Mỗi thành viên chỉ cần mở đúng tệp tài liệu hướng dẫn riê
 | Thành viên | Vai trò Sprint 1 | Trách nhiệm cốt lõi | Cẩm nang hành động riêng | Khối lượng |
 |---|---|---|---|:---:|
 | **TV1: Khánh** | Điều phối Sprint / BA & UAT | Vận hành Kanban/daily, theo dõi bàn giao, chủ trì Review/Retro, soạn và thực thi UAT; Sơn xác nhận nghiệm thu nội bộ | 📄 [**`TV1_Khanh_PO_BA.md`**](./TV1_Khanh_PO_BA.md) | 6 SP (~22h) |
-| **TV2: Sơn** | Trưởng nhóm / Database & Backend Dev | Kịch bản DB `V1.1`, ánh xạ Entity JPA, CRUD Căn hộ 30 tầng (`US-001`) | 📄 [**`TV2_Son_Database_Backend.md`**](./TV2_Son_Database_Backend.md) | 10 SP (~36h) |
-| **TV3: Hoà** | Tech Lead & Core Backend | Khung Spring Boot 3.5.16, Security 6, API Đăng nhập/Khóa 15 phút, Gatekeeper PR | 📄 [**`TV3_Hoa_TechLead_Security.md`**](./TV3_Hoa_TechLead_Security.md) | 8 SP (~28h) |
-| **TV4: Đức Anh** | Frontend Dev & Data Eng | Master Layout Thymeleaf, Giao diện Login, UI Căn hộ & Quản lý User | 📄 [**`TV4_DucAnh_Frontend_UI.md`**](./TV4_DucAnh_Frontend_UI.md) | 7 SP (~28h) |
-| **TV5: Huy** | QA Lead & Test Engineer | Shift-Left testing, Unit test CFG Basis Path, Decision Table, MockMvc | 📄 [**`TV5_Huy_QA_Automation.md`**](./TV5_Huy_QA_Automation.md) | 5 SP (~24h) |
+| **TV2: Sơn** | Trưởng nhóm / Database & Backend Dev | Kịch bản DB `V1.1`, ánh xạ Entity JPA, Căn hộ, hồ sơ/lịch sử chủ hộ (`US-001`), review PR Hoà và nghiệm thu | 📄 [**`TV2_Son_Database_Backend.md`**](./TV2_Son_Database_Backend.md) | 10 SP (~36h) |
+| **TV3: Hoà** | Tech Lead & Core Backend | Khung Spring Boot 3.5.16, Security 6, Đăng nhập/Khóa 15 phút, tài khoản, review chéo cùng Sơn | 📄 [**`TV3_Hoa_TechLead_Security.md`**](./TV3_Hoa_TechLead_Security.md) | 8 SP (~28h) |
+| **TV4: Đức Anh** | Frontend Dev & Data Eng | Master Layout Thymeleaf, Giao diện Login, UI Căn hộ/Chủ hộ/Lịch sử & Quản lý User | 📄 [**`TV4_DucAnh_Frontend_UI.md`**](./TV4_DucAnh_Frontend_UI.md) | 7 SP (~28h) |
+| **TV5: Huy** | QA Lead & Test Engineer | Shift-Left testing, Unit test CFG Basis Path, Decision Table, chủ hộ/rollback/cạnh tranh, MockMvc | 📄 [**`TV5_Huy_QA_Automation.md`**](./TV5_Huy_QA_Automation.md) | 5 SP (~24h) |
 
 > 📋 **Danh mục Thẻ Công việc Backlog:** [**`github_issues_backlog.md`**](./github_issues_backlog.md) (24 gói cha sẵn sàng đưa lên GitHub Kanban).
 > 📐 **Chứng minh Học thuật Kiểm thử:** [**`kiem_thu_hoc_thuat_cfg_decision_table.md`**](./kiem_thu_hoc_thuat_cfg_decision_table.md) (Thiết kế CFG chờ mã nguồn và Bảng quyết định 6 Rules).

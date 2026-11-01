@@ -1,4 +1,6 @@
 # 🎨 CẨM NANG HÀNH ĐỘNG SPRINT 1 — THÀNH VIÊN 4: NGHIÊM ĐỨC ANH
+
+> Bắt đầu với [đồ thị luồng công việc](WORKFLOW_GUIDE.md): đầu vào, bàn giao và điều kiện kết thúc của từng người. Phân công hiện hành: Khánh điều phối/BA/UAT, Sơn DB/Backend và nghiệm thu; review PR Sơn–Hoà.
 ## Vai trò: Frontend Developer & UI/UX Specialist
 ### Dự án: BlueMoon BFMS (IT3180 - Team 13)
 

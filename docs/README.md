@@ -98,3 +98,7 @@ Mọi thành phần trong mã nguồn và kiểm thử đều được truy vế
 ## Quy chuẩn và vận hành Sprint 1
 
 [PROJECT_CONVENTIONS.md](PROJECT_CONVENTIONS.md) là nguồn hiện hành về vai trò Sơn/Khánh, mã truy vết, khóa đăng nhập, review chéo, CI, coverage và skills.
+
+## Bắt đầu công việc Sprint 1
+
+[Đồ thị luồng công việc và bàn giao](sprints/sprint-1/WORKFLOW_GUIDE.md) — xem tổng quan trước, mở luồng của mình rồi nhận phần việc 2–4h. Khánh điều phối Sprint/BA/UAT; Sơn DB/Backend, quyết định phạm vi và nghiệm thu. Tổng 138h/36 SP, 24 gói/44 phần việc.
