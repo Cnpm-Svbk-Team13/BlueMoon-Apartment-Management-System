@@ -1,13 +1,13 @@
 # 📋 CẨM NANG HÀNH ĐỘNG SPRINT 1 — THÀNH VIÊN 1: PHẠM NAM KHÁNH
-## Vai trò: Lead Business Analyst (BA) & UAT
+## Vai trò: Điều phối Sprint / Business Analyst (BA) & UAT
 ### Dự án: BlueMoon BFMS (IT3180 - Team 13)
 
 ---
 
 ## 🎯 1. TỔNG QUAN VAI TRÒ & SẢN PHẨM BÀN GIAO (DELIVERABLES)
 
-- **Vai trò chính:** Phân tích yêu cầu, hỗ trợ Sơn cập nhật bảng Kanban, trực tiếp soạn thảo kịch bản kiểm thử chấp nhận người dùng (UAT) và thực thi UAT tính năng trên giao diện web do Đức Anh xây dựng.
-- **Tổng thời gian cam kết:** **16 giờ ước lượng** (4 Story Points).
+- **Vai trò chính:** Vận hành Kanban/daily, theo dõi phụ thuộc/trở ngại, chủ trì Sprint Review/Retrospective, phân tích yêu cầu, trực tiếp soạn thảo kịch bản kiểm thử chấp nhận người dùng (UAT) và thực thi UAT tính năng trên giao diện web do Đức Anh xây dựng.
+- **Tổng thời gian cam kết:** **22 giờ ước lượng** (6 Story Points).
 - **Sản phẩm đóng góp cụ thể trên Git (Minh chứng chấm điểm cá nhân IT3180):**
   1. Tệp kịch bản kiểm thử: `docs/sprints/sprint-1/UAT_SCENARIOS_SPRINT_1.md` (sản phẩm dự kiến) (12 kịch bản nền, bổ sung kịch bản chủ hộ BA-03).
   2. Tệp biên bản nghiệm thu: `docs/sprints/sprint-1/UAT_REPORT_SPRINT_1.md` (sản phẩm dự kiến) (Nhật ký lỗi và biên bản ký xác nhận nghiệm thu giao diện web).
@@ -19,7 +19,9 @@
 
 ### Điều phối PM-01
 
-PM-01 (6h/2 SP) do Sơn chịu trách nhiệm; Khánh hỗ trợ Kanban với vai trò BA. Khánh giữ PM-02 và bổ sung BA-03 (2h/1 SP) cho UAT chủ hộ.
+PM-01 (6h/2 SP) do Khánh chịu trách nhiệm chính: Kanban/lịch họp (3h), theo dõi tiến độ/tổ chức Sprint Review và Retrospective (3h). Mỗi thành viên tự cập nhật task và báo trở ngại cho Khánh. Khánh kết nối bàn giao, chuyển vướng kỹ thuật cho Sơn/Hoà và đề xuất đổi phạm vi/ưu tiên cho Sơn chốt sau trao đổi nhóm.
+
+Sản phẩm bàn giao: bảng tiến độ/phụ thuộc, lịch họp, ghi nhận trở ngại và biên bản Review/Retro cho cả nhóm. Hoàn thành theo AC của PM-01 trong backlog; Sprint Review là tổ chức họp, không phải review mã nguồn. Khánh theo dõi thỏa thuận đầu vào/đầu ra; nội dung kỹ thuật do Sơn/Hoà/Đức Anh phụ trách. Khánh giữ PM-02 và BA-03 (2h/1 SP) cho UAT chủ hộ.
 
 ### Thẻ Issue 2: `[Sprint 1][BA] Xây dựng 12 Kịch bản UAT & Báo cáo Nghiệm thu Web` (`PM-02`)
 - **Khối lượng:** 14 giờ (3 SP).
@@ -46,13 +48,13 @@ PM-01 (6h/2 SP) do Sơn chịu trách nhiệm; Khánh hỗ trợ Kanban với va
 
 ## 📅 3. CHECKLIST HÀNH ĐỘNG TỪNG NGÀY (DAILY CHECKLIST)
 
-- [ ] **Ngày 1 (31/10):** Hỗ trợ Sơn cập nhật Kanban từ backlog; chuẩn bị BA-03. Bắt đầu phác thảo khung 12 kịch bản UAT.
+- [ ] **Ngày 1 (31/10):** Thiết lập/vận hành Kanban, lịch daily và theo dõi bàn giao từ backlog; chuẩn bị BA-03. Bắt đầu phác thảo khung 12 kịch bản UAT.
 - [ ] **Ngày 2 (01/11):** Thống nhất kịch bản UAT luồng Đăng nhập với Huy (QA Lead) để khớp với đồ thị kiểm thử CFG.
-- [ ] **Ngày 3 (02/11):** Cập nhật tiến độ daily; hoàn thiện kịch bản UAT cho luồng Căn hộ 30 tầng.
+- [ ] **Ngày 3 (02/11):** Tổ chức daily, tổng hợp tiến độ/trở ngại; hoàn thiện kịch bản UAT cho luồng Căn hộ 30 tầng.
 - [ ] **Ngày 4 (03/11):** Mở web thử nghiệm chức năng Đăng nhập do Đức Anh & Hoà vừa ghép nối. Bắt lỗi giao diện (nếu có).
 - [ ] **Ngày 5 (04/11):** Theo dõi tiến độ Backend Căn hộ của Sơn và UI của Đức Anh.
 - [ ] **Ngày 6 (05/11):** Trực tiếp kiểm thử UAT thao tác Thêm/Sửa Căn hộ trên trình duyệt. Lập Bug Log nếu phát hiện lỗi.
-- [ ] **Ngày 7 (06/11):** Xác nhận các bug đã được sửa xong; hoàn thiện biên bản nghiệm thu `UAT_REPORT_SPRINT_1.md`; hỗ trợ Sơn chủ trì buổi Demo Sprint Review & Retrospective.
+- [ ] **Ngày 7 (06/11):** Xác nhận các bug đã được sửa xong; hoàn thiện biên bản nghiệm thu `UAT_REPORT_SPRINT_1.md`; chủ trì Demo Sprint Review/Retrospective, người triển khai trình bày; bàn giao hồ sơ/UAT cho Sơn xác nhận nghiệm thu nội bộ. Sơn không làm lại báo cáo của Khánh/Huy.
 
 ---
 

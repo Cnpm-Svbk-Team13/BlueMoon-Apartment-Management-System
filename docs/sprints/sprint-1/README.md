@@ -19,8 +19,8 @@ Mỗi thành viên chỉ cần mở đúng tệp tài liệu hướng dẫn riê
 
 | Thành viên | Vai trò Sprint 1 | Trách nhiệm cốt lõi | Cẩm nang hành động riêng | Khối lượng |
 |---|---|---|---|:---:|
-| **TV1: Khánh** | Lead BA & UAT | Hỗ trợ Kanban, soạn kịch bản và thực thi UAT; Sơn nghiệm thu nội bộ | 📄 [**`TV1_Khanh_PO_BA.md`**](./TV1_Khanh_PO_BA.md) | 4 SP (~16h) |
-| **TV2: Sơn** | Trưởng nhóm / Database & Backend Dev | Kịch bản DB `V1.1`, ánh xạ Entity JPA, CRUD Căn hộ 30 tầng (`US-001`) | 📄 [**`TV2_Son_Database_Backend.md`**](./TV2_Son_Database_Backend.md) | 13 SP (~42h) |
+| **TV1: Khánh** | Điều phối Sprint / BA & UAT | Vận hành Kanban/daily, theo dõi bàn giao, chủ trì Review/Retro, soạn và thực thi UAT; Sơn xác nhận nghiệm thu nội bộ | 📄 [**`TV1_Khanh_PO_BA.md`**](./TV1_Khanh_PO_BA.md) | 6 SP (~22h) |
+| **TV2: Sơn** | Trưởng nhóm / Database & Backend Dev | Kịch bản DB `V1.1`, ánh xạ Entity JPA, CRUD Căn hộ 30 tầng (`US-001`) | 📄 [**`TV2_Son_Database_Backend.md`**](./TV2_Son_Database_Backend.md) | 10 SP (~36h) |
 | **TV3: Hoà** | Tech Lead & Core Backend | Khung Spring Boot 3.5.16, Security 6, API Đăng nhập/Khóa 15 phút, Gatekeeper PR | 📄 [**`TV3_Hoa_TechLead_Security.md`**](./TV3_Hoa_TechLead_Security.md) | 8 SP (~28h) |
 | **TV4: Đức Anh** | Frontend Dev & Data Eng | Master Layout Thymeleaf, Giao diện Login, UI Căn hộ & Quản lý User | 📄 [**`TV4_DucAnh_Frontend_UI.md`**](./TV4_DucAnh_Frontend_UI.md) | 7 SP (~28h) |
 | **TV5: Huy** | QA Lead & Test Engineer | Shift-Left testing, Unit test CFG Basis Path, Decision Table, MockMvc | 📄 [**`TV5_Huy_QA_Automation.md`**](./TV5_Huy_QA_Automation.md) | 5 SP (~24h) |
@@ -103,14 +103,14 @@ git commit -m "docs(#02): draft 12 uat test scenarios for sprint 1"
 
 | Ngày | Hoạt động Toàn đội | Sản phẩm Cuối ngày |
 |:---:|---|---|
-| **Ngày 1 (31/10)** | Họp Planning 45p. Hoà làm khung App, Sơn làm SQL `V1.1`, Huy setup test, Sơn điều phối; Khánh hỗ trợ Kanban & phác thảo UAT. | App biên dịch sạch, DB `V1.1` sẵn sàng, test setup xong. |
+| **Ngày 1 (31/10)** | Họp Planning 45p. Hoà làm khung App, Sơn làm SQL `V1.1`, Huy setup test, Khánh điều phối Kanban/daily & phác thảo UAT; Sơn tập trung DB/Backend. | App biên dịch sạch, DB `V1.1` sẵn sàng, test setup xong. |
 | **Ngày 2 (01/11)** | Sơn nạp DB & ánh xạ JPA Entity; Hoà cấu hình Security 6; Đức Anh làm Master Layout; Huy dựng khung test stubs. | Kết nối DB PostgreSQL thành công; Layout HTML chuẩn; Security filter chạy. |
 | **Ngày 3 (02/11)** | Hoà viết `AuthService` khóa 15 phút sau 5 lần sai; Đức Anh làm UI Login; Huy ráp test các Basis Paths theo CFG đã chốt chạy thật. | Logic Đăng nhập pass 100% test; Màn hình Login HTML sẵn sàng. |
 | **Ngày 4 (03/11)** | Đức Anh & Hoà ghép UI Login với Security; Khánh kiểm thử đăng nhập trên web; Sơn bắt đầu code `ApartmentService`. | Đăng nhập trên web thành công; Sơn bắt đầu logic Căn hộ. |
 | **Ngày 5 (04/11)** | Sơn hoàn thành CRUD Căn hộ 30 tầng; Đức Anh làm UI Căn hộ; Huy chạy test Bảng quyết định bắt lỗi biên. | Backend Căn hộ hoàn tất; Giao diện Căn hộ sẵn sàng; Test biên pass 100%. |
 | **Ngày 6 (05/11)** | Đức Anh ghép nối UI Căn hộ với Controller; Khánh test UAT trên web; Huy viết `MockMvc` Integration Test. | Thao tác Thêm/Sửa Căn hộ chạy mượt trên web; Integration test pass. |
-| **Ngày 7 (06/11)** | **Code Freeze lúc 12:00 trưa**. Huy đo Coverage $\ge 85\%$. Khánh tổng kết UAT; Sơn nghiệm thu nội bộ và chủ trì Demo Sprint Review & Retrospective. | 100% ca kiểm thử pass xanh; Biên bản nghiệm thu hoàn tất; Đóng gói Deliverables D1–D5. |
+| **Ngày 7 (06/11)** | **Code Freeze lúc 12:00 trưa**. Huy đo Coverage $\ge 85\%$. Khánh tổng kết UAT, chủ trì Demo Sprint Review/Retrospective; người triển khai demo, Sơn kiểm tra bằng chứng và xác nhận nghiệm thu nội bộ. | 100% ca kiểm thử pass xanh; Biên bản nghiệm thu hoàn tất; Đóng gói Deliverables D1–D5. |
 
 ## Quyết định hiện hành
 
-Xem [quy chuẩn](../../PROJECT_CONVENTIONS.md) và phần điều chỉnh backlog: Sơn là trưởng nhóm; Khánh BA/UAT. Bổ sung DB-02, BE-03, FE-05, QA-05, BA-03 và PM-03. Tổng 138h/36 SP, gồm 24 gói cha chia thành phần việc 2–4h. Ngày 31/10 soạn UAT chủ hộ; 01–04/11 hoàn thành dữ liệu/nghiệp vụ; 04–05/11 ghép UI/test; 06/11 nghiệm thu toàn bộ US-001. CI nền tảng xanh chưa phải hoàn thành Sprint.
+Xem [quy chuẩn](../../PROJECT_CONVENTIONS.md) và phần điều chỉnh backlog: Sơn là trưởng nhóm/DB/Backend (36h/10 SP); Khánh điều phối Sprint/BA/UAT (22h/6 SP). PM-01 thuộc Khánh; PM-03 review PR Hoà và kiểm tra nghiệm thu vẫn thuộc Sơn. Mỗi người tự cập nhật task, báo trở ngại cho Khánh; vướng kỹ thuật chuyển Sơn/Hoà, thay phạm vi/ưu tiên do Sơn chốt sau trao đổi nhóm. Bổ sung DB-02, BE-03, FE-05, QA-05, BA-03 và PM-03. Tổng 138h/36 SP, gồm 24 gói cha chia thành phần việc 2–4h. Ngày 31/10 soạn UAT chủ hộ; 01–04/11 hoàn thành dữ liệu/nghiệp vụ; 04–05/11 ghép UI/test; 06/11 nghiệm thu toàn bộ US-001. CI nền tảng xanh chưa phải hoàn thành Sprint.
