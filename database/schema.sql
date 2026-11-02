@@ -9,14 +9,13 @@
 -- Run with psql --set=ON_ERROR_STOP=1 --file=database/schema.sql.
 
 BEGIN;
-
 -- 1. Accounts. BCrypt, login lock expiry and sessions belong to Service.
 CREATE TABLE users (
     id BIGSERIAL PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE CHECK (btrim(username) <> ''),
     password_hash VARCHAR(255) NOT NULL CHECK (btrim(password_hash) <> ''),
     full_name VARCHAR(100) NOT NULL CHECK (btrim(full_name) <> ''),
-    email VARCHAR(100) NOT NULL UNIQUE CHECK (btrim(email) <> ''),
+    email VARCHAR(255) NOT NULL UNIQUE CHECK (btrim(email) <> ''),
     phone VARCHAR(20) NOT NULL CHECK (phone ~ '^[0-9]{10}$'),
     role VARCHAR(20) NOT NULL CHECK (
         role IN ('ROLE_ADMIN', 'ROLE_ACCOUNTANT', 'ROLE_CASHIER', 'ROLE_RESIDENT')
@@ -34,7 +33,7 @@ CREATE TABLE persons (
     full_name VARCHAR(100) NOT NULL CHECK (btrim(full_name) <> ''),
     national_id VARCHAR(12),
     phone VARCHAR(20),
-    email VARCHAR(100),
+    email VARCHAR(255),
     date_of_birth DATE,
     gender VARCHAR(10),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
