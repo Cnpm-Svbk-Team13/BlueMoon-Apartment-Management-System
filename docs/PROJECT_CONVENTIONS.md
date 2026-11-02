@@ -13,6 +13,8 @@ Ngày cập nhật: 01/11/2026 (điều chỉnh phân công Sprint 1). Tài li�
 
 ## Vai trò và review
 
+- Quy ước tên và ánh xạ DB → Java → DTO/form: [DATA_NAMING_CONVENTIONS.md](sprints/sprint-1/DATA_NAMING_CONVENTIONS.md). SQL dùng `snake_case`, Java/form dùng `camelCase`; nhãn tiếng Việt tách khỏi tên trường. Giữ tên cột hiện có; hồ sơ/lịch sử chủ hộ đánh dấu đề xuất cho tới khi DB-02/BE-03 chốt thiết kế. Không coi bảng ánh xạ là bằng chứng chức năng đã triển khai.
+
 - Nguyễn Xuân Sơn: trưởng nhóm, phụ trách Database/Backend, căn hộ và chủ hộ; chốt thay đổi phạm vi/ưu tiên sau khi trao đổi với nhóm, xử lý vấn đề vượt thẩm quyền điều phối và xác nhận nghiệm thu nội bộ dựa trên AC, test, UAT.
 - Phạm Nam Khánh: điều phối Sprint, BA/UAT; phụ trách PM-01 (6h/2 SP), Kanban, daily, theo dõi phụ thuộc/chậm tiến độ, chủ trì Sprint Review/Retrospective; chuẩn hóa yêu cầu, chuẩn bị/thực hiện UAT và tổng hợp hồ sơ nghiệm thu.
 - Mỗi thành viên tự cập nhật task và báo trở ngại cho Khánh. Khánh kết nối người bàn giao/nhận, chuyển vướng kỹ thuật cho Sơn/Hoà theo phân hệ và chuyển đề xuất đổi phạm vi/ưu tiên cho Sơn. Khánh theo dõi thỏa thuận đầu vào/đầu ra; Sơn, Hoà và Đức Anh chịu trách nhiệm nội dung kỹ thuật của phần mình.

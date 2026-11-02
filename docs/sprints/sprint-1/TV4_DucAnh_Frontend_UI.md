@@ -1,6 +1,8 @@
 # 🎨 CẨM NANG HÀNH ĐỘNG SPRINT 1 — THÀNH VIÊN 4: NGHIÊM ĐỨC ANH
 
 > Bắt đầu với [đồ thị luồng công việc](WORKFLOW_GUIDE.md): đầu vào, bàn giao và điều kiện kết thúc của từng người. Phân công hiện hành: Khánh điều phối/BA/UAT, Sơn DB/Backend và nghiệm thu; review PR Sơn–Hoà.
+
+> Trước khi dựng form, dùng [bảng tên DB → Java → DTO/form](DATA_NAMING_CONVENTIONS.md). Input phải khớp thuộc tính DTO (`roomNumber`, `areaSqm`, `active`), nhãn vẫn dùng tiếng Việt; thống nhất cùng chủ backend trước khi đổi tên. Form chủ hộ lồng `owner.*` hiện là đề xuất chờ DB-02/BE-03 xác nhận.
 ## Vai trò: Frontend Developer & UI/UX Specialist
 ### Dự án: BlueMoon BFMS (IT3180 - Team 13)
 

@@ -77,11 +77,10 @@ flowchart LR
 
 ---
 
-### 📋 Báo cáo Đánh giá Đồng bộ & Kế hoạch Chi tiết Sprint 1
-*Tài liệu kiểm soát chất lượng kỹ thuật và kế hoạch hành động chi tiết trước khi bước vào lập trình:*
+### 📋 Kế hoạch Chi tiết Sprint 1
+*Kế hoạch hành động chi tiết để triển khai Sprint 1:*
 
-1. [BAO_CAO_DANH_GIA_DONG_BO_TAI_LIEU.md](./BAO_CAO_DANH_GIA_DONG_BO_TAI_LIEU.md): Báo cáo Đánh giá Đồng bộ và Nhất quán Toàn diện Tài liệu Đặc tả (Khảo sát chéo 14 điểm sai lệch kỹ thuật và phương án chuẩn hóa).
-2. [KE_HOACH_CHI_TIET_SPRINT_1.md](./KE_HOACH_CHI_TIET_SPRINT_1.md): Kế hoạch Chi tiết Triển khai Sprint 1 (Khởi tạo Nền tảng Kiến trúc Spring Boot, Database Schema & Quản lý Tài khoản BQT / Đăng nhập).
+1. [KE_HOACH_CHI_TIET_SPRINT_1.md](./KE_HOACH_CHI_TIET_SPRINT_1.md): Kế hoạch Chi tiết Triển khai Sprint 1 (Khởi tạo Nền tảng Kiến trúc Spring Boot, Database Schema & Quản lý Tài khoản BQT / Đăng nhập).
 
 ---
 

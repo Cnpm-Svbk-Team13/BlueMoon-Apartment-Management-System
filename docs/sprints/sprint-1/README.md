@@ -15,6 +15,8 @@
 
 ## Bắt đầu từ luồng công việc
 
+Trước khi Sơn/Hoà tạo Entity, DTO và Đức Anh dựng form, dùng [quy ước tên trường DB → Java → form](DATA_NAMING_CONVENTIONS.md). Có bảng cụ thể cho tài khoản/căn hộ/hộ gia đình và bảng đề xuất chủ hộ chờ DB-02; tên trường gửi form phải khớp DTO.
+
 Mở [đồ thị bàn giao chung và năm luồng cá nhân](WORKFLOW_GUIDE.md) để biết nhận việc ở đâu, giao gì cho ai và điều kiện hoàn thành. Backlog là nguồn task/AC, không suy ra Done từ sơ đồ. Khánh vận hành Sprint; Sơn tập trung DB/Backend và xác nhận nghiệm thu.
 
 > [Trang bản đồ tương tác](https://bluemoon-sprint-one-map.jetpin.chatgpt.site/) đang chờ xuất bản lại theo phân công 01/11/2026. Trước khi cập nhật trang, dùng đồ thị và backlog trong repository để giao việc.

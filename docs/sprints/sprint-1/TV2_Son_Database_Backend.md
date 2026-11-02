@@ -1,6 +1,8 @@
 # 🗄️ CẨM NANG HÀNH ĐỘNG SPRINT 1 — THÀNH VIÊN 2: NGUYỄN XUÂN SƠN
 
 > Bắt đầu với [đồ thị luồng công việc](WORKFLOW_GUIDE.md): đầu vào, bàn giao và điều kiện kết thúc của từng người. Phân công hiện hành: Khánh điều phối/BA/UAT, Sơn DB/Backend và nghiệm thu; review PR Sơn–Hoà.
+
+> Khi thiết kế dữ liệu/Entity, dùng [bảng tên DB → Java → DTO/form](DATA_NAMING_CONVENTIONS.md). Sơn chốt cột/FK thuộc phân hệ, phối hợp Hoà về `users` và Đức Anh về DTO; DB-02 cần xác nhận nguồn định danh và ánh xạ thật cho chủ hộ/lịch sử, không dùng bảng đề xuất như schema đã có.
 ## Vai trò: Trưởng nhóm / Database Engineer & Backend Developer
 ### Dự án: BlueMoon BFMS (IT3180 - Team 13)
 

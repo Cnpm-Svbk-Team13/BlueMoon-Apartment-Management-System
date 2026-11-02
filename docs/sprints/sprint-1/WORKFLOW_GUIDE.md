@@ -8,6 +8,8 @@ Nguồn quyết định: [quy chuẩn](../../PROJECT_CONVENTIONS.md). Phạm vi:
 
 ## 1. Bàn giao toàn nhóm
 
+Trước khi làm song song, đối chiếu [quy ước tên trường và bảng ánh xạ DB → Java → form](DATA_NAMING_CONVENTIONS.md). Phần chủ hộ/lịch sử còn chờ DB-02/BE-03 xác nhận thiết kế; không tự đoán tên cột hoặc nguồn hồ sơ.
+
 ```mermaid
 flowchart TD
     K["Khánh — PM-01, PM-02, BA-03<br/>Làm rõ AC, điều phối, chuẩn bị UAT"]
