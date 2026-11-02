@@ -1,188 +1,274 @@
--- ==============================================================================
--- BlueMoon BFMS - PostgreSQL Database Schema
--- Dự án: Hệ thống Quản lý Thu phí và Dân cư Chung cư BlueMoon (IT3180)
--- Chuẩn CSDL: PostgreSQL 16+ / 17
--- ==============================================================================
+-- BlueMoon BFMS - Sprint 1 bootstrap, PostgreSQL 16/17.
+-- US-SEC-01/02, NFR-02 -> DB-01, BE-01; US-001, RAW-001/002
+-- -> BE-02, DB-02, BE-03; verification: QA-05.
+-- ERD: docs/02_design_and_architecture/erd_sprint_1_proposal.md.
+-- EMPTY DATABASE ONLY. This is not a migration. No DROP/TRUNCATE.
+-- No IF NOT EXISTS: fail rather than retain an incompatible existing table.
+-- After successful bootstrap, seed_data.sql supplies synthetic Sprint 1 fixtures.
+-- Run this bootstrap directly; do not append migrations from another structure.
+-- Run with psql --set=ON_ERROR_STOP=1 --file=database/schema.sql.
 
--- 1. Bảng Tài khoản người dùng & Phân quyền (RBAC)
-CREATE TABLE IF NOT EXISTS users (
+BEGIN;
+-- 1. Accounts. BCrypt, login lock expiry and sessions belong to Service.
+CREATE TABLE users (
     id BIGSERIAL PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    full_name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE,
-    phone VARCHAR(20),
-    role VARCHAR(20) NOT NULL CHECK (role IN ('ROLE_ADMIN', 'ROLE_ACCOUNTANT', 'ROLE_CASHIER', 'ROLE_RESIDENT')),
-    failed_attempts INT DEFAULT 0,
-    locked_until TIMESTAMP WITH TIME ZONE,
-    is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
--- 2. Bảng Căn hộ (30 tầng: Tầng 1 Kiot, Tầng 2-5 Tiện ích, Tầng 6-29 Nhà ở, Tầng 30 Penthouse)
-CREATE TABLE IF NOT EXISTS apartments (
-    id BIGSERIAL PRIMARY KEY,
-    room_number VARCHAR(20) UNIQUE NOT NULL,
-    floor_number INT NOT NULL CHECK (floor_number BETWEEN 1 AND 30),
-    area_sqm DECIMAL(12, 2) NOT NULL CHECK (area_sqm > 0),
-    apartment_type VARCHAR(20) NOT NULL CHECK (apartment_type IN ('KIOT', 'RESIDENTIAL', 'PENTHOUSE', 'COMMERCIAL')),
-    status VARCHAR(20) DEFAULT 'OCCUPIED' CHECK (status IN ('VACANT', 'OCCUPIED', 'RENOVATING')),
-    description TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
--- 3. Bảng Sổ Hộ khẩu
-CREATE TABLE IF NOT EXISTS households (
-    id BIGSERIAL PRIMARY KEY,
-    apartment_id BIGINT NOT NULL REFERENCES apartments(id) ON DELETE RESTRICT,
-    registration_code VARCHAR(50) UNIQUE NOT NULL,
-    head_name VARCHAR(100) NOT NULL,
-    moved_in_date DATE DEFAULT CURRENT_DATE,
-    status VARCHAR(20) DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'MOVED_OUT', 'TRANSFERRED')),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
--- 4. Bảng Nhân khẩu / Cư dân
-CREATE TABLE IF NOT EXISTS residents (
-    id BIGSERIAL PRIMARY KEY,
-    household_id BIGINT REFERENCES households(id) ON DELETE CASCADE,
-    full_name VARCHAR(100) NOT NULL,
-    date_of_birth DATE NOT NULL,
-    gender VARCHAR(10) CHECK (gender IN ('MALE', 'FEMALE', 'OTHER')),
-    national_id VARCHAR(20) UNIQUE, -- Số CCCD / CMND (12 chữ số theo Luật Căn cước)
-    phone VARCHAR(20),
-    relationship_with_head VARCHAR(50) NOT NULL,
-    residence_status VARCHAR(20) NOT NULL DEFAULT 'THUONG_TRU' CHECK (residence_status IN ('THUONG_TRU', 'TAM_TRU', 'TAM_VANG')),
-    start_date DATE,
-    end_date DATE,
-    notes TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT chk_residence_dates CHECK (
-        residence_status = 'THUONG_TRU' OR 
-        (start_date IS NOT NULL AND end_date IS NOT NULL AND end_date >= start_date)
+    username VARCHAR(50) NOT NULL UNIQUE CHECK (btrim(username) <> ''),
+    password_hash VARCHAR(255) NOT NULL CHECK (btrim(password_hash) <> ''),
+    full_name VARCHAR(100) NOT NULL CHECK (btrim(full_name) <> ''),
+    email VARCHAR(255) NOT NULL UNIQUE CHECK (btrim(email) <> ''),
+    phone VARCHAR(20) NOT NULL CHECK (phone ~ '^[0-9]{10}$'),
+    role VARCHAR(20) NOT NULL CHECK (
+        role IN ('ROLE_ADMIN', 'ROLE_ACCOUNTANT', 'ROLE_CASHIER', 'ROLE_RESIDENT')
     ),
-    CONSTRAINT chk_national_id_format CHECK (national_id IS NULL OR national_id ~ '^[0-9]{12}$')
-);
-
--- 5. Bảng Danh mục Loại khoản phí
-CREATE TABLE IF NOT EXISTS fee_types (
-    id BIGSERIAL PRIMARY KEY,
-    fee_code VARCHAR(30) UNIQUE NOT NULL,
-    fee_name VARCHAR(100) NOT NULL,
-    category VARCHAR(30) NOT NULL CHECK (category IN ('SERVICE_MANDATORY', 'MANAGEMENT_MANDATORY')),
-    unit_price NUMERIC(12, 2) NOT NULL DEFAULT 0, -- Đơn giá VNĐ/m2 hoặc giá cố định
-    calculation_unit VARCHAR(30) NOT NULL DEFAULT 'M2_MONTH', -- 'M2_MONTH', 'FIXED', 'DONATION'
-    is_mandatory BOOLEAN NOT NULL DEFAULT TRUE,
+    failed_attempts INTEGER NOT NULL DEFAULT 0 CHECK (failed_attempts >= 0),
+    locked_until TIMESTAMPTZ,
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
-    description TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- 6. Bảng Chiến dịch Vận động Đóng góp Quỹ tự nguyện
-CREATE TABLE IF NOT EXISTS campaign_funds (
+-- 2. Shared personal identity. Children may have no national ID or phone.
+CREATE TABLE persons (
     id BIGSERIAL PRIMARY KEY,
-    fund_name VARCHAR(150) NOT NULL,
-    start_date DATE NOT NULL,
-    end_date DATE,
-    target_amount NUMERIC(15, 2) DEFAULT 0,
-    current_amount NUMERIC(15, 2) DEFAULT 0,
-    description TEXT,
-    status VARCHAR(20) DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'CLOSED', 'PLANNED')),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
--- 7. Bảng Hóa đơn Thu phí định kỳ hàng tháng
-CREATE TABLE IF NOT EXISTS invoices (
-    id BIGSERIAL PRIMARY KEY,
-    invoice_code VARCHAR(50) UNIQUE NOT NULL,
-    apartment_id BIGINT NOT NULL REFERENCES apartments(id) ON DELETE RESTRICT,
-    period_month INT NOT NULL CHECK (period_month BETWEEN 1 AND 12),
-    period_year INT NOT NULL CHECK (period_year >= 2020),
-    total_amount NUMERIC(15, 2) NOT NULL DEFAULT 0,
-    payment_status VARCHAR(20) DEFAULT 'UNPAID' CHECK (payment_status IN ('UNPAID', 'PAID', 'OVERDUE', 'CANCELLED')),
-    due_date DATE NOT NULL,
-    paid_at TIMESTAMP WITH TIME ZONE,
-    cashier_id BIGINT REFERENCES users(id) ON DELETE SET NULL,
-    version BIGINT NOT NULL DEFAULT 0, -- Khóa lạc quan (Optimistic Locking) ngăn chặn double-payment
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT uq_invoice_period UNIQUE (apartment_id, period_month, period_year)
-);
-
--- 8. Bảng Chi tiết Khoản thu trong Hóa đơn
-CREATE TABLE IF NOT EXISTS invoice_items (
-    id BIGSERIAL PRIMARY KEY,
-    invoice_id BIGINT NOT NULL REFERENCES invoices(id) ON DELETE CASCADE,
-    fee_type_id BIGINT NOT NULL REFERENCES fee_types(id) ON DELETE RESTRICT,
-    item_name VARCHAR(100) NOT NULL,
-    quantity NUMERIC(10, 2) NOT NULL, -- Diện tích m2 hoặc số lượng
-    unit_price NUMERIC(12, 2) NOT NULL,
-    amount NUMERIC(15, 2) NOT NULL
-);
-
--- 9. Bảng Ghi nhận Đóng góp Quỹ tự nguyện (Tùy tâm)
-CREATE TABLE IF NOT EXISTS fund_contributions (
-    id BIGSERIAL PRIMARY KEY,
-    fund_id BIGINT NOT NULL REFERENCES campaign_funds(id) ON DELETE RESTRICT,
-    apartment_id BIGINT NOT NULL REFERENCES apartments(id) ON DELETE RESTRICT,
-    contributor_name VARCHAR(100) NOT NULL,
-    amount NUMERIC(15, 2) NOT NULL CHECK (amount >= 0),
-    contributed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    receipt_code VARCHAR(50) UNIQUE,
-    cashier_id BIGINT REFERENCES users(id) ON DELETE SET NULL,
-    notes TEXT
-);
-
--- 10. Bảng Biên lai / Phiếu thu tiền
-CREATE TABLE IF NOT EXISTS receipts (
-    id BIGSERIAL PRIMARY KEY,
-    receipt_code VARCHAR(50) UNIQUE NOT NULL,
-    invoice_id BIGINT REFERENCES invoices(id) ON DELETE SET NULL,
-    contribution_id BIGINT REFERENCES fund_contributions(id) ON DELETE SET NULL,
-    payer_name VARCHAR(100) NOT NULL,
-    total_amount NUMERIC(15, 2) NOT NULL,
-    payment_method VARCHAR(30) DEFAULT 'CASH' CHECK (payment_method IN ('CASH', 'BANK_TRANSFER', 'VNPAY', 'OTHER')),
-    cashier_id BIGINT REFERENCES users(id) ON DELETE SET NULL,
-    printed_at TIMESTAMP WITH TIME ZONE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT chk_receipt_target CHECK (
-        (invoice_id IS NOT NULL AND contribution_id IS NULL) OR 
-        (invoice_id IS NULL AND contribution_id IS NOT NULL)
+    full_name VARCHAR(100) NOT NULL CHECK (btrim(full_name) <> ''),
+    national_id VARCHAR(12),
+    phone VARCHAR(20),
+    email VARCHAR(255),
+    date_of_birth DATE,
+    gender VARCHAR(10),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uq_persons_national_id UNIQUE (national_id),
+    CONSTRAINT chk_persons_national_id CHECK (
+        national_id IS NULL OR national_id ~ '^[0-9]{12}$'
+    ),
+    CONSTRAINT chk_persons_phone CHECK (phone IS NULL OR phone ~ '^[0-9]{10}$'),
+    CONSTRAINT chk_persons_email CHECK (email IS NULL OR btrim(email) <> ''),
+    CONSTRAINT chk_persons_gender CHECK (
+        gender IS NULL OR gender IN ('MALE', 'FEMALE', 'OTHER')
     )
 );
 
--- 11. Bảng Nhật ký Kiểm toán hệ thống (Audit Logs)
-CREATE TABLE IF NOT EXISTS audit_logs (
+-- 3. Usable area and floor/type agree with the building layout.
+CREATE TABLE apartments (
     id BIGSERIAL PRIMARY KEY,
-    user_id BIGINT REFERENCES users(id) ON DELETE SET NULL,
-    action VARCHAR(50) NOT NULL,
-    entity_name VARCHAR(50) NOT NULL,
+    room_number VARCHAR(20) NOT NULL UNIQUE CHECK (btrim(room_number) <> ''),
+    floor_number INTEGER NOT NULL CHECK (floor_number BETWEEN 1 AND 30),
+    area_sqm DECIMAL(12, 2) NOT NULL CHECK (area_sqm > 0),
+    apartment_type VARCHAR(20) NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'VACANT'
+        CHECK (status IN ('VACANT', 'OCCUPIED', 'RENOVATING')),
+    description TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT chk_apartments_floor_type CHECK (
+        (floor_number = 1 AND apartment_type = 'KIOT')
+        OR (floor_number BETWEEN 2 AND 5 AND apartment_type = 'COMMERCIAL')
+        OR (floor_number BETWEEN 6 AND 29 AND apartment_type = 'RESIDENTIAL')
+        OR (floor_number = 30 AND apartment_type = 'PENTHOUSE')
+    )
+);
+
+-- 4. Multiple historical households; at most one ACTIVE per apartment.
+CREATE TABLE households (
+    id BIGSERIAL PRIMARY KEY,
+    apartment_id BIGINT NOT NULL REFERENCES apartments(id) ON DELETE RESTRICT,
+    head_person_id BIGINT NOT NULL REFERENCES persons(id) ON DELETE RESTRICT,
+    registration_code VARCHAR(50) NOT NULL UNIQUE
+        CHECK (btrim(registration_code) <> ''),
+    moved_in_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE'
+        CHECK (status IN ('ACTIVE', 'MOVED_OUT', 'TRANSFERRED')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    -- Target for the composite history FK below.
+    CONSTRAINT uq_households_id_apartment UNIQUE (id, apartment_id)
+);
+
+CREATE UNIQUE INDEX uq_active_household_per_apt
+    ON households(apartment_id) WHERE status = 'ACTIVE';
+
+-- 5. Residence data, not duplicate identity data.
+-- Canonical relationship codes remain a team decision; reject blank values.
+CREATE TABLE residents (
+    id BIGSERIAL PRIMARY KEY,
+    person_id BIGINT NOT NULL REFERENCES persons(id) ON DELETE RESTRICT,
+    household_id BIGINT NOT NULL REFERENCES households(id) ON DELETE RESTRICT,
+    relationship_with_head VARCHAR(50) NOT NULL
+        CHECK (btrim(relationship_with_head) <> ''),
+    residence_status VARCHAR(20) NOT NULL DEFAULT 'THUONG_TRU'
+        CHECK (residence_status IN ('THUONG_TRU', 'TAM_TRU', 'TAM_VANG')),
+    start_date DATE,
+    end_date DATE,
+    notes TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uq_residents_person UNIQUE (person_id),
+    CONSTRAINT chk_residents_dates CHECK (
+        residence_status = 'THUONG_TRU'
+        OR (start_date IS NOT NULL AND end_date IS NOT NULL AND end_date >= start_date)
+    )
+);
+
+-- 6. Service writes snapshots and authenticated actor in the SAME transaction
+-- as the ownership/profile change. A DB connection user is NOT a website user.
+CREATE TABLE apartment_owner_history (
+    id BIGSERIAL PRIMARY KEY,
+    apartment_id BIGINT NOT NULL REFERENCES apartments(id) ON DELETE RESTRICT,
+    household_id BIGINT NOT NULL,
+    previous_owner_id BIGINT REFERENCES persons(id) ON DELETE RESTRICT,
+    new_owner_id BIGINT NOT NULL REFERENCES persons(id) ON DELETE RESTRICT,
+    event_type VARCHAR(20) NOT NULL,
+    previous_snapshot JSONB,
+    new_snapshot JSONB NOT NULL,
+    changed_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    changed_by_user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+    CONSTRAINT fk_owner_history_household_apartment
+        FOREIGN KEY (household_id, apartment_id)
+        REFERENCES households(id, apartment_id) ON DELETE RESTRICT,
+    CONSTRAINT chk_owner_history_event CHECK (
+        (event_type = 'ASSIGNED' AND previous_owner_id IS NULL
+            AND previous_snapshot IS NULL)
+        OR (event_type = 'REPLACED' AND previous_owner_id IS NOT NULL
+            AND previous_owner_id <> new_owner_id AND previous_snapshot IS NOT NULL)
+        OR (event_type = 'PROFILE_UPDATED' AND previous_owner_id IS NOT NULL
+            AND previous_owner_id = new_owner_id AND previous_snapshot IS NOT NULL)
+    ),
+    CONSTRAINT chk_owner_history_snapshots CHECK (
+        jsonb_typeof(new_snapshot) = 'object'
+        AND new_snapshot ?& ARRAY['full_name', 'national_id', 'phone', 'email']
+        AND (previous_snapshot IS NULL OR (
+            jsonb_typeof(previous_snapshot) = 'object'
+            AND previous_snapshot ?& ARRAY['full_name', 'national_id', 'phone', 'email']
+        ))
+    )
+);
+
+-- 7. Unknown usernames may produce an audit without user_id.
+-- RESTRICT preserves known actors; deactivate accounts instead of deleting.
+CREATE TABLE audit_logs (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT,
+    action VARCHAR(50) NOT NULL CHECK (btrim(action) <> ''),
+    entity_name VARCHAR(50) NOT NULL CHECK (btrim(entity_name) <> ''),
     entity_id BIGINT,
     details TEXT,
     ip_address VARCHAR(50),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- ==============================================================================
--- Chỉ mục (Indexes) tối ưu hóa hiệu năng tra cứu
--- ==============================================================================
--- Partial Unique Index: Mỗi căn hộ chỉ có duy nhất 1 hộ gia đình ACTIVE tại một thời điểm
-CREATE UNIQUE INDEX IF NOT EXISTS uq_active_household_per_apt ON households(apartment_id) WHERE status = 'ACTIVE';
+-- 8. Index only where PK/UNIQUE does not already provide the needed prefix.
+CREATE INDEX idx_apartments_floor ON apartments(floor_number);
+CREATE INDEX idx_households_apartment ON households(apartment_id);
+CREATE INDEX idx_households_head_person ON households(head_person_id);
+CREATE INDEX idx_residents_household ON residents(household_id);
+CREATE INDEX idx_owner_history_apartment_time
+    ON apartment_owner_history(apartment_id, changed_at, id);
+CREATE INDEX idx_owner_history_household ON apartment_owner_history(household_id);
+CREATE INDEX idx_owner_history_previous_owner ON apartment_owner_history(previous_owner_id);
+CREATE INDEX idx_owner_history_new_owner ON apartment_owner_history(new_owner_id);
+CREATE INDEX idx_owner_history_actor ON apartment_owner_history(changed_by_user_id);
+CREATE INDEX idx_audit_logs_user ON audit_logs(user_id);
+CREATE INDEX idx_audit_logs_entity_time
+    ON audit_logs(entity_name, entity_id, created_at);
 
--- Chỉ mục hỗ trợ tìm kiếm, phân trang và truy vấn khóa ngoại
-CREATE INDEX IF NOT EXISTS idx_apartments_floor ON apartments(floor_number);
-CREATE INDEX IF NOT EXISTS idx_households_apartment ON households(apartment_id);
-CREATE INDEX IF NOT EXISTS idx_residents_household ON residents(household_id);
-CREATE INDEX IF NOT EXISTS idx_invoices_status ON invoices(payment_status);
-CREATE INDEX IF NOT EXISTS idx_invoice_items_invoice ON invoice_items(invoice_id);
-CREATE INDEX IF NOT EXISTS idx_invoice_items_fee_type ON invoice_items(fee_type_id);
-CREATE INDEX IF NOT EXISTS idx_contributions_fund ON fund_contributions(fund_id);
-CREATE INDEX IF NOT EXISTS idx_contributions_apt ON fund_contributions(apartment_id);
-CREATE INDEX IF NOT EXISTS idx_receipts_invoice ON receipts(invoice_id);
-CREATE INDEX IF NOT EXISTS idx_receipts_contribution ON receipts(contribution_id);
+-- 9. Shared timestamp trigger. DEFAULT handles INSERT when fields are omitted;
+-- UPDATE keeps the original creation time, even if a caller tries to change it.
+-- CURRENT_TIMESTAMP is the transaction start time, not a wall-clock stopwatch.
+CREATE FUNCTION set_row_updated_at()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    NEW.created_at := OLD.created_at;
+    NEW.updated_at := CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER trg_users_updated_at
+    BEFORE UPDATE ON users
+    FOR EACH ROW EXECUTE FUNCTION set_row_updated_at();
+CREATE TRIGGER trg_persons_updated_at
+    BEFORE UPDATE ON persons
+    FOR EACH ROW EXECUTE FUNCTION set_row_updated_at();
+CREATE TRIGGER trg_apartments_updated_at
+    BEFORE UPDATE ON apartments
+    FOR EACH ROW EXECUTE FUNCTION set_row_updated_at();
+CREATE TRIGGER trg_households_updated_at
+    BEFORE UPDATE ON households
+    FOR EACH ROW EXECUTE FUNCTION set_row_updated_at();
+CREATE TRIGGER trg_residents_updated_at
+    BEFORE UPDATE ON residents
+    FOR EACH ROW EXECUTE FUNCTION set_row_updated_at();
+
+-- 10. Cross-table owner validation (US-001 / DB-02).
+-- Lock the person row: assigning an owner must serialize with editing that
+-- person's required contact data. A plain EXISTS check is insufficient here.
+CREATE FUNCTION validate_household_head()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    owner_record RECORD;
+BEGIN
+    SELECT national_id, phone INTO owner_record
+    FROM persons WHERE id = NEW.head_person_id
+    FOR UPDATE;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Household head must reference an existing person'
+            USING ERRCODE = '23503';
+    END IF;
+    IF owner_record.national_id IS NULL OR owner_record.phone IS NULL THEN
+        RAISE EXCEPTION 'Household head requires national ID and phone'
+            USING ERRCODE = '23514';
+    END IF;
+    RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER trg_households_validate_head
+    BEFORE INSERT OR UPDATE OF head_person_id ON households
+    FOR EACH ROW EXECUTE FUNCTION validate_household_head();
+
+-- Guard the reverse direction too: a valid owner cannot lose required fields.
+-- All referenced households count, including historical/inactive households.
+CREATE FUNCTION protect_household_head_profile()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    IF (NEW.national_id IS NULL OR NEW.phone IS NULL)
+        AND EXISTS (SELECT 1 FROM households WHERE head_person_id = OLD.id) THEN
+        RAISE EXCEPTION 'Cannot remove national ID or phone from a household head'
+            USING ERRCODE = '23514';
+    END IF;
+    RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER trg_persons_protect_head_profile
+    BEFORE UPDATE OF national_id, phone ON persons
+    FOR EACH ROW EXECUTE FUNCTION protect_household_head_profile();
+
+-- 11. History/audit are append-only, including when a statement affects no rows.
+-- This is not tamper-proof against a database owner/superuser who disables triggers.
+CREATE FUNCTION reject_history_mutation()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RAISE EXCEPTION '% is append-only; % is not allowed', TG_TABLE_NAME, TG_OP
+        USING ERRCODE = '23514';
+END;
+$$;
+
+CREATE TRIGGER trg_owner_history_append_only
+    BEFORE UPDATE OR DELETE OR TRUNCATE ON apartment_owner_history
+    FOR EACH STATEMENT EXECUTE FUNCTION reject_history_mutation();
+CREATE TRIGGER trg_audit_logs_append_only
+    BEFORE UPDATE OR DELETE OR TRUNCATE ON audit_logs
+    FOR EACH STATEMENT EXECUTE FUNCTION reject_history_mutation();
+
+COMMIT;

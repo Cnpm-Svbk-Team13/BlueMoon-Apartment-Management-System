@@ -1,123 +1,125 @@
--- ==============================================================================
--- BlueMoon BFMS - Sample Seed Data
--- Dữ liệu mẫu khởi tạo phục vụ phát triển, kiểm thử và demo đồ án
--- ==============================================================================
+-- BlueMoon BFMS - Synthetic Sprint 1 seed, PostgreSQL 16/17.
+-- US-SEC-01/02, NFR-02 -> DB-01, SEC-02/03;
+-- US-001, RAW-001/002 -> DB-02, BE-03, QA-05, BA-03.
+-- Run AFTER schema.sql, ONLY when all seven tables are empty.
+-- Demo accounts: admin, ketoan, thuquy (active), bqt_inactive (disabled).
+-- Demo password: Password@123; BCrypt cost 10, verified with Spring Security.
+-- All identities and contacts are synthetic. Do not use on a live resident DB.
+-- One-time seed: refuse repeat/partial seed; never reset existing data/passwords.
+-- psql --set=ON_ERROR_STOP=1 --file=database/seed_data.sql.
 
--- 1. Tài khoản mẫu (Mật khẩu mặc định là: Password@123)
--- Chuỗi băm BCrypt chuẩn 10 rounds của 'Password@123': $2a$10$ThEK5Lsf49T189/5nvFzwuYgdsmzBFWloKeb2FM2QSwB4JsNK2uTK
+BEGIN;
+SET LOCAL TIME ZONE 'UTC';
+
+-- Serialize seed with other writers, then reject nonempty tables atomically.
+LOCK TABLE users, persons, apartments, households, residents,
+    apartment_owner_history, audit_logs IN SHARE ROW EXCLUSIVE MODE;
+
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM users UNION ALL SELECT 1 FROM persons
+        UNION ALL SELECT 1 FROM apartments UNION ALL SELECT 1 FROM households
+        UNION ALL SELECT 1 FROM residents
+        UNION ALL SELECT 1 FROM apartment_owner_history
+        UNION ALL SELECT 1 FROM audit_logs
+    ) THEN
+        RAISE EXCEPTION 'Sprint 1 seed requires all seven tables to be empty; no data was inserted';
+    END IF;
+END;
+$$;
+
+-- 1. Accounts: no hard-coded generated IDs, no actual connection credentials.
 INSERT INTO users (username, password_hash, full_name, email, phone, role, is_active)
-VALUES 
-    ('admin', '$2a$10$ThEK5Lsf49T189/5nvFzwuYgdsmzBFWloKeb2FM2QSwB4JsNK2uTK', 'Quản trị viên Ban Quản trị', 'admin@bluemoon.vn', '0912345678', 'ROLE_ADMIN', TRUE),
-    ('ketoan', '$2a$10$ThEK5Lsf49T189/5nvFzwuYgdsmzBFWloKeb2FM2QSwB4JsNK2uTK', 'Nguyễn Thị Kế Toán', 'ketoan@bluemoon.vn', '0923456789', 'ROLE_ACCOUNTANT', TRUE),
-    ('thuquy', '$2a$10$ThEK5Lsf49T189/5nvFzwuYgdsmzBFWloKeb2FM2QSwB4JsNK2uTK', 'Trần Văn Thủ Quỹ', 'thuquy@bluemoon.vn', '0934567890', 'ROLE_CASHIER', TRUE),
-    ('cudan1', '$2a$10$ThEK5Lsf49T189/5nvFzwuYgdsmzBFWloKeb2FM2QSwB4JsNK2uTK', 'Lê Cư Dân', 'cudan1@bluemoon.vn', '0945678901', 'ROLE_RESIDENT', TRUE)
-ON CONFLICT (username) DO NOTHING;
+SELECT username, '$2a$10$ljvESH1dmbST9gRG0Gr1tOKvvvsfcVe3FbO4nV8jFqPsgrxNYXVXu',
+    full_name, email, phone, role, active
+FROM (VALUES
+    ('admin', 'Quản trị mẫu', 'admin@example.test', '0900000101', 'ROLE_ADMIN', TRUE),
+    ('ketoan', 'Kế toán mẫu', 'ketoan@example.test', '0900000102', 'ROLE_ACCOUNTANT', TRUE),
+    ('thuquy', 'Thủ quỹ mẫu', 'thuquy@example.test', '0900000103', 'ROLE_CASHIER', TRUE),
+    ('bqt_inactive', 'Tài khoản vô hiệu hóa mẫu', 'inactive@example.test',
+        '0900000104', 'ROLE_ACCOUNTANT', FALSE)
+) AS sample(username, full_name, email, phone, role, active);
 
--- 2. Danh mục Loại khoản phí chuẩn theo đề bài (Phí bắt buộc theo m2)
-INSERT INTO fee_types (fee_code, fee_name, category, unit_price, calculation_unit, is_mandatory, is_active, description)
+-- 2. Shared identities. The child intentionally has no national ID or phone.
+INSERT INTO persons
+    (full_name, national_id, phone, email, date_of_birth, gender, created_at)
 VALUES
-    ('FEE_SERVICE', 'Phí dịch vụ chung cư', 'SERVICE_MANDATORY', 5000.00, 'M2_MONTH', TRUE, TRUE, 'Vệ sinh, rác thải, an ninh bảo vệ 24/7 (2.500 - 16.500 đ/m2)'),
-    ('FEE_MANAGEMENT', 'Phí quản lý chung cư', 'MANAGEMENT_MANDATORY', 7000.00, 'M2_MONTH', TRUE, TRUE, 'Vận hành thang máy, máy bơm, PCCC, chiếu sáng (>= 7.000 đ/m2)')
-ON CONFLICT (fee_code) DO NOTHING;
+    ('Nguyễn An Mẫu', '000000000001', '0900000001', 'an@example.test', '1980-04-12', 'MALE', '2026-09-01 08:00:00+07'),
+    ('Trần Lan Mẫu', '000000000002', '0900000002', 'lan@example.test', '1985-07-20', 'FEMALE', '2026-09-01 08:00:00+07'),
+    ('Lê Bình Mẫu', '000000000003', '0900000003', NULL, '1987-06-15', 'FEMALE', '2026-09-01 08:00:00+07'),
+    ('Bé Mẫu Không CCCD', NULL, NULL, NULL, '2016-11-05', 'MALE', '2026-09-01 08:00:00+07'),
+    ('Phạm Đạt Mẫu', '000000000004', '0900000004', NULL, '1998-03-15', 'MALE', '2026-09-01 08:00:00+07'),
+    ('Hoàng Cường Mẫu', '000000000005', '0900000005', 'cuong@example.test', '1975-02-18', 'MALE', '2026-09-01 08:00:00+07'),
+    ('Hoàng Đức Mẫu', '000000000006', '0900000006', NULL, '2002-08-10', 'MALE', '2026-09-01 08:00:00+07');
 
--- 3. Các Đợt vận động Quỹ tự nguyện (Độc lập, không gộp vào công nợ tháng)
-INSERT INTO campaign_funds (fund_name, start_date, end_date, target_amount, current_amount, description, status)
+-- 3. Four surface types and three apartment states.
+INSERT INTO apartments
+    (room_number, floor_number, area_sqm, apartment_type, status, description, created_at)
 VALUES
-    ('Quỹ vì người nghèo năm 2026', '2026-10-01', '2026-11-30', 50000000.00, 12500000.00, 'Ủng hộ người nghèo và các hộ có hoàn cảnh đặc biệt khó khăn', 'ACTIVE'),
-    ('Quỹ Đền ơn đáp nghĩa 2026', '2026-07-01', '2026-08-31', 30000000.00, 31000000.00, 'Tri ân các gia đình thương binh liệt sĩ và người có công', 'CLOSED'),
-    ('Quỹ Khuyến học & Vì trẻ thơ BlueMoon', '2026-09-01', '2026-12-31', 20000000.00, 8500000.00, 'Khen thưởng học sinh giỏi và hỗ trợ trẻ em khó khăn', 'ACTIVE');
+    ('K.101', 1, 120.00, 'KIOT', 'VACANT', 'Kiot mẫu', '2026-09-01 08:00:00+07'),
+    ('TM.201', 2, 100.00, 'COMMERCIAL', 'VACANT', 'Thương mại mẫu', '2026-09-01 08:00:00+07'),
+    ('P.601', 6, 75.50, 'RESIDENTIAL', 'OCCUPIED', 'Căn có lịch sử thay đại diện', '2026-09-01 08:00:00+07'),
+    ('P.602', 6, 85.00, 'RESIDENTIAL', 'OCCUPIED', 'Căn có người tạm trú', '2026-09-01 08:00:00+07'),
+    ('P.701', 7, 75.50, 'RESIDENTIAL', 'VACANT', 'Căn chưa khai báo hộ', '2026-09-01 08:00:00+07'),
+    ('P.1204', 12, 92.00, 'RESIDENTIAL', 'OCCUPIED', 'Căn có người tạm vắng', '2026-09-01 08:00:00+07'),
+    ('PH.3001', 30, 220.00, 'PENTHOUSE', 'RENOVATING', 'Penthouse mẫu', '2026-09-01 08:00:00+07');
 
--- 4. Danh sách căn hộ mẫu đại diện cho các phân khu
-INSERT INTO apartments (room_number, floor_number, area_sqm, apartment_type, status, description)
-VALUES
-    ('K.101', 1, 120.00, 'KIOT', 'OCCUPIED', 'Ki-ốt kinh doanh tầng 1'),
-    ('P.601', 6, 75.50, 'RESIDENTIAL', 'OCCUPIED', 'Căn hộ gia đình 2 phòng ngủ'),
-    ('P.602', 6, 85.00, 'RESIDENTIAL', 'OCCUPIED', 'Căn hộ gia đình 3 phòng ngủ'),
-    ('P.701', 7, 75.50, 'RESIDENTIAL', 'OCCUPIED', 'Căn hộ gia đình 2 phòng ngủ'),
-    ('P.1204', 12, 92.00, 'RESIDENTIAL', 'OCCUPIED', 'Căn hộ gia đình 3 phòng ngủ căn góc'),
-    ('PH.3001', 30, 220.00, 'PENTHOUSE', 'OCCUPIED', 'Căn hộ Penthouse cao cấp tầng 30')
-ON CONFLICT (room_number) DO NOTHING;
+-- 4. Current household representatives. P.601 changed from An to Lan on 01/11.
+INSERT INTO households
+    (apartment_id, head_person_id, registration_code, moved_in_date, created_at)
+SELECT a.id, p.id, sample.registration_code, sample.moved_in_date, sample.created_at
+FROM (VALUES
+    ('P.601', '000000000002', 'HK-BM-00601', DATE '2026-10-01', TIMESTAMPTZ '2026-10-01 08:00:00+07'),
+    ('P.602', '000000000003', 'HK-BM-00602', DATE '2026-10-01', TIMESTAMPTZ '2026-10-01 08:30:00+07'),
+    ('P.1204', '000000000005', 'HK-BM-01204', DATE '2026-10-01', TIMESTAMPTZ '2026-10-01 09:00:00+07')
+) AS sample(room_number, national_id, registration_code, moved_in_date, created_at)
+JOIN apartments a ON a.room_number = sample.room_number
+JOIN persons p ON p.national_id = sample.national_id;
 
--- 5. Sổ hộ khẩu mẫu
-INSERT INTO households (apartment_id, registration_code, head_name, moved_in_date, status)
-VALUES
-    ((SELECT id FROM apartments WHERE room_number = 'P.601'), 'HK-BM-00601', 'Nguyễn Văn An', '2023-05-15', 'ACTIVE'),
-    ((SELECT id FROM apartments WHERE room_number = 'P.602'), 'HK-BM-00602', 'Trần Thị Bình', '2023-06-20', 'ACTIVE'),
-    ((SELECT id FROM apartments WHERE room_number = 'P.1204'), 'HK-BM-01204', 'Hoàng Minh Cường', '2023-08-10', 'ACTIVE')
-ON CONFLICT (registration_code) DO NOTHING;
+-- 5. Residence data. Full-name joins below identify only these known seed rows;
+-- names are NOT a general identity key for application code.
+INSERT INTO residents
+    (person_id, household_id, relationship_with_head, residence_status, start_date, end_date)
+SELECT p.id, h.id, sample.relationship, sample.status, sample.start_date, sample.end_date
+FROM (VALUES
+    ('Trần Lan Mẫu', 'HK-BM-00601', 'CHỦ HỘ', 'THUONG_TRU', NULL::DATE, NULL::DATE),
+    ('Bé Mẫu Không CCCD', 'HK-BM-00601', 'CON', 'THUONG_TRU', NULL, NULL),
+    ('Lê Bình Mẫu', 'HK-BM-00602', 'CHỦ HỘ', 'THUONG_TRU', NULL, NULL),
+    ('Phạm Đạt Mẫu', 'HK-BM-00602', 'KHÁCH THUÊ', 'TAM_TRU', DATE '2026-10-01', DATE '2027-09-30'),
+    ('Hoàng Cường Mẫu', 'HK-BM-01204', 'CHỦ HỘ', 'THUONG_TRU', NULL, NULL),
+    ('Hoàng Đức Mẫu', 'HK-BM-01204', 'CON', 'TAM_VANG', DATE '2026-10-01', DATE '2027-03-31')
+) AS sample(full_name, registration_code, relationship, status, start_date, end_date)
+JOIN persons p ON p.full_name = sample.full_name
+JOIN households h ON h.registration_code = sample.registration_code;
 
--- 6. Danh sách cư dân trong hộ (Bao gồm Thường trú, Tạm trú và Tạm vắng chuẩn Luật Cư trú 2020)
-INSERT INTO residents (household_id, full_name, date_of_birth, gender, national_id, phone, relationship_with_head, residence_status, start_date, end_date)
-VALUES
-    -- Hộ P.601: Thường trú
-    ((SELECT id FROM households WHERE registration_code = 'HK-BM-00601'), 'Nguyễn Văn An', '1980-04-12', 'MALE', '001080001234', '0912111222', 'CHỦ HỘ', 'THUONG_TRU', NULL, NULL),
-    ((SELECT id FROM households WHERE registration_code = 'HK-BM-00601'), 'Vũ Thị Hoa', '1983-09-25', 'FEMALE', '001183002345', '0912111333', 'VỢ', 'THUONG_TRU', NULL, NULL),
-    ((SELECT id FROM households WHERE registration_code = 'HK-BM-00601'), 'Nguyễn Minh Quân', '2010-11-05', 'MALE', NULL, NULL, 'CON TRAI', 'THUONG_TRU', NULL, NULL),
-    -- Hộ P.602: Thường trú + Tạm trú (có thời hạn từ ngày - đến ngày)
-    ((SELECT id FROM households WHERE registration_code = 'HK-BM-00602'), 'Trần Thị Bình', '1985-07-20', 'FEMALE', '001185004567', '0922334455', 'CHỦ HỘ', 'THUONG_TRU', NULL, NULL),
-    ((SELECT id FROM households WHERE registration_code = 'HK-BM-00602'), 'Lê Văn Đạt', '1998-03-15', 'MALE', '001098005678', '0933445566', 'KHÁCH THUÊ', 'TAM_TRU', '2026-01-01', '2026-12-31'),
-    -- Hộ P.1204: Thường trú + Tạm vắng (có thời hạn từ ngày - đến ngày)
-    ((SELECT id FROM households WHERE registration_code = 'HK-BM-01204'), 'Hoàng Minh Cường', '1975-02-18', 'MALE', '001075003456', '0988777666', 'CHỦ HỘ', 'THUONG_TRU', NULL, NULL),
-    ((SELECT id FROM households WHERE registration_code = 'HK-BM-01204'), 'Hoàng Minh Đức', '2002-08-10', 'MALE', '001202006789', '0977889900', 'CON TRAI', 'TAM_VANG', '2026-09-01', '2027-06-30')
-ON CONFLICT (national_id) DO NOTHING;
+-- 6. Synthetic history: actor is a users row; owners are persons rows.
+-- Snapshots copy actual fixture fields, preserving SQL NULL email as JSON null.
+INSERT INTO apartment_owner_history
+    (apartment_id, household_id, previous_owner_id, new_owner_id, event_type,
+     previous_snapshot, new_snapshot, changed_at, changed_by_user_id)
+SELECT h.apartment_id, h.id, previous_owner.id, new_owner.id, sample.event_type,
+    CASE WHEN previous_owner.id IS NULL THEN NULL ELSE jsonb_build_object(
+        'full_name', previous_owner.full_name, 'national_id', previous_owner.national_id,
+        'phone', previous_owner.phone, 'email', previous_owner.email) END,
+    jsonb_build_object('full_name', new_owner.full_name, 'national_id', new_owner.national_id,
+        'phone', new_owner.phone, 'email', new_owner.email),
+    sample.changed_at, actor.id
+FROM (VALUES
+    ('HK-BM-00601', NULL::VARCHAR, '000000000001', 'ASSIGNED', TIMESTAMPTZ '2026-10-01 08:00:00+07'),
+    ('HK-BM-00601', '000000000001', '000000000002', 'REPLACED', TIMESTAMPTZ '2026-11-01 09:00:00+07'),
+    ('HK-BM-00602', NULL, '000000000003', 'ASSIGNED', TIMESTAMPTZ '2026-10-01 08:30:00+07'),
+    ('HK-BM-01204', NULL, '000000000005', 'ASSIGNED', TIMESTAMPTZ '2026-10-01 09:00:00+07')
+) AS sample(registration_code, previous_id_number, new_id_number, event_type, changed_at)
+JOIN households h ON h.registration_code = sample.registration_code
+LEFT JOIN persons previous_owner ON previous_owner.national_id = sample.previous_id_number
+JOIN persons new_owner ON new_owner.national_id = sample.new_id_number
+JOIN users actor ON actor.username = 'admin';
 
--- 7. Hóa đơn mẫu tháng 10/2026
--- Căn P.601: Diện tích 75.5m2 => Dịch vụ (75.5 * 5000 = 377.500) + Quản lý (75.5 * 7000 = 528.500) = 906.000 VNĐ (UNPAID)
--- Căn P.602: Diện tích 85.0m2 => Dịch vụ (85 * 5000 = 425.000) + Quản lý (85 * 7000 = 595.000) = 1.020.000 VNĐ (UNPAID)
--- Căn P.1204: Diện tích 92.0m2 => Dịch vụ (92 * 5000 = 460.000) + Quản lý (92 * 7000 = 644.000) = 1.104.000 VNĐ (PAID)
-INSERT INTO invoices (invoice_code, apartment_id, period_month, period_year, total_amount, payment_status, due_date, paid_at, cashier_id, version)
-VALUES
-    ('INV-202610-P601', (SELECT id FROM apartments WHERE room_number = 'P.601'), 10, 2026, 906000.00, 'UNPAID', '2026-10-31', NULL, NULL, 0),
-    ('INV-202610-P602', (SELECT id FROM apartments WHERE room_number = 'P.602'), 10, 2026, 1020000.00, 'UNPAID', '2026-10-31', NULL, NULL, 0),
-    ('INV-202610-P1204', (SELECT id FROM apartments WHERE room_number = 'P.1204'), 10, 2026, 1104000.00, 'PAID', '2026-10-31', '2026-10-15 14:30:00+07', (SELECT id FROM users WHERE username = 'thuquy'), 1)
-ON CONFLICT (apartment_id, period_month, period_year) DO NOTHING;
+-- 7. Audit matches the synthetic ownership events, not evidence of real UAT.
+INSERT INTO audit_logs (user_id, action, entity_name, entity_id, details, created_at)
+SELECT changed_by_user_id, event_type, 'apartment_owner_history', id,
+    'Dữ liệu mẫu Sprint 1: sự kiện chủ hộ', changed_at
+FROM apartment_owner_history;
 
--- 8. Chi tiết hóa đơn
-INSERT INTO invoice_items (invoice_id, fee_type_id, item_name, quantity, unit_price, amount)
-VALUES
-    -- Hóa đơn P.601
-    ((SELECT id FROM invoices WHERE invoice_code = 'INV-202610-P601'), (SELECT id FROM fee_types WHERE fee_code = 'FEE_SERVICE'), 'Phí dịch vụ chung cư', 75.50, 5000.00, 377500.00),
-    ((SELECT id FROM invoices WHERE invoice_code = 'INV-202610-P601'), (SELECT id FROM fee_types WHERE fee_code = 'FEE_MANAGEMENT'), 'Phí quản lý chung cư', 75.50, 7000.00, 528500.00),
-    -- Hóa đơn P.602
-    ((SELECT id FROM invoices WHERE invoice_code = 'INV-202610-P602'), (SELECT id FROM fee_types WHERE fee_code = 'FEE_SERVICE'), 'Phí dịch vụ chung cư', 85.00, 5000.00, 425000.00),
-    ((SELECT id FROM invoices WHERE invoice_code = 'INV-202610-P602'), (SELECT id FROM fee_types WHERE fee_code = 'FEE_MANAGEMENT'), 'Phí quản lý chung cư', 85.00, 7000.00, 595000.00),
-    -- Hóa đơn P.1204
-    ((SELECT id FROM invoices WHERE invoice_code = 'INV-202610-P1204'), (SELECT id FROM fee_types WHERE fee_code = 'FEE_SERVICE'), 'Phí dịch vụ chung cư', 92.00, 5000.00, 460000.00),
-    ((SELECT id FROM invoices WHERE invoice_code = 'INV-202610-P1204'), (SELECT id FROM fee_types WHERE fee_code = 'FEE_MANAGEMENT'), 'Phí quản lý chung cư', 92.00, 7000.00, 644000.00);
-
--- 9. Ghi nhận Đóng góp Quỹ tự nguyện (Độc lập, tùy tâm)
-INSERT INTO fund_contributions (fund_id, apartment_id, contributor_name, amount, contributed_at, receipt_code, cashier_id, notes)
-VALUES
-    ((SELECT id FROM campaign_funds WHERE fund_name = 'Quỹ vì người nghèo năm 2026'), 
-     (SELECT id FROM apartments WHERE room_number = 'P.601'), 
-     'Nguyễn Văn An', 500000.00, '2026-10-10 09:15:00+07', 'REC-202610-F001', 
-     (SELECT id FROM users WHERE username = 'thuquy'), 'Ủng hộ người nghèo'),
-    ((SELECT id FROM campaign_funds WHERE fund_name = 'Quỹ Khuyến học & Vì trẻ thơ BlueMoon'), 
-     (SELECT id FROM apartments WHERE room_number = 'P.1204'), 
-     'Hoàng Minh Cường', 1000000.00, '2026-10-12 10:00:00+07', 'REC-202610-F002', 
-     (SELECT id FROM users WHERE username = 'thuquy'), 'Ủng hộ phong trào khuyến học');
-
--- 10. Biên lai / Phiếu thu tiền (Tuân thủ ràng buộc XOR: hoặc Invoice hoặc Contribution, không gộp chung)
-INSERT INTO receipts (receipt_code, invoice_id, contribution_id, payer_name, total_amount, payment_method, cashier_id, printed_at, created_at)
-VALUES
-    -- Biên lai thu phí bắt buộc căn P.1204 (invoice_id NOT NULL, contribution_id NULL)
-    ('REC-202610-INV-1204', 
-     (SELECT id FROM invoices WHERE invoice_code = 'INV-202610-P1204'), 
-     NULL, 
-     'Hoàng Minh Cường', 1104000.00, 'BANK_TRANSFER', 
-     (SELECT id FROM users WHERE username = 'thuquy'), 
-     '2026-10-15 14:30:00+07', '2026-10-15 14:30:00+07'),
-    -- Phiếu xác nhận đóng góp Quỹ vì người nghèo căn P.601 (invoice_id NULL, contribution_id NOT NULL)
-    ('REC-202610-F001', 
-     NULL, 
-     (SELECT id FROM fund_contributions WHERE receipt_code = 'REC-202610-F001'), 
-     'Nguyễn Văn An', 500000.00, 'CASH', 
-     (SELECT id FROM users WHERE username = 'thuquy'), 
-     '2026-10-10 09:15:00+07', '2026-10-10 09:15:00+07')
-ON CONFLICT (receipt_code) DO NOTHING;
-
--- 11. Nhật ký Kiểm toán hệ thống mẫu (Audit Logs)
-INSERT INTO audit_logs (user_id, action, entity_name, entity_id, details, ip_address)
-VALUES
-    ((SELECT id FROM users WHERE username = 'admin'), 'LOGIN_SUCCESS', 'users', (SELECT id FROM users WHERE username = 'admin'), 'Đăng nhập hệ thống thành công', '192.168.1.10'),
-    ((SELECT id FROM users WHERE username = 'thuquy'), 'PAY_INVOICE', 'invoices', (SELECT id FROM invoices WHERE invoice_code = 'INV-202610-P1204'), 'Gạch nợ hóa đơn tháng 10/2026 cho căn P.1204 số tiền 1.104.000 VNĐ', '192.168.1.15');
+COMMIT;

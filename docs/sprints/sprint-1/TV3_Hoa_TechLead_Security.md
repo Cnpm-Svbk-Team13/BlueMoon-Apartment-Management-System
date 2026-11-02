@@ -1,4 +1,8 @@
 # 🛡️ CẨM NANG HÀNH ĐỘNG SPRINT 1 — THÀNH VIÊN 3: PHẠM THÁI HOÀ
+
+> Bắt đầu với [đồ thị luồng công việc](WORKFLOW_GUIDE.md): đầu vào, bàn giao và điều kiện kết thúc của từng người. Phân công hiện hành: Khánh điều phối/BA/UAT, Sơn DB/Backend và nghiệm thu; review PR Sơn–Hoà.
+
+> Khi triển khai tài khoản/bảo mật, dùng [quy ước tên và bảng ánh xạ](DATA_NAMING_CONVENTIONS.md). Hoà xác nhận tên input với Đức Anh, phối hợp Sơn về schema `users`: `is_active` → `active`; `password` là input, `passwordHash` chỉ lưu nội bộ, không đưa vào DTO hiển thị.
 ## Vai trò: Technical Lead & Core Backend Developer
 ### Dự án: BlueMoon BFMS (IT3180 - Team 13)
 

@@ -22,6 +22,7 @@ docs/02_design_and_architecture/
 ├── SRS.md                  # Tài liệu Đặc tả Yêu cầu Phần mềm (Software Requirements Specification)
 ├── architecture.md         # Thiết kế Kiến trúc Hệ thống (Pure Web, Layered Architecture)
 ├── erd.md                  # Mô hình Thực thể Liên kết (Entity-Relationship Diagram & Data Dictionary)
+├── erd_sprint_1_proposal.md # ERD Sprint 1 chi tiết — đã có DDL, chưa áp dụng lên VM
 └── workflows.md            # Thiết kế chi tiết 4 Luồng nghiệp vụ cốt lõi (Sequence Diagrams)
 ```
 
@@ -36,6 +37,7 @@ docs/02_design_and_architecture/
 | [architecture.md](./architecture.md) | Kiến trúc hệ thống phân tầng (Presentation $\rightarrow$ Security $\rightarrow$ Service $\rightarrow$ Persistence $\rightarrow$ Database); các nguyên tắc thiết kế và quyết định công nghệ then chốt (Java 25 LTS, Spring Boot 3.5.16, PostgreSQL). | Backend Dev, Tech Lead |
 | [erd.md](./erd.md) | Mô hình CSDL quan hệ gồm 11 bảng chuẩn: `users`, `apartments`, `households`, `residents`, `fee_types`, `campaign_funds`, `invoices`, `invoice_items`, `fund_contributions`, `receipts`, `audit_logs`. | Data Engineer, Backend Dev |
 | [workflows.md](./workflows.md) | Biểu đồ tuần tự (Sequence Diagram) và lưu đồ (Flowchart) của **4 luồng nghiệp vụ chính**: Đăng ký/đăng nhập, Tạo khoản thu, Thu phí & phát hành biên lai, Thống kê báo cáo. | Frontend Dev, Tester, BA |
+| [erd_sprint_1_proposal.md](./erd_sprint_1_proposal.md) | ERD Sprint 1 với thuộc tính, PK/FK/UK, quan hệ và giải thích snapshot. Đã có DDL 7 bảng và kiểm tra PostgreSQL cô lập; chưa áp dụng lên VM hoặc nghiệm thu Sprint. | Sơn, Hoà, Backend, Frontend, QA |
 
 ---
 
