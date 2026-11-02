@@ -9,11 +9,11 @@ Ngày cập nhật: 01/11/2026 (điều chỉnh phân công Sprint 1). Tài li�
 - [Kế hoạch Sprint 1](KE_HOACH_CHI_TIET_SPRINT_1.md) và [backlog](sprints/sprint-1/github_issues_backlog.md): 31/10–06/11/2026; mục tiêu hoàn thành US-SEC-01, US-SEC-02, toàn bộ US-001 gồm hồ sơ/lịch sử chủ hộ.
 - Core Workflow 1 là quản lý tài khoản/xác thực. Bất biến nghiệp vụ 1 là tách quỹ tự nguyện khỏi nợ bắt buộc; hai số 1 không phải cùng một yêu cầu.
 - Mã NFR chuẩn là `NFR-01…05`; bảo mật dùng `NFR-02`. Các ghi chú quy chiếu US cũ chỉ dùng khi đọc lịch sử.
-- [Schema](../database/schema.sql) là thiết kế dữ liệu hiện có. Task chủ hộ phải cập nhật DDL/migration và ERD trước khi nghiệm thu; đợt đồng bộ này không thay database.
+- Cập nhật 02/11/2026 theo yêu cầu Sơn: [schema](../database/schema.sql) là bootstrap 7 bảng theo [ERD Sprint 1](02_design_and_architecture/erd_sprint_1_proposal.md), chỉ chạy trên database trống; [seed](../database/seed_data.sql) đã đồng bộ và chỉ nạp khi 7 bảng chưa có bản ghi. Chưa thay database VM, chưa có migration chuyển đổi và chưa nghiệm thu US. Phần tài chính của DB-01 cần bổ sung khi triển khai tài chính; không ghi DB-01 hoàn thành toàn bộ.
 
 ## Vai trò và review
 
-- Quy ước tên và ánh xạ DB → Java → DTO/form: [DATA_NAMING_CONVENTIONS.md](sprints/sprint-1/DATA_NAMING_CONVENTIONS.md). SQL dùng `snake_case`, Java/form dùng `camelCase`; nhãn tiếng Việt tách khỏi tên trường. Giữ tên cột hiện có; hồ sơ/lịch sử chủ hộ đánh dấu đề xuất cho tới khi DB-02/BE-03 chốt thiết kế. Không coi bảng ánh xạ là bằng chứng chức năng đã triển khai.
+- Quy ước tên và ánh xạ DB → Java → DTO/form: [DATA_NAMING_CONVENTIONS.md](sprints/sprint-1/DATA_NAMING_CONVENTIONS.md), đã đồng bộ 7 bảng Sprint 1. SQL dùng `snake_case`, Java/form dùng `camelCase`; nhãn tiếng Việt tách khỏi tên trường. Không coi bảng ánh xạ là bằng chứng Entity/DTO hoặc chức năng đã triển khai.
 
 - Nguyễn Xuân Sơn: trưởng nhóm, phụ trách Database/Backend, căn hộ và chủ hộ; chốt thay đổi phạm vi/ưu tiên sau khi trao đổi với nhóm, xử lý vấn đề vượt thẩm quyền điều phối và xác nhận nghiệm thu nội bộ dựa trên AC, test, UAT.
 - Phạm Nam Khánh: điều phối Sprint, BA/UAT; phụ trách PM-01 (6h/2 SP), Kanban, daily, theo dõi phụ thuộc/chậm tiến độ, chủ trì Sprint Review/Retrospective; chuẩn hóa yêu cầu, chuẩn bị/thực hiện UAT và tổng hợp hồ sơ nghiệm thu.

@@ -5,7 +5,7 @@
 # MÔ HÌNH THỰC THỂ LIÊN KẾT (ENTITY-RELATIONSHIP DIAGRAM - ERD)
 ## Dự án: Hệ thống Quản lý Thu phí và Dân cư Chung cư BlueMoon (BlueMoon BFMS)
 
-> **Đề xuất Sprint 1 đang thảo luận (02/11/2026):** xem [ERD chi tiết với thuộc tính và quan hệ](erd_sprint_1_proposal.md). Bản đề xuất chưa triển khai vào schema SQL. ERD tổng thể bên dưới được giữ để đối chiếu, còn các sai lệch đã phát hiện; không coi là thiết kế đã nghiệm thu.
+> **Schema Sprint 1 (02/11/2026):** xem [ERD chi tiết với thuộc tính và quan hệ](erd_sprint_1_proposal.md), đã có DDL 7 bảng trong `database/schema.sql`. ERD 11 bảng bên dưới là thiết kế trước đây, được giữ để đối chiếu với `database/legacy/schema_before_sprint1.sql`; không còn mô tả bootstrap hiện hành và không phải thiết kế đã nghiệm thu.
 
 ---
 

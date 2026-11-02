@@ -2,7 +2,7 @@
 
 Cập nhật: 02/11/2026. Người phụ trách xem xét: Nguyễn Xuân Sơn.
 
-**Trạng thái: đã ghi nhận thiết kế đề xuất, chưa duyệt cuối cùng, chưa triển khai SQL, chưa kiểm thử PostgreSQL và chưa nghiệm thu.** Việc lưu tài liệu không có nghĩa thay thế schema hiện hành.
+**Trạng thái 02/11/2026:** Sơn yêu cầu triển khai DDL theo ERD này vào `database/schema.sql`. Đã có bootstrap 7 bảng và trigger, đã kiểm thử trên PostgreSQL 17 cô lập; chưa áp dụng lên VM và chưa nghiệm thu nghiệp vụ/Sprint. Xem [hướng dẫn và giới hạn](../../database/README.md) và [báo cáo kiểm tra](../../database/tests/SPRINT1_SCHEMA_VERIFICATION.md).
 
 - Phạm vi: US-SEC-01, US-SEC-02 / NFR-02; US-001 / RAW-001, RAW-002.
 - Task liên quan: DB-01, BE-01, BE-02, DB-02, BE-03; kiểm thử QA-05 và UAT BA-03.
@@ -157,9 +157,9 @@ Ví dụ: An bàn giao cho Lan, kế toán Bình xác nhận trong phần mềm.
 
 - Thêm `persons` và `apartment_owner_history`.
 - Thay `households.head_name` bằng `head_person_id`; chuyển thông tin cá nhân từ `residents` sang `persons`.
-- Giữ các bảng tài chính hiện có và các ràng buộc nền DB-01; sơ đồ này không xác nhận các vấn đề tài chính đã được sửa.
+- Theo yêu cầu ghi đè schema tập trung Sprint 1, bootstrap hiện chỉ tạo 7 bảng trong sơ đồ này. Thiết kế tài chính trước đây được lưu ở [schema cũ](../../database/legacy/schema_before_sprint1.sql); chưa tạo `invoices` hoặc ràng buộc phiếu thu trong bootstrap mới. Phần nền DB-01 cho tài chính phải được bổ sung lại trước khi triển khai phân hệ đó; không ghi toàn bộ DB-01 đã hoàn thành.
 - **Không yêu cầu xóa toàn bộ database.** Sơn cho biết VM chưa có dữ liệu; vẫn cần kiểm tra cấu trúc thực tế trước khi triển khai. Không chạy DROP/TRUNCATE hoặc chuyển đổi dữ liệu chỉ dựa vào tài liệu đề xuất này.
-- Schema SQL, migration, seed, Entity và bảng ánh xạ chưa được chuyển sang mô hình này. Cần duyệt thiết kế và kiểm thử PostgreSQL cô lập trước khi áp dụng.
+- Schema SQL, seed và bảng ánh xạ đã đồng bộ theo 7 bảng này. Seed dùng dữ liệu giả, chỉ chạy khi cả 7 bảng không có bản ghi. Entity/Service cần triển khai theo bảng ánh xạ; chưa có migration chuyển đổi cấu trúc.
 
 ## 6. Nội dung tiếp tục hỏi đáp
 
