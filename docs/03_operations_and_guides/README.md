@@ -26,7 +26,7 @@ docs/03_operations_and_guides/
 - [`.env.example`](../../.env.example): Tệp mẫu biến môi trường kết nối database an toàn.
 - [`docker-compose.yml`](../../docker-compose.yml): Cấu hình 1-click khởi chạy PostgreSQL 17 cục bộ qua Docker.
 - [`database/README.md`](../../database/README.md): Quy trình phát triển CSDL song song giữa Dev và Test Deploy.
-- [`database/schema.sql`](../../database/schema.sql): Script DDL khởi tạo toàn bộ 11 bảng và chỉ mục PostgreSQL.
+- [`database/schema.sql`](../../database/schema.sql): Bootstrap khởi tạo 7 bảng Sprint 1 cùng ràng buộc/index/trigger trên PostgreSQL trống; xem database/README.md trước khi nạp.
 - [`database/seed_data.sql`](../../database/seed_data.sql): Dữ liệu khởi tạo mẫu (30 tầng căn hộ, tài khoản Admin/Kế toán, biểu phí mẫu).
 
 ---

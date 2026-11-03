@@ -47,7 +47,7 @@ Cổng Cư dân ───────┘                            │
 - [x] Tạo cấu trúc Maven chuẩn, Maven Wrapper và Spring Boot application scaffold.
 - [x] Cấu hình DataSource linh hoạt hỗ trợ biến môi trường Google Cloud và Docker Compose.
 - [x] Tích hợp cấu hình kiểm thử độc lập với H2 In-Memory Database.
-- [x] Soạn Database Schema, bản vá Migration V1.1 và triển khai xác thực thành công trên Google Cloud Platform cho 30 tầng căn hộ & cư dân.
+- [x] Soạn schema/seed 7 bảng phục vụ Sprint 1; cách khởi tạo, kiểm tra và bàn giao xem [database/README.md](database/README.md). Việc nạp dữ liệu không chứng minh hoàn thành chức năng xác thực hoặc nghiệm thu US.
 - [ ] Phát triển các luồng nghiệp vụ Quản trị (Admin); Portal để v2.0.
 - [ ] Bổ sung kiểm thử tự động (Unit Test / Integration Test) và hoàn thiện giao diện.
 

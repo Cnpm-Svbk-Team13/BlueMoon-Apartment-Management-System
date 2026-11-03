@@ -9,7 +9,7 @@ Ngày cập nhật: 01/11/2026 (điều chỉnh phân công Sprint 1). Tài li�
 - [Kế hoạch Sprint 1](KE_HOACH_CHI_TIET_SPRINT_1.md) và [backlog](sprints/sprint-1/github_issues_backlog.md): 31/10–06/11/2026; mục tiêu hoàn thành US-SEC-01, US-SEC-02, toàn bộ US-001 gồm hồ sơ/lịch sử chủ hộ.
 - Core Workflow 1 là quản lý tài khoản/xác thực. Bất biến nghiệp vụ 1 là tách quỹ tự nguyện khỏi nợ bắt buộc; hai số 1 không phải cùng một yêu cầu.
 - Mã NFR chuẩn là `NFR-01…05`; bảo mật dùng `NFR-02`. Các ghi chú quy chiếu US cũ chỉ dùng khi đọc lịch sử.
-- Cập nhật 02/11/2026 theo yêu cầu Sơn: [schema](../database/schema.sql) là bootstrap 7 bảng theo [ERD Sprint 1](02_design_and_architecture/erd_sprint_1_proposal.md), chỉ chạy trên database trống; [seed](../database/seed_data.sql) đã đồng bộ và chỉ nạp khi 7 bảng chưa có bản ghi. Chưa thay database VM, chưa có migration chuyển đổi và chưa nghiệm thu US. Phần tài chính của DB-01 cần bổ sung khi triển khai tài chính; không ghi DB-01 hoàn thành toàn bộ.
+- Cập nhật 02/11/2026 theo yêu cầu Sơn: [schema](../database/schema.sql) là bootstrap 7 bảng theo [ERD Sprint 1](02_design_and_architecture/erd_sprint_1_proposal.md), chỉ chạy trên database trống; [seed](../database/seed_data.sql) đã đồng bộ và chỉ nạp khi 7 bảng chưa có bản ghi. Chưa thay database VM, chưa có migration chuyển đổi và chưa nghiệm thu US. DB-01 hiện là khởi tạo, kiểm tra và bàn giao schema/seed Sprint 1 (7h/2 SP); chỉ hoàn thành khi đủ bằng chứng và bàn giao. Ràng buộc tài chính phải được giao/kiểm tra ở Sprint triển khai tài chính, không thuộc bootstrap 7 bảng.
 
 ## Vai trò và review
 

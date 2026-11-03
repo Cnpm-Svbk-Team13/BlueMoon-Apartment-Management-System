@@ -240,55 +240,55 @@ docker compose ps
 
 ---
 
-### GIAI ĐOẠN 4: NẠP TOÀN BỘ SCHEMA, SEED DATA VÀ BẢN VÁ MIGRATION V1.1
+### GIAI ĐOẠN 4: KHỞI TẠO SCHEMA VÀ SEED SPRINT 1 (7 BẢNG)
 
-Bây giờ chúng ta sẽ nạp toàn bộ cấu trúc CSDL của chung cư BlueMoon vào máy chủ Cloud.
+Chỉ thực hiện giai đoạn này khi database đích trống và được phép khởi tạo. Nếu Sơn đã nạp dữ liệu, bỏ qua bước nạp và thực hiện kiểm tra chỉ đọc ở bước 4.3; không xóa bảng, nạp lại seed hay ghép script của cấu trúc cũ. Chi tiết và giới hạn: [database/README.md](../../database/README.md).
 
-#### Bước 4.1: Tải các file SQL từ GitHub về máy ảo
-Em có thể tải nhanh các file SQL trực tiếp từ repository của dự án:
+#### Bước 4.1: Lấy đúng phiên bản SQL đã thống nhất
+
+Dùng schema và seed từ **cùng commit** mà Sơn bàn giao. Thay `<COMMIT_SHA_DA_CHOT>` bằng commit đầy đủ trước khi chạy; không tải một file từ nhánh này và file kia từ nhánh khác. Ví dụ dưới đây chạy trên shell của VM, chỉ tải tệp, chưa nạp database:
+
 ```bash
 cd /opt/bluemoon-db
 mkdir -p sql_init
-
-# Clone hoặc tải các file schema từ repo chính thức của nhóm
-curl -fsSL https://raw.githubusercontent.com/PhamHoa2006/BlueMoon-Apartment-Management-System/main/database/schema.sql -o sql_init/schema.sql
-curl -fsSL https://raw.githubusercontent.com/PhamHoa2006/BlueMoon-Apartment-Management-System/main/database/seed_data.sql -o sql_init/seed_data.sql
-curl -fsSL https://raw.githubusercontent.com/PhamHoa2006/BlueMoon-Apartment-Management-System/main/database/migrations/V1.1__fix_schema_and_seed.sql -o sql_init/v1.1.sql
+SPRINT_DB_COMMIT='<COMMIT_SHA_DA_CHOT>'
+curl -fsSL "https://raw.githubusercontent.com/PhamHoa2006/BlueMoon-Apartment-Management-System/${SPRINT_DB_COMMIT}/database/schema.sql" -o sql_init/schema.sql
+curl -fsSL "https://raw.githubusercontent.com/PhamHoa2006/BlueMoon-Apartment-Management-System/${SPRINT_DB_COMMIT}/database/seed_data.sql" -o sql_init/seed_data.sql
 ```
-*(Nếu repo của nhóm là Private, Sơn chỉ cần dùng lệnh `cat << 'EOF' > sql_init/schema.sql` rồi dán nội dung từ máy local lên).*
 
-#### Bước 4.2: Thực thi nạp CSDL theo đúng thứ tự chuẩn
-Thực thi tuần tự 3 tệp SQL vào container `bluemoon-postgres-cloud`:
+Nếu repository riêng tư hoặc tải không thành công, chuyển hai tệp từ checkout đúng commit sang VM bằng kênh đã được cấp quyền. Chỉ tiếp tục khi có đủ hai tệp đúng phiên bản; không dùng tệp cũ còn sót sau một lần tải lỗi.
+
+#### Bước 4.2: Nạp vào database trống
+
+Chạy lần lượt trong container PostgreSQL đã thiết lập; lệnh thứ hai chỉ chạy khi lệnh thứ nhất thành công. Mỗi script có transaction; `ON_ERROR_STOP=1` yêu cầu psql dừng khi lỗi.
 
 ```bash
-# 1. Nạp 11 bảng cấu trúc cơ bản
-docker exec -i bluemoon-postgres-cloud psql -U bluemoon_admin -d bluemoon < sql_init/schema.sql
+# 1. Khởi tạo 7 bảng và FK/CHECK/UNIQUE/index/trigger Sprint 1
+docker exec -i bluemoon-postgres-cloud psql -U bluemoon_admin -d bluemoon -v ON_ERROR_STOP=1 < sql_init/schema.sql
 
-# 2. Nạp dữ liệu mẫu 30 tầng căn hộ & tài khoản BQT
-docker exec -i bluemoon-postgres-cloud psql -U bluemoon_admin -d bluemoon < sql_init/seed_data.sql
-
-# 3. Nạp kịch bản vá lỗi Migration V1.1 (vá 7 điểm DDL/DML, chuẩn hóa BCrypt)
-docker exec -i bluemoon-postgres-cloud psql -U bluemoon_admin -d bluemoon < sql_init/v1.1.sql
+# 2. Chỉ sau khi schema thành công và cả 7 bảng chưa có bản ghi: nạp dữ liệu giả
+docker exec -i bluemoon-postgres-cloud psql -U bluemoon_admin -d bluemoon -v ON_ERROR_STOP=1 < sql_init/seed_data.sql
 ```
 
-#### Bước 4.3: Kiểm tra nghiệm thu dữ liệu trên Cloud
-Chạy lệnh kiểm tra số lượng bản ghi:
+Schema không nâng cấp database đã có bảng; seed không chạy lặp để đặt lại dữ liệu/mật khẩu. Nếu gặp lỗi, dừng và kiểm tra kết quả/transaction theo hướng dẫn database; không tự DROP/TRUNCATE hoặc nạp thêm script chuyển đổi chưa được duyệt.
+
+#### Bước 4.3: Kiểm tra chỉ đọc và bàn giao
+
 ```bash
-docker exec -it bluemoon-postgres-cloud psql -U bluemoon_admin -d bluemoon -c "
-SELECT 
-    (SELECT COUNT(*) FROM apartments) AS tong_can_ho,
-    (SELECT COUNT(*) FROM users) AS tong_tai_khoan,
-    (SELECT COUNT(*) FROM fee_types) AS tong_bieu_phi;
-"
+docker exec -i bluemoon-postgres-cloud psql -U bluemoon_admin -d bluemoon -v ON_ERROR_STOP=1 <<'SQL'
+SELECT 'users' AS table_name, count(*) FROM users
+UNION ALL SELECT 'persons', count(*) FROM persons
+UNION ALL SELECT 'apartments', count(*) FROM apartments
+UNION ALL SELECT 'households', count(*) FROM households
+UNION ALL SELECT 'residents', count(*) FROM residents
+UNION ALL SELECT 'apartment_owner_history', count(*) FROM apartment_owner_history
+UNION ALL SELECT 'audit_logs', count(*) FROM audit_logs;
+SQL
 ```
-Kết quả hiển thị:
-```text
- tong_can_ho | tong_tai_khoan | tong_bieu_phi 
--------------+----------------+---------------
-          30 |              4 |             3
-(1 row)
-```
-🎉 **Dữ liệu tòa nhà BlueMoon 30 tầng đã hiện diện trọn vẹn trên Google Cloud!**
+
+Ngay sau nạp seed, trước mọi thao tác ứng dụng, kỳ vọng: **4 users, 7 persons, 7 apartments, 3 households, 6 residents, 4 apartment_owner_history, 4 audit_logs**. Đây là dữ liệu căn mẫu đại diện các loại mặt bằng, không phải đã tạo đủ mọi căn của 30 tầng. Database đã dùng để phát triển có thể khác số bản ghi; không nạp lại seed để ép về số này.
+
+Sơn bàn giao commit SQL, môi trường, kết quả thực chạy, cách kết nối qua kênh riêng và giới hạn cho Hoà/Huy. Kiểm tra ràng buộc với dữ liệu sai hoặc thao tác phá hủy phải chạy trên PostgreSQL cô lập. Tạo bảng và đếm bản ghi thành công chưa nghiệm thu nghiệp vụ đăng nhập/căn hộ/chủ hộ.
 
 ---
 
@@ -304,7 +304,7 @@ Kết quả hiển thị:
    - **Username:** `bluemoon_admin`
    - **Password:** `BlueMoonSecure2026@PlaLa`
    - **Database:** `bluemoon`
-4. Bấm **Connect**. Cây thư mục sẽ load thành công 11 bảng giống hệt như local!
+4. Bấm **Connect**. Kiểm tra đủ 7 bảng Sprint 1 theo database/README.md; kết nối thành công chưa chứng minh ứng dụng hoặc nghiệp vụ đã hoạt động.
 
 ---
 

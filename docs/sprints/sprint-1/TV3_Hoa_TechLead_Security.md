@@ -83,7 +83,7 @@
 ## 📅 3. CHECKLIST HÀNH ĐỘNG TỪNG NGÀY (DAILY CHECKLIST)
 
 - [ ] **Ngày 1 (31/10):** Kiểm tra `pom.xml`, cấu hình `application.yml` kết nối PostgreSQL; viết `GlobalExceptionHandler.java`.
-- [ ] **Ngày 2 (01/11):** Cấu hình `SecurityConfig.java` với Form Login và BCrypt; hỗ trợ Sơn chạy migration CSDL.
+- [ ] **Ngày 2 (01/11):** Cấu hình `SecurityConfig.java` với Form Login và BCrypt; phối hợp Sơn kiểm tra kết nối và tiếp nhận schema/seed (không nạp lại dữ liệu đã có).
 - [ ] **Ngày 3 (02/11):** Hoàn thành logic `AuthService.java` (khóa 15 phút sau 5 lần sai); push code lên nhánh để Huy ráp test CFG.
 - [ ] **Ngày 4 (03/11):** Phối hợp với Đức Anh ghép Form Login với Spring Security. Lập trình `UserService.java`.
 - [ ] **Ngày 5 (04/11):** Hoàn thiện các API Quản lý tài khoản BQT trong `AdminController.java`. Review PR Backend Căn hộ của Sơn.

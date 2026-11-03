@@ -72,7 +72,7 @@ Khánh tổ chức Sprint Review; người triển khai demo. Khánh tổng hợ
 
 ```mermaid
 flowchart TD
-    A["DB-01<br/>Rà schema, migration<br/>Kiểm tra PostgreSQL"]
+    A["DB-01<br/>Rà schema/seed, bàn giao<br/>Kiểm tra PostgreSQL"]
     B["BE-01<br/>Entity và Repository"]
     C["BE-02<br/>Backend căn hộ"]
     D["DB-02<br/>Dữ liệu hồ sơ và lịch sử chủ hộ"]
@@ -93,7 +93,7 @@ flowchart TD
 
 | Bước | Cần nhận / bàn giao | Điều kiện xong và tài liệu |
 |---|---|---|
-| DB-01 | Nhận [schema](../../../database/schema.sql); giao migration đã kiểm tra cho Hoà/Huy và BE-01 | Chạy trên PostgreSQL, có kết quả ràng buộc/seed; [DB-01 — AC](github_issues_backlog.md#db-01) |
+| DB-01 | Nhận [schema](../../../database/schema.sql); giao schema/seed đã kiểm tra cho Hoà/Huy và BE-01 | Chạy trên PostgreSQL, có kết quả ràng buộc/seed; [DB-01 — AC](github_issues_backlog.md#db-01) |
 | BE-01 | Nhận DB-01; giao Entity/Repository và cách dùng cho Hoà/Huy | Mapping, kiểu dữ liệu, query được kiểm tra; [BE-01 — AC](github_issues_backlog.md#be-01) |
 | BE-02 | Nhận BE-01; giao backend căn hộ cho Đức Anh/Huy | Chặn mã trùng, diện tích sai, tầng/loại sai; giao dịch đúng, test đạt; [BE-02 — AC](github_issues_backlog.md#be-02) |
 | DB-02 | Nhận DB-01/BE-01; giao DDL/ERD hồ sơ và lịch sử cho BE-03/Huy | CCCD duy nhất, tối đa một hộ ACTIVE, không mất hồ sơ cũ; [DB-02 — AC](github_issues_backlog.md#db-02) |
@@ -201,7 +201,7 @@ Tra cứu: [backlog QA](github_issues_backlog.md), [thiết kế kiểm thử](k
 | Người | Nhận việc đầu tiên | Tổng ước lượng |
 |---|---|---:|
 | Khánh | PM-01: Kanban/lịch họp (3h); chuẩn bị PM-02/BA-03 song song theo khả năng | 22h / 6 SP |
-| Sơn | DB-01: review schema/migration (3h) | 36h / 10 SP |
+| Sơn | DB-01: review schema/seed và chuẩn bị bàn giao (3h) | 36h / 10 SP |
 | Hoà | ARCH-01: rà cấu hình/build nền tảng (2h) | 28h / 8 SP |
 | Đức Anh | FE-01: layout/nav (3h), sau khi xác nhận khung ARCH-01 | 28h / 7 SP |
 | Huy | QA-01: fixtures/nền tảng test (4h); thiết kế ca từ AC ngay | 24h / 5 SP |

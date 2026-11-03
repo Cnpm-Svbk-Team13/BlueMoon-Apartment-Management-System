@@ -10,10 +10,10 @@
 
 ## 🎯 1. TỔNG QUAN VAI TRÒ & SẢN PHẨM BÀN GIAO (DELIVERABLES)
 
-- **Vai trò chính:** Quản trị cơ sở dữ liệu PostgreSQL, soạn thảo kịch bản migration CSDL `V1.1` khắc phục toàn bộ 7 lỗi DDL/DML đã phát hiện, ánh xạ tầng JPA Entity & Repository, và xây dựng toàn bộ backend CRUD Căn hộ 30 tầng (`US-001`).
+- **Vai trò chính:** Quản trị cơ sở dữ liệu PostgreSQL, khởi tạo, kiểm tra và bàn giao schema/seed 7 bảng Sprint 1, ánh xạ tầng JPA Entity & Repository, và xây dựng toàn bộ backend CRUD Căn hộ 30 tầng (`US-001`).
 - **Tổng thời gian cam kết:** **36 giờ ước lượng** (10 Story Points).
 - **Quyền quản trị mã nguồn:**
-  - `database/migrations/V1.1__fix_schema_and_seed.sql`
+  - `database/schema.sql`, `database/seed_data.sql`
   - Đồng quản trị file cấu hình `pom.xml` và `src/main/resources/application.yml` cùng Hoà (Tech Lead).
   - Tầng dữ liệu: `src/main/java/com/bluemoon/bfms/model/`, `repository/`, `service/ApartmentService.java`.
 
@@ -21,19 +21,17 @@
 
 ## 📌 2. DANH MỤC NHIỆM VỤ CHI TIẾT (TASK BREAKDOWN)
 
-### Thẻ Issue 3: `[Sprint 1][DB] Soạn thảo Kịch bản Migration CSDL V1.1` (`DB-01`)
-- **Khối lượng:** 7 giờ (2 SP).
-- **Mã nhánh Git:** `feature/issue-03-db-migration-v1-1`
-- **File tạo mới:** `database/migrations/V1.1__fix_schema_and_seed.sql`
-- **7 Điểm cần vá trong CSDL PostgreSQL:**
-  1. Thêm `residence_status NOT NULL` và 2 cột `start_date DATE`, `end_date DATE` vào bảng `residents` kèm ràng buộc: Nếu là `TAM_TRU` hoặc `TAM_VANG` thì bắt buộc `start_date` và `end_date` không được null, và `end_date >= start_date` (Tuân thủ Luật Cư trú 2020).
-  2. Thêm cột `version BIGINT NOT NULL DEFAULT 0` vào bảng `invoices` để kích hoạt khóa lạc quan `@Version`.
-  3. Thêm ràng buộc XOR vào bảng `receipts`: Một phiếu thu chỉ được gắn với hóa đơn bắt buộc HOẶC đóng góp tự nguyện, không được cả hai (Bất biến 1: NĐ 93/2021/NĐ-CP).
-  4. Đổi kiểu dữ liệu `apartments.area_sqm` sang `DECIMAL(12,2)` và thêm kiểm tra `area_sqm > 0`.
-  5. Đổi khóa duy nhất `households.apartment_id` sang Partial Unique Index (`WHERE status = 'ACTIVE'`) để bảo toàn lịch sử chủ hộ cũ.
-  6. Thay toàn bộ mật khẩu giả lập trong seed data bằng mã băm BCrypt chuẩn cho `Password@123`:
-     `$2a$10$ThEK5Lsf49T189/5nvFzwuYgdsmzBFWloKeb2FM2QSwB4JsNK2uTK`
-  7. Nạp dữ liệu mẫu cho các căn hộ mẫu từ tầng 1 đến tầng 30 (Kiot, Thương mại, Căn hộ ở, Penthouse).
+### Thẻ Issue 3: `[Sprint 1][DB] Khởi tạo, kiểm tra và bàn giao schema/seed Sprint 1` (`DB-01`)
+- **Khối lượng:** 7 giờ (2 SP): review schema/seed và chuẩn bị bàn giao (3h), chạy PostgreSQL cô lập và ghi kết quả (4h).
+- **Mã nhánh Git:** `feature/issue-03-sprint1-schema-seed`
+- **File phụ trách:** `database/schema.sql`, `database/seed_data.sql`.
+- **Checklist:**
+  - [ ] `database/schema.sql` tạo đủ 7 bảng cùng FK/CHECK/UNIQUE/index/trigger trên PostgreSQL trống, không nạp vào database đã có cấu trúc.
+  - [ ] `database/seed_data.sql` chỉ nạp khi cả 7 bảng rỗng; dữ liệu giả và tài khoản BCrypt khớp `database/README.md`.
+  - [ ] Kiểm tra dữ liệu hợp lệ/sai: tầng–loại, diện tích, CCCD/SĐT, ngày cư trú, một hộ ACTIVE/căn, liên kết chủ hộ và bảo vệ lịch sử/audit; ghi kết quả PostgreSQL thực chạy.
+  - [ ] Bàn giao commit/schema/seed, cách kết nối không lộ bí mật, dữ liệu mẫu, bằng chứng và giới hạn cho Hoà/Huy; không coi việc tạo bảng là đã hoàn thành nghiệp vụ.
+
+Xem [hướng dẫn database](../../../database/README.md). Không chạy lại bootstrap hoặc seed trên database đã có dữ liệu; thay đổi cấu trúc đã triển khai cần phương án chuyển đổi riêng. Phần tài chính chưa có trong bootstrap Sprint 1.
 
 ---
 
@@ -71,8 +69,8 @@
 
 ## 📅 3. CHECKLIST HÀNH ĐỘNG TỪNG NGÀY (DAILY CHECKLIST)
 
-- [ ] **Ngày 1 (31/10):** Viết script SQL `database/migrations/V1.1__fix_schema_and_seed.sql`. Chạy thử nghiệm trên PostgreSQL local.
-- [ ] **Ngày 2 (01/11):** Nạp migration CSDL thành công; tạo các file Enum và Entity JPA (`Apartment`, `Household`, `Resident`) với `BigDecimal`.
+- [ ] **Ngày 1 (31/10):** Rà schema/seed 7 bảng, chạy thử trên PostgreSQL trống/cô lập và ghi bằng chứng.
+- [ ] **Ngày 2 (01/11):** Kiểm tra và bàn giao schema/seed đã nạp; tạo các file Enum và Entity JPA (`Apartment`, `Household`, `Resident`) với `BigDecimal`.
 - [ ] **Ngày 3 (02/11):** Viết các interface Repository (`ApartmentRepository`). Viết query tìm kiếm căn hộ theo tầng.
 - [ ] **Ngày 4 (03/11):** Bắt đầu lập trình `ApartmentService`: viết hàm `validateApartmentBusinessRules()` và `createApartment()`.
 - [ ] **Ngày 5 (04/11):** Hoàn thành toàn bộ `ApartmentService` (thêm, sửa, đổi trạng thái). Bàn giao cho Huy (QA) chạy bộ test Bảng quyết định.
@@ -88,13 +86,13 @@
 git checkout develop
 git pull origin develop
 
-# 2. Tạo nhánh làm việc cho migration CSDL
-git checkout -b feature/issue-03-db-migration-v1-1
+# 2. Tạo nhánh làm việc cho schema/seed Sprint 1
+git checkout -b feature/issue-03-sprint1-schema-seed
 
 # 3. Commit và đẩy lên GitHub
-git add database/migrations/V1.1__fix_schema_and_seed.sql
-git commit -m "feat(#03): add v1.1 database migration script with all constraint fixes"
-git push origin feature/issue-03-db-migration-v1-1
+git add database/schema.sql database/seed_data.sql
+git commit -m "docs(#03): record Sprint 1 schema and seed verification"
+git push origin feature/issue-03-sprint1-schema-seed
 
 # 4. Tạo Pull Request trên GitHub và nhờ Hoà duyệt (PR của Sơn không tự duyệt)
 ```

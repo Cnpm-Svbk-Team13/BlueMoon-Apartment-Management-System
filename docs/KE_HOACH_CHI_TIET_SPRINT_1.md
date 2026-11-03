@@ -39,7 +39,7 @@ Sprint 1 quy chuẩn phạm vi thực thi bao gồm 3 nhóm hạng mục:
    - **Quản lý Tài khoản Ban Quản trị & Phân quyền RBAC (`TASK-SEC-USER` / quy chiếu `US-SEC-01`):** Quản trị viên cấp cao (Admin) khởi tạo, cập nhật, kích hoạt/vô hiệu hóa tài khoản cho các thành viên BQT, Kế toán và Thủ quỹ.
 3. **Nhiệm vụ Kỹ thuật Nền tảng (Technical Enablers & Quality):**
    - **TASK-TECH-01:** Khởi tạo khung dự án Spring Boot 3.5.16, cấu hình Pure Web đa tầng và xử lý ngoại lệ tập trung.
-   - **TASK-TECH-02:** Nạp kịch bản Migration CSDL PostgreSQL `V1.1__fix_schema_and_seed.sql` và khởi tạo JPA Entities/Repositories.
+   - **TASK-TECH-02:** Khởi tạo, kiểm tra và bàn giao schema/seed 7 bảng PostgreSQL Sprint 1 và khởi tạo JPA Entities/Repositories.
    - **TASK-TECH-03 (Shift-Left Testing):** Thiết lập môi trường kiểm thử tự động, chuẩn bị sẵn dữ liệu mẫu fixture và khung kiểm thử từ Ngày 1.
 
 ---
@@ -53,7 +53,7 @@ Nhóm 13 gồm 5 thành viên được phân công giữ nguyên vẹn chuyên m
 | Thành viên | Vai trò Sprint 1 | Trách nhiệm chính trong 7 ngày | Mã nhiệm vụ (Task IDs) | Story Points | Giờ ước lượng | Tỷ trọng |
 |---|---|---|---|:---:|:---:|:---:|
 | **TV1: Phạm Nam Khánh** | Điều phối Sprint / BA & UAT | Vận hành Kanban/daily, theo dõi phụ thuộc, chủ trì Review/Retro; chuẩn hóa yêu cầu, thực hiện UAT và tổng hợp hồ sơ | `PM-01`, `PM-02`, `BA-03` | 6 SP | 22h | 15.94% |
-| **TV2: Nguyễn Xuân Sơn** | Trưởng nhóm / Database Engineer & Backend Dev | Khắc phục Schema CSDL `V1.1`, Entity JPA, Backend CRUD Căn hộ & Chủ hộ (`US-001`) | `PM-03`, `DB-01`, `BE-01`, `BE-02`, `DB-02`, `BE-03` | 10 SP | 36h | 26.09% |
+| **TV2: Nguyễn Xuân Sơn** | Trưởng nhóm / Database Engineer & Backend Dev | Schema/seed 7 bảng Sprint 1, Entity JPA, Backend CRUD Căn hộ & Chủ hộ (`US-001`) | `PM-03`, `DB-01`, `BE-01`, `BE-02`, `DB-02`, `BE-03` | 10 SP | 36h | 26.09% |
 | **TV3: Phạm Thái Hoà** | Technical Lead & Core Backend Dev | Kiến trúc hệ thống, Spring Security 6, API Đăng nhập (`US-SEC-02`), Quản lý User (`US-SEC-01`), Code Review & Gatekeeping | `ARCH-01`, `SEC-01`, `SEC-02`, `SEC-03`, `SEC-04` | 8 SP | 28h | 20.29% |
 | **TV4: Nghiêm Đức Anh** | Frontend Developer & UI/UX Specialist | Dựng Master Layout Thymeleaf, Giao diện Login, UI Quản lý tài khoản, UI Căn hộ 30 tầng | `FE-01`, `FE-02`, `FE-03`, `FE-04`, `FE-05` | 7 SP | 28h | 20.29% |
 | **TV5: Nguyễn Hợp Huy** | QA Lead & Test Automation Engineer | Áp dụng Shift-Left: Cấu hình Test Framework, Unit Test CFG Basis Path, MockMvc Integration Test, Decision Table | `QA-01`, `QA-02`, `QA-03`, `QA-04`, `QA-05` | 5 SP | 24h | 17.39% |
@@ -82,7 +82,7 @@ Nhóm 13 gồm 5 thành viên được phân công giữ nguyên vẹn chuyên m
 
 | Mã Task | Tên Nhiệm vụ | Mô tả Chi tiết Công việc | Ước lượng | Tiêu chí Hoàn thành (Acceptance Criteria) |
 |---|---|---|:---:|---|
-| **DB-01** | Soạn thảo Kịch bản Migration CSDL `V1.1__fix_schema_and_seed.sql` | • Bổ sung `start_date`, `end_date` vào `residents` kèm check constraint ngày.<br>• Bổ sung `version BIGINT NOT NULL DEFAULT 0` vào `invoices`.<br>• Thêm ràng buộc XOR cho bảng `receipts`.<br>• Chuyển `apartments.area_sqm` sang `DECIMAL(12,2)`.<br>• Đổi khóa `households.apartment_id` sang Partial Unique Index (`status = 'ACTIVE'`).<br>• Cập nhật hash BCrypt chuẩn (`$2a$10$ThEK5Lsf49T189/5nvFzwuYgdsmzBFWloKeb2FM2QSwB4JsNK2uTK`) cho `Password@123` và bổ sung seed data cho `TAM_TRU`, `TAM_VANG`. | 7 giờ (2 SP) | • Kịch bản SQL chạy trơn tru không lỗi trên PostgreSQL 17 (Docker chuẩn nhóm).<br>• Toàn bộ 7 lỗi DDL và DML được vá 100%. |
+| **DB-01** | Khởi tạo, kiểm tra và bàn giao schema/seed Sprint 1 | • Rà schema/seed 7 bảng theo ERD Sprint 1.<br>• Kiểm tra FK/CHECK/UNIQUE/index/trigger và dữ liệu giả trên PostgreSQL trống/cô lập.<br>• Bàn giao phiên bản SQL, dữ liệu mẫu, bằng chứng và giới hạn cho Hoà/Huy; không nạp lại vào database đang có dữ liệu. | 7 giờ (2 SP) | • Khởi tạo và seed đạt kỳ vọng, kiểm tra dữ liệu đúng/sai có kết quả thực chạy.<br>• Người nhận có đủ thông tin để kết nối và phát triển; chưa coi là nghiệm thu nghiệp vụ. |
 | **BE-01** | Xây dựng Tầng Entity JPA & Repositories | • Ánh xạ JPA Entity chuẩn cho `User`, `Apartment`, `Household`, `Resident`.<br>• Khai báo `@Version` trên `Invoice` entity.<br>• Viết các Repository Interface kế thừa `JpaRepository` kèm custom JPQL query tìm kiếm căn hộ theo tầng, mã căn. | 9 giờ (2 SP) | • Entity ánh xạ chính xác 100% bảng CSDL.<br>• Không dùng `float`/`double`, toàn bộ diện tích dùng `BigDecimal`. |
 | **BE-02** | Hiện thực hóa Backend CRUD Căn hộ (`US-001`) | • Viết `ApartmentService` và `ApartmentController`.<br>• Kiểm tra ràng buộc diện tích thông thủy strictly positive ($m^2 > 0$).<br>• Xử lý thêm/sửa/xóa logic căn hộ (30 tầng) và gán hồ sơ chủ hộ đại diện.<br>• Ghi nhật ký kiểm toán vào `AuditLog`. | 9 giờ (3 SP) | • Thỏa mãn AC 1–2 của US-001; AC 3–4 nghiệm thu kết hợp DB-02/BE-03/FE-05/QA-05.<br>• Chặn thành công diện tích $\le 0$ và mã căn trùng lặp.<br>• Phối hợp BE-03 để lưu lịch sử chủ hộ cũ an toàn. |
 
@@ -139,7 +139,7 @@ Ma trận RACI bảo toàn 100% phân công chuyên môn gốc của nhóm:
 | Hạng mục Công việc & Deliverables Sprint 1 | TV1: Khánh (BA/UAT) | TV2: Sơn (Trưởng nhóm/DB/BE) | TV3: Hoà (Tech Lead) | TV4: Đ.Anh (UI/UX) | TV5: Huy (QA Lead) |
 |---|:---:|:---:|:---:|:---:|:---:|
 | **D1: Khung Kiến trúc Spring Boot 3.5.16 & Pure Web** | I | C | **A / R** | C | I |
-| **D2: Kịch bản Migration CSDL `V1.1` & Seed Data** | C | **R** | **A** | I | C |
+| **D2: Schema/Seed Sprint 1 & Bằng chứng bàn giao** | C | **R** | **A** | I | C |
 | **D3a: Backend Xác thực, Khóa Brute-force & Quản lý User** | C | I | **A / R** | C | C |
 | **D3b: Backend CRUD Danh mục Căn hộ & Chủ hộ (`US-001`)** | C | **R** | **A** | C | C |
 | **D4: Bộ Giao diện Thymeleaf (Layout, Login, Admin)** | **C / Approver (UAT)** | I | **A** *(Kiến trúc)* | **R** *(Xây dựng)* | I |
@@ -209,7 +209,7 @@ Sprint 1 cam kết bàn giao đầy đủ 5 sản phẩm bàn giao kỹ thuật 
 ```
 DELIVERABLES SPRINT 1 (31/10 - 06/11/2026)
 ├── D1: Mã nguồn Khung Kiến trúc Phân tầng Spring Boot 3.5.16 (Java 25 LTS)
-├── D2: Bộ Kịch bản CSDL PostgreSQL Hoàn thiện (Migration V1.1 Script)
+├── D2: Schema/Seed 7 bảng PostgreSQL & Bằng chứng bàn giao
 ├── D3: Phân hệ Backend API/Service/Controller Xác thực & Quản lý Tài khoản BQT
 ├── D4: Bộ Giao diện Người dùng Thymeleaf Hoàn chỉnh (Layout, Login, Dashboard, Users, Apartments)
 ├── D5: Bộ Ca Kiểm thử Tự động & Báo cáo Đo lường Chất lượng Chuẩn SoICT
@@ -225,16 +225,12 @@ DELIVERABLES SPRINT 1 (31/10 - 06/11/2026)
   - `exception/GlobalExceptionHandler.java`: Xử lý ngoại lệ tập trung, bắt ngoại lệ validation `@Valid`, ngoại lệ bảo mật và ngoại lệ khóa lạc quan `ObjectOptimisticLockingFailureException`.
   - `pom.xml`: Khai báo phụ thuộc chuẩn mực, không thừa thư viện bên ngoài.
 
-### Deliverable D2: Bộ Kịch bản Migration CSDL PostgreSQL Hoàn thiện
-- **Vị trí lưu trữ:** `database/migrations/V1.1__fix_schema_and_seed.sql`
-- **Nội dung sửa đổi cốt lõi:**
-  1. Thiết lập `ALTER TABLE residents ALTER COLUMN residence_status SET NOT NULL;` (triệt tiêu lỗ hổng SQL 3-valued logic bypass check constraints), đồng thời thêm 2 cột `start_date DATE` và `end_date DATE` kèm ràng buộc kiểm tra hợp lệ thời hạn tạm trú/tạm vắng theo Luật Cư trú 2020.
-  2. Bổ sung cột `version BIGINT NOT NULL DEFAULT 0` vào bảng `invoices` để kích hoạt cơ chế khóa lạc quan `@Version` (khẳng định chuẩn kiểu `BIGINT` khớp 1:1 với kiểu `Long` của Hibernate/JPA, ngăn ngừa ngoại lệ `SchemaManagementException`).
-  3. Bổ sung ràng buộc XOR độc lập vào bảng `receipts` để chống in gộp biên lai thu phí với biên lai quỹ.
-  4. Đổi kiểu dữ liệu `apartments.area_sqm` sang `DECIMAL(12,2)`.
-  5. Chuyển ràng buộc `households.apartment_id UNIQUE` sang Partial Unique Index (`status = 'ACTIVE'`) để bảo toàn lịch sử chủ hộ cũ.
-  6. Thay thế toàn bộ mật khẩu băm giả lập trong `seed_data.sql` bằng mã băm BCrypt chuẩn đã được kiểm chứng thực nghiệm độc lập của `'Password@123'` (`$2a$10$ThEK5Lsf49T189/5nvFzwuYgdsmzBFWloKeb2FM2QSwB4JsNK2uTK`).
-  7. Nạp đầy đủ dữ liệu mẫu cho các trường hợp `TAM_TRU`, `TAM_VANG` và các dòng chi tiết hóa đơn.
+### Deliverable D2: Schema/seed PostgreSQL Sprint 1 và bằng chứng bàn giao
+- **Vị trí:** `database/schema.sql`, `database/seed_data.sql`; cách chạy và dữ liệu kỳ vọng: [database/README.md](../database/README.md).
+- **Nội dung:** 7 bảng users, persons, apartments, households, residents, apartment_owner_history, audit_logs; FK/CHECK/UNIQUE/index/trigger theo schema hiện hành.
+- **Kiểm tra:** khởi tạo trên PostgreSQL trống/cô lập, seed khi cả 7 bảng rỗng, xác nhận số bản ghi và ràng buộc với dữ liệu hợp lệ/sai; ghi phiên bản, lệnh, kết quả và giới hạn chưa kiểm tra.
+- **Bàn giao:** Sơn cung cấp phiên bản SQL, cách kết nối không lộ bí mật và dữ liệu mẫu cho Hoà/Huy. Database đang có dữ liệu không chạy lại bootstrap/seed.
+- **Giới hạn:** hóa đơn/biên lai/quỹ thuộc triển khai tài chính sau này; các bất biến vẫn phải được thực hiện trước khi nghiệm thu phân hệ đó. Tạo schema không chứng minh hoàn thành US hoặc đăng nhập web.
 
 ### Deliverable D3: Backend API / Service / Controller Xác thực & Tài khoản BQT
 - **Vị trí lưu trữ:** `src/main/java/com/bluemoon/bfms/service/`, `controller/`
@@ -350,9 +346,9 @@ Ma trận truy vết 5 tầng dưới đây bảo đảm tính liên kết hữu
 | **Nền tảng** | Khung kiến trúc Pure Web & Master Layout | `ARCH-01` (5h, 1 SP), `FE-01` (6h, 1.5 SP), `SEC-04` (3h, 1 SP) | Hoà (TV3), Đ.Anh (TV4) | **Deliverable D1, D4** | `SmokeTest.java`, `LayoutRenderTest.java` | Kiến trúc Pure Web phân tầng, Master Layout Thymeleaf responsive, Gatekeeper PR review, Java 25 LTS, Spring Boot 3.5.16. |
 | **RAW-001** | `US-001`: Danh mục Căn hộ 30 tầng | `BE-01`, `BE-02`, `FE-04` | Sơn (TV2), Đ.Anh (TV4) | **Deliverable D2, D3, D4** | `TC_APT_DT_01` $\rightarrow$ `06` | Bất biến 2: Diện tích thông thủy strictly positive ($m^2 > 0$), `DECIMAL(12,2)`. |
 | **RAW-002** | `US-001`: Thông tin Hồ sơ Chủ hộ | `BE-02`, `FE-04` | Sơn (TV2), Đ.Anh (TV4) | **Deliverable D3, D4** | `TC_OWNER_01`, `TC_OWNER_02` | CCCD 12 chữ số, SĐT 10 số, lưu vết lịch sử chủ hộ (`status = 'ACTIVE'`). |
-| **RAW-006** *(Chuẩn bị)* | `US-003`: Trạng thái Tạm trú/vắng | `DB-01` | Sơn (TV2) | **Deliverable D2** (Schema migration) | `TC_DB_MIGRATE_01` | Bất biến 3: Thêm `start_date`, `end_date` vào `residents` (Luật Cư trú 2020). |
-| **RAW-011..016** *(Chuẩn bị)* | Thu phí & Khóa lạc quan | `DB-01` | Sơn (TV2) | **Deliverable D2** (Schema migration) | `TC_DB_MIGRATE_02` | Concurrency Invariant: Thêm `version BIGINT` vào `invoices` chống gạch nợ đúp. |
-| **RAW-022..025** *(Chuẩn bị)* | Tách biệt Đóng góp Tự nguyện | `DB-01` | Sơn (TV2) | **Deliverable D2** (Schema migration) | `TC_DB_MIGRATE_03` | Bất biến 1: Thêm XOR check trên `receipts` chống in gộp biên lai (NĐ 93/2021). |
+| **RAW-006** *(Chuẩn bị)* | `US-003`: Trạng thái Tạm trú/vắng | `DB-01` | Sơn (TV2) | **Deliverable D2** (Schema/seed Sprint 1) | `TC_DB_BOOTSTRAP_01` (dự kiến) | Kiểm tra residence_status, start_date/end_date và CHECK ngày trên PostgreSQL; chưa nghiệm thu chức năng US-003. |
+| **RAW-011..016** *(phân hệ tài chính sau)* | Thu phí & Khóa lạc quan | Chưa giao trong DB-01 Sprint 1 | Sơn/Hoà theo Sprint triển khai | Ngoài bootstrap 7 bảng | Thiết kế test khi triển khai | Hóa đơn phải có version/khóa lạc quan trước nghiệm thu thu phí; không tạo hoặc xác nhận bằng D2 Sprint 1. |
+| **RAW-022..025** *(phân hệ tài chính sau)* | Tách biệt Đóng góp Tự nguyện | Chưa giao trong DB-01 Sprint 1 | Sơn/Hoà theo Sprint triển khai | Ngoài bootstrap 7 bảng | Thiết kế test khi triển khai | Giữ bất biến tách quỹ và ràng buộc biên lai; cần triển khai/kiểm tra riêng khi xây phân hệ tài chính. |
 | **NFR-02** | `US-SEC-01`: Quản lý Tài khoản BQT | `SEC-03`, `FE-03` | Hoà (TV3), Đ.Anh (TV4) | **Deliverable D3, D4** | `TC_USER_CRUD_01`, `TC_USER_CRUD_02` | Phân quyền RBAC (`ROLE_ADMIN`, `ACCOUNTANT`, `CASHIER`), kiểm tra tính duy nhất. |
 | **NFR-02** | `US-SEC-02`: Đăng nhập & Khóa Brute-force | `SEC-01`, `SEC-02`, `FE-02` | Hoà (TV3), Đ.Anh (TV4) | **Deliverable D3, D4** | `TC_LOGIN_BP_01` $\rightarrow$ `TC_LOGIN_BP_05` | Khóa tạm thời 15 phút sau 5 lần sai liên tiếp, mã hóa BCrypt $\ge 10$ rounds. |
 | **Nghiệm thu** | Bộ Kịch bản UAT & Báo cáo Bàn giao | `PM-02` | Khánh (TV1) | **Deliverable D-UAT** | 12 Kịch bản UAT Thực tế | Xác nhận nghiệm thu chức năng từ góc độ Product Owner / Ban Quản trị. |
@@ -367,7 +363,7 @@ gantt
     title TIẾN ĐỘ 7 NGÀY SPRINT 1 (31/10/2026 - 06/11/2026)
     dateFormat  YYYY-MM-DD
     section Khởi động & Nền tảng
-    Họp Sprint Planning, Khung Spring Boot (Hoà), Script DB V1.1 (Sơn) :2026-10-31, 1d
+    Họp Sprint Planning, Khung Spring Boot (Hoà), Schema/Seed Sprint 1 (Sơn) :2026-10-31, 1d
     Test Setup Shift-Left (Huy), Phác thảo 12 kịch bản UAT (Khánh)     :2026-10-31, 1d
     section Xây dựng Song song
     Cấu hình Security, JPA Entity, Master Layout Thymeleaf UI         :2026-11-01, 1d
@@ -381,8 +377,8 @@ gantt
 
 | Ngày làm việc | Hoạt động Trọng tâm Toàn đội | Output Kỳ vọng Cuối ngày |
 |---|---|---|
-| **Ngày 1 (Thứ Bảy, 31/10)** | • Sáng: Họp Sprint Planning 45 phút, Sơn chốt backlog 36 SP / 138h.<br>• Hoà: Thiết lập khung Spring Boot 3.5.16 (`ARCH-01`).<br>• Sơn: Hoàn tất script CSDL migration `V1.1` (`DB-01`).<br>• Huy (Shift-Left): Cấu hình môi trường test `application-test.yml`, JUnit 5, Mockito (`QA-01`).<br>• Khánh điều phối, quản lý Kanban và bắt đầu phác thảo 12 kịch bản UAT (`PM-02`, `BA-03`). | Mã nguồn khung biên dịch sạch; script migration `V1.1` sẵn sàng; môi trường test sẵn sàng. |
-| **Ngày 2 (Chủ Nhật, 01/11)** | • Sơn & Hoà: Nạp migration CSDL, chạy seed data hash BCrypt chuẩn; Hoà cấu hình Security Filter (`SEC-01`); Sơn ánh xạ JPA Entity (`BE-01`).<br>• Đức Anh: Xây dựng Master Layout Thymeleaf (`FE-01`).<br>• Huy & Khánh: Huy vẽ đồ thị CFG và dựng khung test stubs; Khánh hoàn thiện kịch bản UAT cho Đăng nhập. | Kết nối DB PostgreSQL thành công; Security filter hoạt động; Master layout sẵn sàng; khung test stubs sẵn sàng. |
+| **Ngày 1 (Thứ Bảy, 31/10)** | • Sáng: Họp Sprint Planning 45 phút, Sơn chốt backlog 36 SP / 138h.<br>• Hoà: Thiết lập khung Spring Boot 3.5.16 (`ARCH-01`).<br>• Sơn: Rà schema/seed 7 bảng và chuẩn bị kiểm tra/bàn giao (`DB-01`).<br>• Huy (Shift-Left): Cấu hình môi trường test `application-test.yml`, JUnit 5, Mockito (`QA-01`).<br>• Khánh điều phối, quản lý Kanban và bắt đầu phác thảo 12 kịch bản UAT (`PM-02`, `BA-03`). | Mã nguồn khung biên dịch sạch; schema/seed Sprint 1 sẵn sàng kiểm tra; môi trường test sẵn sàng. |
+| **Ngày 2 (Chủ Nhật, 01/11)** | • Sơn & Hoà: Kiểm tra/bàn giao schema/seed trên PostgreSQL; chỉ khởi tạo database trống, seed khi 7 bảng rỗng; Hoà cấu hình Security Filter (`SEC-01`); Sơn ánh xạ JPA Entity (`BE-01`).<br>• Đức Anh: Xây dựng Master Layout Thymeleaf (`FE-01`).<br>• Huy & Khánh: Huy vẽ đồ thị CFG và dựng khung test stubs; Khánh hoàn thiện kịch bản UAT cho Đăng nhập. | Kết nối DB PostgreSQL thành công; Security filter hoạt động; Master layout sẵn sàng; khung test stubs sẵn sàng. |
 | **Ngày 3 (Thứ Hai, 02/11)** | • Hoà: Hoàn thành `AuthService` xử lý khóa 15 phút sau 5 lần sai (`SEC-02`).<br>• Đức Anh: Hoàn thành giao diện màn hình Đăng nhập `login.html` (`FE-02`).<br>• Huy: Ráp `AuthServiceTest` vào code của Hoà vừa push, chạy kiểm thử các Basis Paths theo CFG đã chốt ngay trong ngày (Continuous Feedback). | Logic xác thực pass các Basis Paths theo CFG đã chốt; giao diện Login sẵn sàng. |
 | **Ngày 4 (Thứ Ba, 03/11)** | • Đức Anh & Hoà: Ghép nối Form Login Thymeleaf với Spring Security.<br>• Khánh: Trực tiếp đăng nhập thử nghiệm trên giao diện web, kiểm tra thông báo lỗi tiếng Việt theo kịch bản UAT.<br>• Sơn: Bắt đầu code `ApartmentService` (`BE-02`).<br>• Huy: Thiết kế Bảng quyết định và viết sẵn khung kiểm thử tham số hóa cho Căn hộ (`QA-03`). | Đăng nhập trên giao diện web thành công; khung test Bảng quyết định căn hộ sẵn sàng. |
 | **Ngày 5 (Thứ Tư, 04/11)** | • Sơn: Hoàn thành Backend CRUD Căn hộ (ràng buộc 30 tầng và diện tích $>0$).<br>• Đức Anh: Xây dựng giao diện Quản lý Căn hộ và Quản lý tài khoản BQT (`FE-03`, `FE-04`).<br>• Huy: Thực thi bộ test Bảng quyết định trên `ApartmentService`, xác nhận bắt đúng 100% các lỗi biên. | Backend Căn hộ hoàn thành; UI Căn hộ và User sẵn sàng; kiểm thử biên pass 100%. |

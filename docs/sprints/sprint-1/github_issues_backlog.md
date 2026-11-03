@@ -45,19 +45,20 @@
 
 <a id="db-01"></a>
 
-### Issue #03: `[Sprint 1][DB] Soạn thảo Kịch bản Migration CSDL V1.1`
+### Issue #03: `[Sprint 1][DB] Khởi tạo, kiểm tra và bàn giao schema/seed Sprint 1`
 - **Người phụ trách (Assignee):** Nguyễn Xuân Sơn (TV2)
 - **Ước lượng:** 7 giờ (2 SP)
-- **Mã nhánh Git:** `feature/issue-03-db-migration-v1-1`
-- **Traceability:** Links to `RAW-006`, `RAW-011`, `RAW-022`, `Bất biến 1, 2, 3 AGENTS.md`
-- **Layer Impact:** Database (PostgreSQL DDL/DML)
-- **Prerequisites:** Database schema gốc `database/schema.sql`
+- **Mã nhánh Git:** `feature/issue-03-sprint1-schema-seed`
+- **Traceability:** US-001 / RAW-001, RAW-002; US-SEC-01/02 / NFR-02; RAW-006 (chuẩn bị dữ liệu cư trú); DB-01
+- **Layer Impact:** Database (PostgreSQL DDL/DML) / Handoff
+- **Prerequisites:** `database/schema.sql`, `database/seed_data.sql`, ERD và bảng tên trường Sprint 1
 - **Acceptance Criteria (Checklist):**
-  - [ ] Kịch bản `database/migrations/V1.1__fix_schema_and_seed.sql` chạy thành công không cảnh báo trên PostgreSQL 17 (Docker chuẩn nhóm).
-  - [ ] Bổ sung `residence_status NOT NULL`, `start_date`, `end_date` vào `residents` với check constraint ngày.
-  - [ ] Bổ sung `version BIGINT NOT NULL DEFAULT 0` vào `invoices` hỗ trợ khóa lạc quan.
-  - [ ] Bổ sung ràng buộc XOR trên `receipts` chống in gộp biên lai quỹ và phí bắt buộc.
-  - [ ] Cập nhật toàn bộ mật khẩu băm BCrypt chuẩn cho `Password@123` trong seed data.
+  - [ ] `database/schema.sql` tạo đủ 7 bảng cùng FK/CHECK/UNIQUE/index/trigger trên PostgreSQL trống, không nạp vào database đã có cấu trúc.
+  - [ ] `database/seed_data.sql` chỉ nạp khi cả 7 bảng rỗng; dữ liệu giả và tài khoản BCrypt khớp `database/README.md`.
+  - [ ] Kiểm tra dữ liệu hợp lệ/sai: tầng–loại, diện tích, CCCD/SĐT, ngày cư trú, một hộ ACTIVE/căn, liên kết chủ hộ và bảo vệ lịch sử/audit; ghi kết quả PostgreSQL thực chạy.
+  - [ ] Bàn giao commit/schema/seed, cách kết nối không lộ bí mật, dữ liệu mẫu, bằng chứng và giới hạn cho Hoà/Huy; không coi việc tạo bảng là đã hoàn thành nghiệp vụ.
+
+Các ràng buộc tài chính (khóa lạc quan hóa đơn, XOR biên lai, tách quỹ) vẫn bắt buộc khi triển khai phân hệ tài chính; không nằm trong bootstrap 7 bảng của DB-01 Sprint 1.
 
 ---
 
@@ -334,7 +335,7 @@ PM-01 (6h/2 SP) do Khánh phụ trách vận hành Sprint, bên cạnh PM-02 (14
 - **Layer Impact:** Database / Entity
 - **Prerequisites:** #03, #04
 - **Acceptance Criteria (Checklist):**
-  - [ ] Thiết kế trường họ tên, CCCD, SĐT, email chủ hộ và lịch sử có thời điểm/người thay đổi; cập nhật DDL/migration và ERD.
+  - [ ] Thiết kế trường họ tên, CCCD, SĐT, email chủ hộ và lịch sử có thời điểm/người thay đổi; đối chiếu DDL bootstrap và ERD; nếu đổi database đã có dữ liệu thì phải có phương án chuyển đổi riêng.
   - [ ] Giữ tối đa một hộ ACTIVE/căn hộ và CCCD duy nhất toàn cục; kiểm tra với PostgreSQL cô lập.
   - [ ] Giữ dữ liệu chủ hộ cũ khi thay chủ; không xóa cứng. Ghi rõ cách liên kết hồ sơ với households/residents, tránh hai nguồn định danh khác nhau.
 
@@ -431,7 +432,7 @@ Các hàng là phần việc con của gói cha, kế thừa người phụ trá
 |---|---|---|
 | PM-01 (6h) | Kanban/lịch họp (3); theo dõi tiến độ/tổ chức Sprint Review và Retrospective (3) | Ngày 1; xuyên tuần |
 | PM-02 (14h) | Kịch bản đăng nhập (4); căn hộ/tài khoản (4); thực thi UAT (3); kết quả/lỗi (3) | Soạn từ AC ngay; chạy khi chức năng sẵn sàng |
-| DB-01 (7h) | Review schema/migration hiện có (3); chạy PostgreSQL và ghi kết quả (4) | Trước ánh xạ JPA |
+| DB-01 (7h) | Review schema/seed và chuẩn bị bàn giao (3); chạy PostgreSQL và ghi kết quả (4) | Trước ánh xạ JPA |
 | BE-01 (9h) | Apartment mapping/repository (3); Household/Resident (3); query/integration check (3) | DB-01; User mapping do Hoà phối hợp SEC-03 |
 | BE-02 (9h) | Quy tắc căn hộ/test (3); thêm/sửa và audit (3); web binding (3) | BE-01; chủ hộ chi tiết ở BE-03 |
 | ARCH-01 (5h) | Review cấu hình/build nền tảng (2); exception handler (3) | Cấu hình nền tảng được bàn giao trong đợt này |
@@ -447,7 +448,7 @@ Các hàng là phần việc con của gói cha, kế thừa người phụ trá
 | QA-02 (6h) | Thiết kế CFG/test từ AC (3); chạy và chốt CFG theo mã (3) | SEC-02 để chạy |
 | QA-03 (5h) | Decision table/biên (2); test tham số hóa (3) | BE-02 để chạy |
 | QA-04 (5h) | MockMvc bảo mật/form (3); coverage và test report (2) | SEC-01…03, BE-02, FE |
-| DB-02 (4h) | Hồ sơ/lịch sử chủ hộ và migration/ERD (4) | 01–02/11; DB-01 |
+| DB-02 (4h) | Đối chiếu DDL/ERD hồ sơ và lịch sử chủ hộ (4) | 01–02/11; DB-01 |
 | BE-03 (4h) | Transaction thay chủ hộ và truy vấn lịch sử (4) | 03–04/11; DB-02 |
 | FE-05 (4h) | Form chủ hộ/lịch sử và ghép dữ liệu (4) | 04–05/11; BE-03 |
 | QA-05 (4h) | Test chủ hộ, rollback và concurrent update (4) | Thiết kế sớm; chạy 04–05/11 |

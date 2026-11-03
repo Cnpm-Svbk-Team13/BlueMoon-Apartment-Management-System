@@ -9,7 +9,7 @@
 - **Thời gian thực hiện:** Đúng **7 ngày liên tục** (Từ **31/10/2026** đến **06/11/2026**).
 - **Dung lượng cam kết:** **36 Story Points (138 giờ ước lượng)**.
 - **Sprint Goal:**
-  > *Thiết lập hoàn chỉnh khung kiến trúc dự án **Spring Boot 3.5.16 (Java 25 LTS)** theo mô hình Pure Web, kết nối và nạp kịch bản CSDL **PostgreSQL** (vá triệt để các lỗi thiếu `start_date`/`end_date` và `version`), hiện thực hóa thành công phân hệ **Xác thực Đăng nhập, Cơ chế khóa Brute-force 15 phút sau 5 lần sai, Quản lý Tài khoản BQT & Phân quyền RBAC**, kết hợp phân hệ **Quản lý Căn hộ 30 tầng & Chủ hộ** nền tảng, đáp ứng 100% tiêu chí kiểm thử Shift-Left và chuẩn mực học thuật của Viện CNTT&TT (SoICT / HUST).*
+  > *Thiết lập hoàn chỉnh khung kiến trúc dự án **Spring Boot 3.5.16 (Java 25 LTS)** theo mô hình Pure Web, kết nối và nạp kịch bản CSDL **PostgreSQL** (schema/seed 7 bảng Sprint 1, kiểm tra và bàn giao dữ liệu), hiện thực hóa thành công phân hệ **Xác thực Đăng nhập, Cơ chế khóa Brute-force 15 phút sau 5 lần sai, Quản lý Tài khoản BQT & Phân quyền RBAC**, kết hợp phân hệ **Quản lý Căn hộ 30 tầng & Chủ hộ** nền tảng, đáp ứng 100% tiêu chí kiểm thử Shift-Left và chuẩn mực học thuật của Viện CNTT&TT (SoICT / HUST).*
 
 ---
 
@@ -28,7 +28,7 @@ Mỗi thành viên chỉ cần mở đúng tệp tài liệu hướng dẫn riê
 | Thành viên | Vai trò Sprint 1 | Trách nhiệm cốt lõi | Cẩm nang hành động riêng | Khối lượng |
 |---|---|---|---|:---:|
 | **TV1: Khánh** | Điều phối Sprint / BA & UAT | Vận hành Kanban/daily, theo dõi bàn giao, chủ trì Review/Retro, soạn và thực thi UAT; Sơn xác nhận nghiệm thu nội bộ | 📄 [**`TV1_Khanh_PO_BA.md`**](./TV1_Khanh_PO_BA.md) | 6 SP (~22h) |
-| **TV2: Sơn** | Trưởng nhóm / Database & Backend Dev | Kịch bản DB `V1.1`, ánh xạ Entity JPA, Căn hộ, hồ sơ/lịch sử chủ hộ (`US-001`), review PR Hoà và nghiệm thu | 📄 [**`TV2_Son_Database_Backend.md`**](./TV2_Son_Database_Backend.md) | 10 SP (~36h) |
+| **TV2: Sơn** | Trưởng nhóm / Database & Backend Dev | Schema/seed 7 bảng Sprint 1, ánh xạ Entity JPA, Căn hộ, hồ sơ/lịch sử chủ hộ (`US-001`), review PR Hoà và nghiệm thu | 📄 [**`TV2_Son_Database_Backend.md`**](./TV2_Son_Database_Backend.md) | 10 SP (~36h) |
 | **TV3: Hoà** | Tech Lead & Core Backend | Khung Spring Boot 3.5.16, Security 6, Đăng nhập/Khóa 15 phút, tài khoản, review chéo cùng Sơn | 📄 [**`TV3_Hoa_TechLead_Security.md`**](./TV3_Hoa_TechLead_Security.md) | 8 SP (~28h) |
 | **TV4: Đức Anh** | Frontend Dev & Data Eng | Master Layout Thymeleaf, Giao diện Login, UI Căn hộ/Chủ hộ/Lịch sử & Quản lý User | 📄 [**`TV4_DucAnh_Frontend_UI.md`**](./TV4_DucAnh_Frontend_UI.md) | 7 SP (~28h) |
 | **TV5: Huy** | QA Lead & Test Engineer | Shift-Left testing, Unit test CFG Basis Path, Decision Table, chủ hộ/rollback/cạnh tranh, MockMvc | 📄 [**`TV5_Huy_QA_Automation.md`**](./TV5_Huy_QA_Automation.md) | 5 SP (~24h) |
@@ -48,7 +48,7 @@ IT3180_BlueMoon-Management/
 ├── pom.xml                                    ───► [HOÀ HOẶC SƠN QUẢN TRỊ]
 ├── src/main/resources/application.yml         ───► [HOÀ HOẶC SƠN QUẢN TRỊ]
 │
-├── database/migrations/V1.1__*.sql            ───► [SƠN (TV2)]
+├── database/schema.sql, seed_data.sql            ───► [SƠN (TV2)]
 │
 ├── src/main/java/com/bluemoon/bfms/
 │   ├── config/SecurityConfig.java             ───► [HOÀ (TV3)]
@@ -111,8 +111,8 @@ git commit -m "docs(#02): draft 12 uat test scenarios for sprint 1"
 
 | Ngày | Hoạt động Toàn đội | Sản phẩm Cuối ngày |
 |:---:|---|---|
-| **Ngày 1 (31/10)** | Họp Planning 45p. Hoà làm khung App, Sơn làm SQL `V1.1`, Huy setup test, Khánh điều phối Kanban/daily & phác thảo UAT; Sơn tập trung DB/Backend. | App biên dịch sạch, DB `V1.1` sẵn sàng, test setup xong. |
-| **Ngày 2 (01/11)** | Sơn nạp DB & ánh xạ JPA Entity; Hoà cấu hình Security 6; Đức Anh làm Master Layout; Huy dựng khung test stubs. | Kết nối DB PostgreSQL thành công; Layout HTML chuẩn; Security filter chạy. |
+| **Ngày 1 (31/10)** | Họp Planning 45p. Hoà làm khung App, Sơn rà schema/seed 7 bảng, Huy setup test, Khánh điều phối Kanban/daily & phác thảo UAT; Sơn tập trung DB/Backend. | App biên dịch sạch, schema/seed sẵn sàng kiểm tra và bàn giao, test setup xong. |
+| **Ngày 2 (01/11)** | Sơn kiểm tra/bàn giao DB và ánh xạ JPA Entity (không nạp lại bootstrap/seed nếu DB đã có dữ liệu); Hoà cấu hình Security 6; Đức Anh làm Master Layout; Huy dựng khung test stubs. | Kết nối DB PostgreSQL thành công; Layout HTML chuẩn; Security filter chạy. |
 | **Ngày 3 (02/11)** | Hoà viết `AuthService` khóa 15 phút sau 5 lần sai; Đức Anh làm UI Login; Huy ráp test các Basis Paths theo CFG đã chốt chạy thật. | Logic Đăng nhập pass 100% test; Màn hình Login HTML sẵn sàng. |
 | **Ngày 4 (03/11)** | Đức Anh & Hoà ghép UI Login với Security; Khánh kiểm thử đăng nhập trên web; Sơn bắt đầu code `ApartmentService`. | Đăng nhập trên web thành công; Sơn bắt đầu logic Căn hộ. |
 | **Ngày 5 (04/11)** | Sơn hoàn thành CRUD Căn hộ 30 tầng; Đức Anh làm UI Căn hộ; Huy chạy test Bảng quyết định bắt lỗi biên. | Backend Căn hộ hoàn tất; Giao diện Căn hộ sẵn sàng; Test biên pass 100%. |

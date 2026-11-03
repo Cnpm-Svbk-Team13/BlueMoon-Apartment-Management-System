@@ -4,6 +4,8 @@ Ngày kiểm tra: 31/10/2026. Truy vết: US-001 / RAW-001, RAW-002; US-SEC-01/0
 
 > Phân công/ước lượng dưới đây ghi nhận tại ngày kiểm tra 31/10/2026, đã được thay thế ngày 01/11/2026: PM-01 về Khánh; Sơn 36h/10 SP, Khánh 22h/6 SP. Xem [quy chuẩn hiện hành](../../PROJECT_CONVENTIONS.md). Các bằng chứng build/test lịch sử giữ nguyên; không phải kết quả chạy lại.
 
+> Cập nhật hướng dẫn 02/11/2026: phương án migration V1.1 cũ đã được thay bằng bootstrap `schema.sql` + `seed_data.sql` cho database trống. Các nhắc đến migration bên dưới là bối cảnh lịch sử, không phải lệnh phải chạy; bằng chứng kiểm tra cũ giữ nguyên. Xem [database/README.md](../../../database/README.md).
+
 ## Thay đổi
 
 - Boot 3.5.16, Java 25; JaCoCo 0.8.16; Mockito nạp bằng javaagent khi test để tránh tự attach JVM.
