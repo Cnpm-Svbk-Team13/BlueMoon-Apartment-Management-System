@@ -6,14 +6,14 @@ spring:
     # URL kết nối: Ưu tiên lấy từ biến môi trường DB_URL (dành cho Cloud SQL / GCP VM)
     # Mặc định fallback về PostgreSQL localhost
     url: ${DB_URL:jdbc:postgresql://localhost:5432/bluemoon}
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:postgres}
+    username: ${DB_USERNAME:bluemoon_app}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      # 'update' tự động đồng bộ entity trong giai đoạn phát triển ban đầu
-      ddl-auto: ${JPA_DDL_AUTO:update}
+      # Schema do database/schema.sql quản lý; Hibernate chỉ xác minh Entity.
+      ddl-auto: ${JPA_DDL_AUTO:validate}
     open-in-view: false
     show-sql: false
     properties:

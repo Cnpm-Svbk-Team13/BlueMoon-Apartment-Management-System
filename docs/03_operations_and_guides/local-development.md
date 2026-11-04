@@ -26,7 +26,7 @@
 Dự án đã cấu hình sẵn tập tin `docker-compose.yml` tại thư mục gốc.
 
 ### 2.1. Khởi động Container Database
-Mở terminal tại thư mục gốc của dự án và chạy:
+Sao chép `.env.example` thành `.env`, đặt `POSTGRES_OWNER_PASSWORD`, `DB_PASSWORD` bằng hai mật khẩu khác nhau và không commit `.env`. Sau đó mở terminal tại thư mục gốc và chạy:
 ```bash
 docker compose up -d
 ```
@@ -34,8 +34,19 @@ Lệnh này sẽ tải và khởi động container PostgreSQL 17 với thông s
 - **Tên container:** `bluemoon-postgres`
 - **Port:** `5432`
 - **Database:** `bluemoon`
-- **Username:** `postgres`
-- **Password:** `postgres`
+- **Owner:** `bluemoon_owner` (chỉ bootstrap/quản trị)
+- **App role:** `bluemoon_app` (tạo riêng, dùng cho Spring Boot)
+
+Với volume local mới, tạo app role bằng lời nhắc mật khẩu rồi chạy ba script theo thứ tự:
+
+```bash
+docker exec -it bluemoon-postgres createuser -U bluemoon_owner --login --pwprompt bluemoon_app
+docker exec -i bluemoon-postgres psql -U bluemoon_owner -d bluemoon -v ON_ERROR_STOP=1 < database/schema.sql
+docker exec -i bluemoon-postgres psql -U bluemoon_owner -d bluemoon -v ON_ERROR_STOP=1 < database/permissions.sql
+docker exec -i bluemoon-postgres psql -U bluemoon_owner -d bluemoon -v ON_ERROR_STOP=1 < database/seed_data.sql
+```
+
+Seed chỉ chạy khi ứng dụng đã dừng và cả bảy bảng rỗng. Việc đổi `POSTGRES_OWNER_*` không thay user trong volume đã khởi tạo trước đó; database cũ cần kế hoạch chuyển đổi riêng, không tự xóa volume có dữ liệu.
 
 ### 2.2. Kiểm tra Trạng thái Container
 ```bash
@@ -57,14 +68,16 @@ docker compose down
 | Tên biến môi trường | Giá trị mặc định khi chạy Local | Mô tả |
 |---|---|---|
 | `DB_URL` | `jdbc:postgresql://localhost:5432/bluemoon` | Địa chỉ JDBC tới CSDL PostgreSQL |
-| `DB_USERNAME` | `postgres` | Tài khoản quản trị database |
-| `DB_PASSWORD` | `postgres` | Mật khẩu database |
+| `DB_USERNAME` | `bluemoon_app` | Role ứng dụng ít quyền, không phải owner |
+| `DB_PASSWORD` | Không có mặc định | Mật khẩu lấy từ secret hoặc `.env` không commit |
+| `JPA_DDL_AUTO` | `validate` | Chỉ xác minh Entity, không tự sửa schema |
 
 Trên Windows PowerShell, bạn có thể thiết lập tạm thời cho phiên làm việc hiện tại:
 ```powershell
 $env:DB_URL="jdbc:postgresql://localhost:5432/bluemoon"
-$env:DB_USERNAME="postgres"
-$env:DB_PASSWORD="postgres"
+$env:DB_USERNAME="bluemoon_app"
+$env:DB_PASSWORD="<LOCAL_APP_PASSWORD>"
+$env:JPA_DDL_AUTO="validate"
 ```
 
 ---

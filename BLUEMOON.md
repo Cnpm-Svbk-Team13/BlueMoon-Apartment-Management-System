@@ -172,18 +172,18 @@ Dùng Spring Boot parent/BOM để quản lý phiên bản dependencies; không 
 spring:
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/bluemoon}
-    username: ${DB_USERNAME}
+    username: ${DB_USERNAME:bluemoon_app}
     password: ${DB_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     open-in-view: false
 
 server:
   port: 8080
 ```
 
-Tạo database `bluemoon` trên PostgreSQL trước khi chạy ứng dụng. Cấu hình `DB_URL`, `DB_USERNAME` và `DB_PASSWORD` trong môi trường chạy; không ghi mật khẩu thật vào `application.yml` hoặc commit lên Git. Ví dụ URL mặc định kết nối tới PostgreSQL local ở cổng `5432`. `ddl-auto: update` chỉ phù hợp để bắt đầu phát triển, không thay thế migration có kiểm soát cho dữ liệu quan trọng.
+Tạo database `bluemoon` bằng owner, chạy `schema.sql` và `permissions.sql`, sau đó cho ứng dụng kết nối bằng role ít quyền `bluemoon_app`. Cấu hình `DB_URL`, `DB_USERNAME` và `DB_PASSWORD` trong môi trường chạy; không ghi mật khẩu thật vào `application.yml` hoặc commit lên Git. `ddl-auto: validate` chỉ xác minh Entity khớp schema, không tự sửa database.
 
 ## 6. Cài đặt và chạy thử
 

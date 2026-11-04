@@ -12,7 +12,9 @@ BEGIN;
 -- 1. Shared personal identity. Children may have no national ID or phone.
 CREATE TABLE persons (
     id BIGSERIAL PRIMARY KEY,
-    full_name VARCHAR(100) NOT NULL CHECK (btrim(full_name) <> ''),
+    full_name VARCHAR(100) NOT NULL CHECK (
+        full_name = btrim(full_name) AND full_name <> ''
+    ),
     national_id VARCHAR(12),
     phone VARCHAR(20),
     email VARCHAR(255),
@@ -25,7 +27,12 @@ CREATE TABLE persons (
         national_id IS NULL OR national_id ~ '^[0-9]{12}$'
     ),
     CONSTRAINT chk_persons_phone CHECK (phone IS NULL OR phone ~ '^[0-9]{10}$'),
-    CONSTRAINT chk_persons_email CHECK (email IS NULL OR btrim(email) <> ''),
+    CONSTRAINT chk_persons_email CHECK (
+        email IS NULL OR (
+            email = lower(btrim(email))
+            AND email <> ''
+        )
+    ),
     CONSTRAINT chk_persons_gender CHECK (
         gender IS NULL OR gender IN ('MALE', 'FEMALE', 'OTHER')
     )
@@ -34,7 +41,9 @@ CREATE TABLE persons (
 -- 2. Accounts. BCrypt, login lock expiry and sessions belong to Service.
 CREATE TABLE users (
     id BIGSERIAL PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE CHECK (btrim(username) <> ''),
+    username VARCHAR(50) NOT NULL UNIQUE CHECK (
+        username = lower(btrim(username)) AND username <> ''
+    ),
     password_hash VARCHAR(255) NOT NULL CHECK (btrim(password_hash) <> ''),
     person_id BIGINT NOT NULL UNIQUE REFERENCES persons(id) ON DELETE RESTRICT,
     role VARCHAR(20) NOT NULL CHECK (
@@ -50,7 +59,9 @@ CREATE TABLE users (
 -- 3. Usable area; type is independent of floor (RAW-001, decision 2026-11-04).
 CREATE TABLE apartments (
     id BIGSERIAL PRIMARY KEY,
-    room_number VARCHAR(20) NOT NULL UNIQUE CHECK (btrim(room_number) <> ''),
+    room_number VARCHAR(20) NOT NULL UNIQUE CHECK (
+        room_number = upper(btrim(room_number)) AND room_number <> ''
+    ),
     floor_number INTEGER NOT NULL CHECK (floor_number BETWEEN 1 AND 30),
     area_sqm DECIMAL(12, 2) NOT NULL CHECK (area_sqm > 0),
     apartment_type VARCHAR(20) NOT NULL,
@@ -70,12 +81,23 @@ CREATE TABLE households (
     apartment_id BIGINT NOT NULL REFERENCES apartments(id) ON DELETE RESTRICT,
     head_person_id BIGINT NOT NULL REFERENCES persons(id) ON DELETE RESTRICT,
     registration_code VARCHAR(50) NOT NULL UNIQUE
-        CHECK (btrim(registration_code) <> ''),
+        CHECK (
+            registration_code = upper(btrim(registration_code))
+            AND registration_code <> ''
+        ),
     moved_in_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    moved_out_date DATE,
     status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE'
         CHECK (status IN ('ACTIVE', 'MOVED_OUT', 'TRANSFERRED')),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT chk_households_moved_out_date CHECK (
+        (status = 'ACTIVE' AND moved_out_date IS NULL)
+        OR (
+            status IN ('MOVED_OUT', 'TRANSFERRED')
+            AND (moved_out_date IS NULL OR moved_out_date >= moved_in_date)
+        )
+    )
 );
 
 CREATE UNIQUE INDEX uq_active_household_per_apt
@@ -98,13 +120,52 @@ CREATE TABLE residents (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT uq_residents_person UNIQUE (person_id),
     CONSTRAINT chk_residents_dates CHECK (
-        residence_status = 'THUONG_TRU'
-        OR (start_date IS NOT NULL AND end_date IS NOT NULL AND end_date >= start_date)
+        (
+            residence_status = 'THUONG_TRU'
+            AND start_date IS NULL
+            AND end_date IS NULL
+        )
+        OR (
+            residence_status IN ('TAM_TRU', 'TAM_VANG')
+            AND start_date IS NOT NULL
+            AND end_date IS NOT NULL
+            AND end_date >= start_date
+        )
     )
 );
 
 -- 6. Service writes snapshots and authenticated actor in the SAME transaction
 -- as the head/profile change. A DB connection user is NOT a website user.
+-- This immutable helper validates snapshot structure only. Service remains
+-- responsible for proving that values are the real before/after profile.
+CREATE FUNCTION is_valid_head_snapshot(snapshot JSONB)
+RETURNS BOOLEAN
+LANGUAGE sql
+IMMUTABLE
+STRICT
+PARALLEL SAFE
+AS $$
+    SELECT jsonb_typeof(snapshot) = 'object'
+        AND snapshot ?& ARRAY['full_name', 'national_id', 'phone', 'email']
+        AND jsonb_typeof(snapshot->'full_name') = 'string'
+        AND snapshot->>'full_name' = btrim(snapshot->>'full_name')
+        AND snapshot->>'full_name' <> ''
+        AND char_length(snapshot->>'full_name') <= 100
+        AND jsonb_typeof(snapshot->'national_id') = 'string'
+        AND snapshot->>'national_id' ~ '^[0-9]{12}$'
+        AND jsonb_typeof(snapshot->'phone') = 'string'
+        AND snapshot->>'phone' ~ '^[0-9]{10}$'
+        AND (
+            jsonb_typeof(snapshot->'email') = 'null'
+            OR (
+                jsonb_typeof(snapshot->'email') = 'string'
+                AND snapshot->>'email' = lower(btrim(snapshot->>'email'))
+                AND char_length(snapshot->>'email') <= 255
+                AND snapshot->>'email' ~ '^[^[:space:]@]+@[^[:space:]@]+[.][^[:space:]@]+$'
+            )
+        );
+$$;
+
 CREATE TABLE household_head_history (
     id BIGSERIAL PRIMARY KEY,
     household_id BIGINT NOT NULL REFERENCES households(id) ON DELETE RESTRICT,
@@ -119,12 +180,11 @@ CREATE TABLE household_head_history (
         OR (previous_head_person_id IS NOT NULL AND previous_snapshot IS NOT NULL)
     ),
     CONSTRAINT chk_head_history_snapshots CHECK (
-        jsonb_typeof(new_snapshot) = 'object'
-        AND new_snapshot ?& ARRAY['full_name', 'national_id', 'phone', 'email']
-        AND (previous_snapshot IS NULL OR (
-            jsonb_typeof(previous_snapshot) = 'object'
-            AND previous_snapshot ?& ARRAY['full_name', 'national_id', 'phone', 'email']
-        ))
+        is_valid_head_snapshot(new_snapshot)
+        AND (
+            previous_snapshot IS NULL
+            OR is_valid_head_snapshot(previous_snapshot)
+        )
     )
 );
 
@@ -306,8 +366,9 @@ BEGIN
             USING ERRCODE = '23514';
     END IF;
     IF EXISTS (
-        SELECT p.email FROM users u JOIN persons p ON p.id = u.person_id
-        GROUP BY p.email HAVING count(*) > 1
+        SELECT lower(btrim(p.email))
+        FROM users u JOIN persons p ON p.id = u.person_id
+        GROUP BY lower(btrim(p.email)) HAVING count(*) > 1
     ) THEN
         RAISE EXCEPTION 'Account holder email must be unique'
             USING ERRCODE = '23505';

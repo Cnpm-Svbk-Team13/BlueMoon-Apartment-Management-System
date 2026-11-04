@@ -1,6 +1,6 @@
 # Quy chuẩn hiện hành — BlueMoon BFMS
 
-Ngày cập nhật: 01/11/2026 (điều chỉnh phân công Sprint 1). Tài liệu này ghi quyết định hiện hành; hồ sơ khai phá cũ là nguồn lịch sử, không tự thay đổi phân công Sprint.
+Ngày cập nhật: 04/11/2026. Tài liệu này ghi quyết định hiện hành; hồ sơ khai phá cũ là nguồn lịch sử, không tự thay đổi phân công Sprint.
 
 ## Nguồn chuẩn và truy vết
 
@@ -9,7 +9,7 @@ Ngày cập nhật: 01/11/2026 (điều chỉnh phân công Sprint 1). Tài li�
 - [Kế hoạch Sprint 1](KE_HOACH_CHI_TIET_SPRINT_1.md) và [backlog](sprints/sprint-1/github_issues_backlog.md): 31/10–06/11/2026; mục tiêu hoàn thành US-SEC-01, US-SEC-02, toàn bộ US-001 gồm hồ sơ/lịch sử chủ hộ.
 - Core Workflow 1 là quản lý tài khoản/xác thực. Bất biến nghiệp vụ 1 là tách quỹ tự nguyện khỏi nợ bắt buộc; hai số 1 không phải cùng một yêu cầu.
 - Mã NFR chuẩn là `NFR-01…05`; bảo mật dùng `NFR-02`. Các ghi chú quy chiếu US cũ chỉ dùng khi đọc lịch sử.
-- Cập nhật 02/11/2026 theo yêu cầu Sơn: [schema](../database/schema.sql) là bootstrap 7 bảng theo [ERD Sprint 1](02_design_and_architecture/erd_sprint_1_proposal.md), chỉ chạy trên database trống; [seed](../database/seed_data.sql) đã đồng bộ và chỉ nạp khi 7 bảng chưa có bản ghi. Chưa thay database VM, chưa có migration chuyển đổi và chưa nghiệm thu US. DB-01 hiện là khởi tạo, kiểm tra và bàn giao schema/seed Sprint 1 (7h/2 SP); chỉ hoàn thành khi đủ bằng chứng và bàn giao. Ràng buộc tài chính phải được giao/kiểm tra ở Sprint triển khai tài chính, không thuộc bootstrap 7 bảng.
+- Cập nhật 02/11/2026 theo yêu cầu Sơn: [schema](../database/schema.sql) là bootstrap 7 bảng theo [ERD Sprint 1](02_design_and_architecture/erd_sprint_1_proposal.md), chỉ chạy trên database trống; [permissions](../database/permissions.sql) tách owner/app role; [seed](../database/seed_data.sql) chỉ nạp khi app dừng và 7 bảng chưa có bản ghi. Chưa thay database VM, chưa có migration chuyển đổi và chưa nghiệm thu US. DB-01 hiện là khởi tạo, kiểm tra và bàn giao schema/permissions/seed Sprint 1 (7h/2 SP); chỉ hoàn thành khi đủ bằng chứng và bàn giao. Ràng buộc tài chính phải được giao/kiểm tra ở Sprint triển khai tài chính, không thuộc bootstrap 7 bảng.
 
 ## Vai trò và review
 
@@ -73,3 +73,5 @@ Các phát hiện ngoài đợt này (đối soát seed, thiết kế cư dân n
 US-001 / RAW-001, RAW-002; US-SEC-01/02 / NFR-02 → DB-01, DB-02, BE-01/02/03. Giữ phân công và ước lượng hiện hành. Thiết kế 7 bảng mới dùng persons làm nguồn hồ sơ chung, users.person_id duy nhất; chủ hộ không phải chủ sở hữu. Loại mặt bằng độc lập tầng; trạng thái căn chỉ VACANT/OCCUPIED. Hộ gắn cố định một căn; lịch sử household_head_history tham chiếu hộ, không lưu căn/event_type độc lập. Quan hệ cư trú HEAD/SPOUSE/CHILD/PARENT/TENANT/OTHER được kiểm tra cuối transaction. Mỗi người có tối đa một hồ sơ cư trú hiện tại; chưa nghiệm thu US-002/003.
 
 Form tài khoản lấy/sửa hồ sơ qua Person; form căn vẫn nhập loại mặt bằng độc lập tầng. Các hướng dẫn tầng–loại cố định hoặc owner-history trong hồ sơ cũ được thay thế bằng quyết định này. Không thay lời khai phá RAW gốc. Đây là thay đổi dữ liệu/tài liệu, chưa triển khai Java, chưa áp dụng VM hoặc nghiệm thu Sprint. Handoff phải đối chiếu ERD hiện hành, bảng ánh xạ và báo cáo kiểm thử PostgreSQL 04/11.
+
+Schema hardening 04/11: thường trú không lưu khoảng ngày; households có moved_out_date nullable cho ngày kết thúc chưa biết; snapshot JSONB được kiểm tra kiểu/định dạng. Username/email lưu lowercase, mã căn/mã hộ uppercase, chuỗi phải trim. Hibernate mặc định validate. Bootstrap chạy bằng owner, ứng dụng dùng role bluemoon_app ít quyền; seed chỉ chạy maintenance trên database mới khi ứng dụng đã dừng.

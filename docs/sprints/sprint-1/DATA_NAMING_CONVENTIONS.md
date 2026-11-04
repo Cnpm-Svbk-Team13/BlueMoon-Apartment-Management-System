@@ -18,6 +18,7 @@ Cập nhật: 04/11/2026. Dành cho Sơn (DB/Backend), Hoà (tài khoản/bảo 
 - Enum lưu theo tên, không theo số thứ tự. Giá trị form là mã trong schema, không phải nhãn tiếng Việt.
 - `users.is_active` → `User.active` kiểu `boolean`, getter `isActive()`; DTO dùng `Boolean` nếu cần phát hiện input thiếu trước khi validation.
 - NULL ở cột tùy chọn khác chuỗi rỗng. Service trim đầu vào và chuyển trường tùy chọn trống thành NULL; không dùng 0 thay ID thiếu.
+- Service lưu username/email dạng lowercase, roomNumber/registrationCode dạng uppercase. Database từ chối chuỗi chưa trim hoặc sai dạng canonical; fullName chỉ trim, không đổi hoa/thường và không unique.
 - Entity phản ánh dữ liệu lưu; DTO chỉ nhận trường cho phép sửa. ID, FK, quyền và dữ liệu tra cứu phải được server kiểm tra.
 - Mọi bảng bên dưới có `id BIGSERIAL PK` → `id: Long` trong Entity; ID do DB sinh. Form tạo mới không tự cấp ID.
 - Chỉ cột ghi “NULL” bên dưới mới cho phép NULL. DEFAULT không thay thế giá trị NULL được truyền rõ.
@@ -76,9 +77,12 @@ Mã phòng `roomNumber` khác ID `id`. DTO tổng hợp dùng `apartmentId` khi 
 | `head_person_id` | `headPerson: Person` | `headPersonId: Long` (đọc/tham chiếu) | FK bắt buộc; hồ sơ có CCCD và SĐT |
 | `registration_code` | `registrationCode: String` | `registrationCode` | Bắt buộc, duy nhất, không rỗng, ≤50; Service cấp mã |
 | `moved_in_date` | `movedInDate: LocalDate` | `movedInDate` | Bắt buộc, mặc định ngày hiện tại |
+| `moved_out_date` | `movedOutDate: LocalDate` | `movedOutDate` (đọc/đóng hộ) | ACTIVE phải NULL; hộ đã kết thúc cho phép NULL nếu chưa rõ ngày, nếu có phải >= movedInDate |
 | `status` | `status: HouseholdStatus` | `status` | ACTIVE, MOVED_OUT, TRANSFERRED; mặc định ACTIVE |
 
 Tối đa một hộ ACTIVE/căn qua partial unique index. Tên đại diện đọc qua `headPerson.fullName`, không có cột `head_name`. `householdId` trong DTO tổng hợp ánh xạ `households.id`; không nhầm với `headPersonId`. API tạo/thay chủ dùng nhóm `headPerson.*`; Service giải quyết ID, không tin FK do trình duyệt gửi.
+
+Khi đóng hộ, Service nhận `movedOutDate` tùy chọn; NULL nghĩa là đã kết thúc nhưng chưa xác định ngày. Khi kích hoạt lại, Service phải xóa `movedOutDate`. Không dùng ngày giả để thay cho dữ liệu chưa biết.
 
 ### 3.5. Cư trú — `residents` → `Resident`
 
@@ -106,7 +110,7 @@ Tối đa một hộ ACTIVE/căn qua partial unique index. Tên đại diện đ
 | `changed_at` | `changedAt: OffsetDateTime` | `changedAt` | Bắt buộc, mặc định thời điểm transaction |
 | `changed_by_user_id` | `changedByUser: User` | `changedByUserId: Long` | FK bắt buộc; lấy từ phiên đăng nhập |
 
-Snapshot giữ khóa JSON `full_name`, `national_id`, `phone`, `email` theo schema; DTO trình bày đổi thành `fullName`, `nationalId`, `phone`, `email`. Ánh xạ JSONB trong JPA dùng `@JdbcTypeCode(SqlTypes.JSON)` trên JsonNode; không lưu JSON thành chuỗi bằng cách đoán kiểu cột. Lịch sử hiển thị thông tin từ snapshot, không lấy hồ sơ hiện tại thay thông tin tại thời điểm sự kiện.
+Snapshot giữ tối thiểu các khóa JSON `full_name`, `national_id`, `phone`, `email` theo schema; có thể có khóa mở rộng. DTO trình bày đổi thành `fullName`, `nationalId`, `phone`, `email`. Ánh xạ JSONB trong JPA dùng `@JdbcTypeCode(SqlTypes.JSON)` trên JsonNode; không lưu JSON thành chuỗi bằng cách đoán kiểu cột. Lịch sử hiển thị thông tin từ snapshot, không lấy hồ sơ hiện tại thay thông tin tại thời điểm sự kiện.
 
 ASSIGNED không có chủ trước; REPLACED có hai ID khác nhau; PROFILE_UPDATED có hai ID bằng nhau. Service ghi lịch sử và thay đổi hồ sơ/hộ trong cùng transaction. Không nhận snapshot hoặc người thực hiện tùy ý từ form; không sửa/xóa lịch sử.
 

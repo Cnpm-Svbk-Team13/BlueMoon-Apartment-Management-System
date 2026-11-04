@@ -213,8 +213,8 @@ services:
     restart: always
     environment:
       POSTGRES_DB: bluemoon
-      POSTGRES_USER: bluemoon_admin
-      POSTGRES_PASSWORD: BlueMoonSecure2026@PlaLa
+      POSTGRES_USER: bluemoon_owner
+      POSTGRES_PASSWORD: ${POSTGRES_OWNER_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
@@ -226,12 +226,12 @@ EOF
 ```
 
 > [!IMPORTANT]
-> - **Username:** Đã chuyển thành `bluemoon_admin` (thay vì dùng user mặc định `postgres`).
-> - **Password:** Đã đặt mật khẩu mạnh chuẩn doanh nghiệp `BlueMoonSecure2026@PlaLa` có chữ hoa, thường, số và ký tự đặc biệt.
+> - **Owner:** `bluemoon_owner` chỉ dùng để bootstrap, cấp quyền và backup; không dùng trong Spring Boot.
+> - **Password:** đặt `POSTGRES_OWNER_PASSWORD` ngoài Git bằng secret của môi trường, không ghi giá trị thật vào tài liệu hoặc lệnh.
 > - **Restart policy:** `restart: always` giúp container tự động khởi động lại nếu máy ảo bị khởi động lại.
 
 #### Bước 3.3: Khởi động máy chủ Database
-Chạy lệnh quen thuộc mà Sơn đã thực hành:
+Đặt `POSTGRES_OWNER_PASSWORD` bằng secret ngoài Git trong phiên shell hoặc file môi trường chỉ owner đọc, sau đó chạy:
 ```bash
 docker compose up -d
 docker compose ps
@@ -246,28 +246,35 @@ Chỉ thực hiện giai đoạn này khi database đích trống và được p
 
 #### Bước 4.1: Lấy đúng phiên bản SQL đã thống nhất
 
-Dùng schema và seed từ **cùng commit** mà Sơn bàn giao. Thay `<COMMIT_SHA_DA_CHOT>` bằng commit đầy đủ trước khi chạy; không tải một file từ nhánh này và file kia từ nhánh khác. Ví dụ dưới đây chạy trên shell của VM, chỉ tải tệp, chưa nạp database:
+Dùng schema, permissions và seed từ **cùng commit** mà Sơn bàn giao. Thay `<COMMIT_SHA_DA_CHOT>` bằng commit đầy đủ trước khi chạy; không trộn tệp từ các nhánh khác nhau. Ví dụ dưới đây chạy trên shell của VM, chỉ tải tệp, chưa nạp database:
 
 ```bash
 cd /opt/bluemoon-db
 mkdir -p sql_init
 SPRINT_DB_COMMIT='<COMMIT_SHA_DA_CHOT>'
 curl -fsSL "https://raw.githubusercontent.com/PhamHoa2006/BlueMoon-Apartment-Management-System/${SPRINT_DB_COMMIT}/database/schema.sql" -o sql_init/schema.sql
+curl -fsSL "https://raw.githubusercontent.com/PhamHoa2006/BlueMoon-Apartment-Management-System/${SPRINT_DB_COMMIT}/database/permissions.sql" -o sql_init/permissions.sql
 curl -fsSL "https://raw.githubusercontent.com/PhamHoa2006/BlueMoon-Apartment-Management-System/${SPRINT_DB_COMMIT}/database/seed_data.sql" -o sql_init/seed_data.sql
 ```
 
-Nếu repository riêng tư hoặc tải không thành công, chuyển hai tệp từ checkout đúng commit sang VM bằng kênh đã được cấp quyền. Chỉ tiếp tục khi có đủ hai tệp đúng phiên bản; không dùng tệp cũ còn sót sau một lần tải lỗi.
+Nếu repository riêng tư hoặc tải không thành công, chuyển ba tệp từ checkout đúng commit sang VM bằng kênh đã được cấp quyền. Chỉ tiếp tục khi có đủ schema, permissions và seed đúng phiên bản; không dùng tệp cũ còn sót sau một lần tải lỗi.
 
 #### Bước 4.2: Nạp vào database trống
 
 Chạy lần lượt trong container PostgreSQL đã thiết lập; lệnh thứ hai chỉ chạy khi lệnh thứ nhất thành công. Mỗi script có transaction; `ON_ERROR_STOP=1` yêu cầu psql dừng khi lỗi.
 
 ```bash
-# 1. Khởi tạo 7 bảng và FK/CHECK/UNIQUE/index/trigger Sprint 1
-docker exec -i bluemoon-postgres-cloud psql -U bluemoon_admin -d bluemoon -v ON_ERROR_STOP=1 < sql_init/schema.sql
+# 1. Tạo role ứng dụng bằng lời nhắc mật khẩu; không đặt mật khẩu trong command history
+docker exec -it bluemoon-postgres-cloud createuser -U bluemoon_owner --login --pwprompt bluemoon_app
 
-# 2. Chỉ sau khi schema thành công và cả 7 bảng chưa có bản ghi: nạp dữ liệu giả
-docker exec -i bluemoon-postgres-cloud psql -U bluemoon_admin -d bluemoon -v ON_ERROR_STOP=1 < sql_init/seed_data.sql
+# 2. Khởi tạo 7 bảng và FK/CHECK/UNIQUE/index/trigger Sprint 1
+docker exec -i bluemoon-postgres-cloud psql -U bluemoon_owner -d bluemoon -v ON_ERROR_STOP=1 < sql_init/schema.sql
+
+# 3. Cấp quyền tối thiểu cho ứng dụng
+docker exec -i bluemoon-postgres-cloud psql -U bluemoon_owner -d bluemoon -v ON_ERROR_STOP=1 < sql_init/permissions.sql
+
+# 4. Khi ứng dụng đã dừng và cả 7 bảng rỗng: nạp dữ liệu giả
+docker exec -i bluemoon-postgres-cloud psql -U bluemoon_owner -d bluemoon -v ON_ERROR_STOP=1 < sql_init/seed_data.sql
 ```
 
 Schema không nâng cấp database đã có bảng; seed không chạy lặp để đặt lại dữ liệu/mật khẩu. Nếu gặp lỗi, dừng và kiểm tra kết quả/transaction theo hướng dẫn database; không tự DROP/TRUNCATE hoặc nạp thêm script chuyển đổi chưa được duyệt.
@@ -275,7 +282,7 @@ Schema không nâng cấp database đã có bảng; seed không chạy lặp đ�
 #### Bước 4.3: Kiểm tra chỉ đọc và bàn giao
 
 ```bash
-docker exec -i bluemoon-postgres-cloud psql -U bluemoon_admin -d bluemoon -v ON_ERROR_STOP=1 <<'SQL'
+docker exec -i bluemoon-postgres-cloud psql -U bluemoon_owner -d bluemoon -v ON_ERROR_STOP=1 <<'SQL'
 SELECT 'users' AS table_name, count(*) FROM users
 UNION ALL SELECT 'persons', count(*) FROM persons
 UNION ALL SELECT 'apartments', count(*) FROM apartments
@@ -301,8 +308,8 @@ Sơn bàn giao commit SQL, môi trường, kết quả thực chạy, cách kế
    - **Name:** `BlueMoon Google Cloud`
    - **Host:** `<EXTERNAL_IP_CỦA_VM>` (Lấy từ màn hình VM instances trên GCP Console, ví dụ: `34.124.78.102`).
    - **Port:** `5432`
-   - **Username:** `bluemoon_admin`
-   - **Password:** `BlueMoonSecure2026@PlaLa`
+   - **Username:** `bluemoon_app`
+   - **Password:** `<APP_PASSWORD_TỪ_SECRET>`
    - **Database:** `bluemoon`
 4. Bấm **Connect**. Kiểm tra đủ 7 bảng Sprint 1 theo database/README.md; kết nối thành công chưa chứng minh ứng dụng hoặc nghiệp vụ đã hoạt động.
 
@@ -314,8 +321,9 @@ Sơn bàn giao commit SQL, môi trường, kết quả thực chạy, cách kế
 ```env
 # Kết nối Google Cloud PostgreSQL VM
 DB_URL=jdbc:postgresql://<EXTERNAL_IP_CỦA_VM>:5432/bluemoon?sslmode=prefer
-DB_USERNAME=bluemoon_admin
-DB_PASSWORD=BlueMoonSecure2026@PlaLa
+DB_USERNAME=bluemoon_app
+DB_PASSWORD=<APP_PASSWORD_TỪ_SECRET>
+JPA_DDL_AUTO=validate
 PORT=8080
 ```
 
@@ -368,7 +376,7 @@ TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 mkdir -p $BACKUP_DIR
 
 # Sao lưu và nén tệp bằng gzip
-docker exec -t bluemoon-postgres-cloud pg_dump -U bluemoon_admin bluemoon | gzip > "$BACKUP_DIR/bluemoon_$TIMESTAMP.sql.gz"
+docker exec -t bluemoon-postgres-cloud pg_dump -U bluemoon_owner bluemoon | gzip > "$BACKUP_DIR/bluemoon_$TIMESTAMP.sql.gz"
 
 # Chỉ giữ lại các bản sao lưu trong 7 ngày gần nhất (tự xóa bản cũ hơn)
 find $BACKUP_DIR -type f -name "*.sql.gz" -mtime +7 -delete
@@ -395,7 +403,7 @@ chmod +x /opt/bluemoon-db/backup.sh
 | **Swap Space** | 2 GB Swap File | Chống Out-Of-Memory |
 | **Database Engine** | PostgreSQL 17 (Docker container) | Đồng bộ 100% với Local |
 | **Database Name** | `bluemoon` | CSDL chính của tòa nhà |
-| **Admin User** | `bluemoon_admin` | Phân quyền quản trị |
+| **Owner / App User** | `bluemoon_owner` / `bluemoon_app` | Owner triển khai; ứng dụng dùng role ít quyền |
 | **JDBC Connection URL** | `jdbc:postgresql://<EXTERNAL_IP>:5432/bluemoon?sslmode=prefer` | Khai báo trong `.env` |
 | **Thao tác tiết kiệm** | Bấm **STOP** trên Console khi không dùng | Tiết kiệm 80% chi phí |
 

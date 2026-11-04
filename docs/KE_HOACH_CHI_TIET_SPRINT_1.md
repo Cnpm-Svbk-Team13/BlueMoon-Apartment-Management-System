@@ -226,7 +226,7 @@ DELIVERABLES SPRINT 1 (31/10 - 06/11/2026)
   - `pom.xml`: Khai báo phụ thuộc chuẩn mực, không thừa thư viện bên ngoài.
 
 ### Deliverable D2: Schema/seed PostgreSQL Sprint 1 và bằng chứng bàn giao
-- **Vị trí:** `database/schema.sql`, `database/seed_data.sql`; cách chạy và dữ liệu kỳ vọng: [database/README.md](../database/README.md).
+- **Vị trí:** `database/schema.sql`, `database/permissions.sql`, `database/seed_data.sql`; cách chạy và dữ liệu kỳ vọng: [database/README.md](../database/README.md).
 - **Nội dung:** 7 bảng users, persons, apartments, households, residents, household_head_history, audit_logs; FK/CHECK/UNIQUE/index/trigger theo schema hiện hành.
 - **Kiểm tra:** khởi tạo trên PostgreSQL trống/cô lập, seed khi cả 7 bảng rỗng, xác nhận số bản ghi và ràng buộc với dữ liệu hợp lệ/sai; ghi phiên bản, lệnh, kết quả và giới hạn chưa kiểm tra.
 - **Bàn giao:** Sơn cung cấp phiên bản SQL, cách kết nối không lộ bí mật và dữ liệu mẫu cho Hoà/Huy. Database đang có dữ liệu không chạy lại bootstrap/seed.

@@ -21,15 +21,17 @@ Thiết kế: [ERD Sprint 1](../docs/02_design_and_architecture/erd_sprint_1_pro
 | Tệp | Nội dung |
 |---|---|
 | [schema.sql](schema.sql) | Tạo 7 bảng, khóa, ràng buộc, index và trigger |
+| [permissions.sql](permissions.sql) | Cấp quyền tối thiểu cho role ứng dụng `bluemoon_app`; chạy bằng owner |
 | [seed_data.sql](seed_data.sql) | Dữ liệu giả để phát triển, kiểm thử và demo Sprint 1 |
 
 ## 2. Khởi tạo
 
-Chọn một database PostgreSQL trống. Chạy từ thư mục gốc repository; thay các giá trị trong dấu `<...>` bằng cấu hình của bạn. Mật khẩu nhập khi psql yêu cầu, không ghi vào lệnh hoặc Git.
+Chọn một database PostgreSQL trống do role owner quản lý. DBA tạo riêng login `bluemoon_owner` và `bluemoon_app`, cấp mật khẩu qua secret/môi trường, không ghi mật khẩu vào Git. Chạy bootstrap và script quyền bằng owner:
 
 ```bash
-psql -h <HOST> -p <PORT> -U <USERNAME> -d <DATABASE> -v ON_ERROR_STOP=1 -f database/schema.sql
-psql -h <HOST> -p <PORT> -U <USERNAME> -d <DATABASE> -v ON_ERROR_STOP=1 -f database/seed_data.sql
+psql -h <HOST> -p <PORT> -U bluemoon_owner -d <DATABASE> -v ON_ERROR_STOP=1 -f database/schema.sql
+psql -h <HOST> -p <PORT> -U bluemoon_owner -d <DATABASE> -v ON_ERROR_STOP=1 -f database/permissions.sql
+psql -h <HOST> -p <PORT> -U bluemoon_owner -d <DATABASE> -v ON_ERROR_STOP=1 -f database/seed_data.sql
 ```
 
 Nếu dùng SSH tunnel từ máy cá nhân tới VM, HOST là `127.0.0.1`, PORT là cổng local đã chuyển tiếp, ví dụ `15432`.
@@ -37,7 +39,7 @@ Nếu dùng SSH tunnel từ máy cá nhân tới VM, HOST là `127.0.0.1`, PORT 
 Mỗi script dùng một transaction: lỗi thì rollback, không giữ kết quả một phần. `ON_ERROR_STOP=1` giúp psql dừng ngay khi lỗi. Trong DBeaver/pgAdmin, chạy từng script và cấu hình dừng khi lỗi; nếu phiên còn trong transaction lỗi, dùng `ROLLBACK;` trước khi tiếp tục.
 
 - Schema chỉ dùng để khởi tạo, không tự nâng cấp bảng đã có. Báo “relation already exists” thì dừng và kiểm tra cấu trúc hoặc chọn database thử nghiệm trống; không tự xóa bảng để chạy lại.
-- Seed yêu cầu **cả 7 bảng không có bản ghi**. Chạy lần hai hoặc chạy trên database đã nhập một phần sẽ báo lỗi trước khi chèn. Seed không tự xóa dữ liệu hoặc đặt lại mật khẩu.
+- Seed là thao tác maintenance-only: dừng ứng dụng và writer khác trước khi chạy. Seed yêu cầu **cả 7 bảng không có bản ghi**, timeout sau 2 giây nếu không lấy được khóa. Chạy lần hai hoặc chạy trên database đã nhập một phần sẽ báo lỗi trước khi chèn; mọi lỗi rollback toàn bộ. Seed không tự xóa dữ liệu hoặc đặt lại mật khẩu.
 - Chỉ nạp seed vào môi trường phát triển/demo, không dùng cùng hồ sơ cư dân thật.
 
 ## 3. Dữ liệu mẫu và tài khoản thử
@@ -59,6 +61,7 @@ P.601 có người đại diện ban đầu là Nguyễn An Mẫu, sau đó chuy
 
 - `set_row_updated_at`: dùng chung cho 5 bảng có updated_at, giữ created_at và cập nhật updated_at khi sửa. INSERT bỏ qua timestamps thì DEFAULT điền thời gian. CURRENT_TIMESTAMP lấy thời điểm bắt đầu transaction.
 - `validate_household_head`, `protect_household_head_profile`: người đại diện phải có CCCD và SĐT, không được sửa mất các thông tin bắt buộc khi còn được hộ tham chiếu.
+- `is_valid_head_snapshot`: kiểm tra object JSONB, khóa bắt buộc, kiểu và định dạng; không xác minh nội dung có đúng là dữ liệu trước/sau thực tế.
 - `reject_history_mutation`: chặn sửa/xóa/truncate lịch sử và audit. Trigger không thay thế việc giới hạn quyền tài khoản database.
 - CHECK/FK/UNIQUE bảo vệ diện tích, tầng và loại độc lập, CCCD, thời hạn cư trú, một hộ ACTIVE/căn và một hồ sơ cư trú/người.
 - Service vẫn phải kiểm tra email, ngày sinh khi khai báo cư dân, danh mục quan hệ, phân quyền, BCrypt và quy tắc khóa đăng nhập.
@@ -77,16 +80,17 @@ UNION ALL SELECT 'household_head_history', count(*) FROM household_head_history
 UNION ALL SELECT 'audit_logs', count(*) FROM audit_logs;
 ```
 
-Kết nối Spring Boot bằng DB_URL, DB_USERNAME, DB_PASSWORD và đặt `JPA_DDL_AUTO=validate`. Không commit mật khẩu kết nối hoặc để Hibernate tự đổi cấu trúc database dùng chung.
+Kết nối Spring Boot bằng DB_URL, `DB_USERNAME=bluemoon_app`, DB_PASSWORD và `JPA_DDL_AUTO=validate`. Role ứng dụng không sở hữu bảng, không được ALTER/TRIGGER/TRUNCATE; history/audit chỉ cho SELECT/INSERT. Không commit mật khẩu kết nối hoặc để Hibernate tự đổi cấu trúc database dùng chung.
 
 Chạy DDL và seed thành công chỉ xác nhận khởi tạo dữ liệu. Nghiệp vụ cần test Service/Controller, UAT và kiểm tra PostgreSQL phù hợp trước nghiệm thu Sprint; H2 smoke test không thay thế kiểm tra DDL/trigger.
 
 ## 6. Quyết định dữ liệu 04/11/2026
 
 - users chỉ lưu tài khoản và person_id UNIQUE NOT NULL; tên/email/điện thoại ở persons. Hồ sơ có tài khoản cần email/SĐT; email duy nhất trong tập người có tài khoản, không duy nhất toàn bộ persons.
-- Hộ gắn cố định một căn; chuyển căn kết thúc hộ cũ, tạo hộ mới. Lịch sử chỉ lưu household_id, truy căn qua hộ; không có apartment_id/event_type trong lịch sử. Event type suy từ cặp ID.
+- Hộ gắn cố định một căn; chuyển căn kết thúc hộ cũ, tạo hộ mới. `moved_out_date` NULL với ACTIVE; hộ đã kết thúc được để NULL nếu chưa rõ ngày. Lịch sử chỉ lưu household_id, truy căn qua hộ; không có apartment_id/event_type trong lịch sử. Event type suy từ cặp ID.
+- Username/email lưu lowercase; mã căn/mã hộ lưu uppercase; các chuỗi nghiệp vụ phải được trim trước khi ghi. Database từ chối dạng chưa chuẩn hóa.
 - Loại mặt bằng độc lập tầng. status chỉ VACANT/OCCUPIED do BQT xác nhận; không quản lý sửa chữa.
 - Ghi persons/users/households/residents yêu cầu READ COMMITTED, cùng advisory lock (3180,13) trước khóa hàng. Kiểm tra hồ sơ tài khoản và HEAD hoãn cuối transaction. Đây là khóa thô có giới hạn thông lượng, chưa nghiệm thu NFR.
 - Dữ liệu tham khảo thử nghiệm, không là migration. Không nạp cùng dữ liệu thật.
-- Kiểm tra mới: `python database/tests/verify_erd_revision.py` (Python chuẩn + Docker đang chạy, image postgres:17-alpine). Runner tạo container riêng không publish cổng, không gắn volume và dọn container trong finally; không truy cập VM.
+- Kiểm tra mới: `python database/tests/verify_erd_revision.py --image postgres:17-alpine` và lặp với `postgres:16-alpine` (Python chuẩn + Docker đang chạy). Runner tạo container riêng không publish cổng, không gắn volume và dọn container trong finally; không truy cập VM.
 - [Báo cáo mới](tests/ERD_REVISION_VERIFICATION.md); [báo cáo cũ](tests/SPRINT1_SCHEMA_VERIFICATION.md) chỉ là bằng chứng lịch sử.

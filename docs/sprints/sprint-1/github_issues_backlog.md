@@ -51,7 +51,7 @@
 - **Mã nhánh Git:** `feature/issue-03-sprint1-schema-seed`
 - **Traceability:** US-001 / RAW-001, RAW-002; US-SEC-01/02 / NFR-02; RAW-006 (chuẩn bị dữ liệu cư trú); DB-01
 - **Layer Impact:** Database (PostgreSQL DDL/DML) / Handoff
-- **Prerequisites:** `database/schema.sql`, `database/seed_data.sql`, ERD và bảng tên trường Sprint 1
+- **Prerequisites:** `database/schema.sql`, `database/permissions.sql`, `database/seed_data.sql`, ERD và bảng tên trường Sprint 1
 - **Acceptance Criteria (Checklist):**
   - [ ] `database/schema.sql` tạo đủ 7 bảng cùng FK/CHECK/UNIQUE/index/trigger trên PostgreSQL trống, không nạp vào database đã có cấu trúc.
   - [ ] `database/seed_data.sql` chỉ nạp khi cả 7 bảng rỗng; dữ liệu giả và tài khoản BCrypt khớp `database/README.md`.

@@ -68,8 +68,9 @@ Sao chép tệp mẫu [`.env.example`](./.env.example) thành tệp `.env` tại
 ```bash
 # Phương án A: Kết nối Google Cloud Database dùng chung của nhóm
 DB_URL=jdbc:postgresql://<GCP_HOST_OR_IP>:5432/bluemoon?sslmode=prefer
-DB_USERNAME=bluemoon_admin
+DB_USERNAME=bluemoon_app
 DB_PASSWORD=your_secure_password_here
+JPA_DDL_AUTO=validate
 PORT=8080
 ```
 *(Chi tiết thông số IP và mật khẩu Google Cloud được quản trị viên CSDL chia sẻ nội bộ qua kênh bảo mật của nhóm).*

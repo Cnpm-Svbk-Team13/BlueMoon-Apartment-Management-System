@@ -1,7 +1,7 @@
 -- BlueMoon BFMS - Synthetic Sprint 1 seed, PostgreSQL 16/17.
 -- US-SEC-01/02, NFR-02 -> DB-01, BE-01;
 -- US-001, RAW-001/002 -> DB-02, BE-03, QA-05, BA-03.
--- Run AFTER schema.sql, ONLY when all seven tables are empty.
+-- Run AFTER schema.sql, ONLY when all seven tables are empty and the app is stopped.
 -- Demo accounts: admin, ketoan, thuquy (active), bqt_inactive (disabled).
 -- Demo password: Password@123; BCrypt cost 10, verified with Spring Security.
 -- All identities and contacts are synthetic. Do not use on a live resident DB.
@@ -10,9 +10,11 @@
 
 BEGIN;
 SET LOCAL TIME ZONE 'UTC';
+SET LOCAL lock_timeout = '2s';
 
--- Serialize seed with other writers, then reject nonempty tables atomically.
-LOCK TABLE users, persons, apartments, households, residents,
+-- Maintenance-only seed. Fail fast if any writer is still active, then reject
+-- nonempty tables atomically. Lock order follows table dependencies.
+LOCK TABLE persons, users, apartments, households, residents,
     household_head_history, audit_logs IN SHARE ROW EXCLUSIVE MODE;
 
 DO $$
