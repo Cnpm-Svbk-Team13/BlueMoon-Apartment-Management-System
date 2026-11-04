@@ -1,3 +1,5 @@
+> Thiết kế 11 bảng lịch sử. Mô hình Sprint 1 hiện hành: [ERD 04/11/2026](erd_sprint_1_proposal.md). Không dùng sơ đồ bên dưới để tạo database mới.
+
 [🏠 Trang chủ Docs](../README.md) > [Giai đoạn 2: Thiết kế Hệ thống](./README.md) > **erd.md**
 
 ---

@@ -212,3 +212,9 @@ Mỗi lần nhận việc, nói rõ: **nhận gì từ ai → làm phần việc
 Sơn và Hoà review chéo xuyên tuần, không tự duyệt. Huy cung cấp test/coverage; Khánh cung cấp UAT và tổ chức Review/Retro. Sơn xác nhận nghiệm thu khi đủ AC, test, UAT và `clean verify -Psprint1-quality` theo [quy chuẩn kiểm tra](../../PROJECT_CONVENTIONS.md#build-ci-và-coverage). CI nền tảng xanh không phải bằng chứng hoàn thành Sprint; task thiếu bằng chứng tiếp tục mở.
 
 Các báo cáo UAT/test được nhắc trong backlog là **sản phẩm cần tạo**; không suy ra đã có hoặc đã ký. Tài liệu này hướng dẫn đọc luồng, không thay thế AC/backlog và không tự cập nhật tiến độ.
+
+## Đồng bộ dữ liệu Sprint 1 — quyết định 04/11/2026
+
+US-001 / RAW-001, RAW-002; US-SEC-01/02 / NFR-02 → DB-01, DB-02, BE-01/02/03. Giữ phân công và ước lượng hiện hành. Thiết kế 7 bảng mới dùng persons làm nguồn hồ sơ chung, users.person_id duy nhất; chủ hộ không phải chủ sở hữu. Loại mặt bằng độc lập tầng; trạng thái căn chỉ VACANT/OCCUPIED. Hộ gắn cố định một căn; lịch sử household_head_history tham chiếu hộ, không lưu căn/event_type độc lập. Quan hệ cư trú HEAD/SPOUSE/CHILD/PARENT/TENANT/OTHER được kiểm tra cuối transaction. Mỗi người có tối đa một hồ sơ cư trú hiện tại; chưa nghiệm thu US-002/003.
+
+Form tài khoản lấy/sửa hồ sơ qua Person; form căn vẫn nhập loại mặt bằng độc lập tầng. Các hướng dẫn tầng–loại cố định hoặc owner-history trong hồ sơ cũ được thay thế bằng quyết định này. Không thay lời khai phá RAW gốc. Đây là thay đổi dữ liệu/tài liệu, chưa triển khai Java, chưa áp dụng VM hoặc nghiệm thu Sprint. Handoff phải đối chiếu ERD hiện hành, bảng ánh xạ và báo cáo kiểm thử PostgreSQL 04/11.

@@ -34,7 +34,7 @@ Mỗi thành viên chỉ cần mở đúng tệp tài liệu hướng dẫn riê
 | **TV5: Huy** | QA Lead & Test Engineer | Shift-Left testing, Unit test CFG Basis Path, Decision Table, chủ hộ/rollback/cạnh tranh, MockMvc | 📄 [**`TV5_Huy_QA_Automation.md`**](./TV5_Huy_QA_Automation.md) | 5 SP (~24h) |
 
 > 📋 **Danh mục Thẻ Công việc Backlog:** [**`github_issues_backlog.md`**](./github_issues_backlog.md) (24 gói cha sẵn sàng đưa lên GitHub Kanban).
-> 📐 **Chứng minh Học thuật Kiểm thử:** [**`kiem_thu_hoc_thuat_cfg_decision_table.md`**](./kiem_thu_hoc_thuat_cfg_decision_table.md) (Thiết kế CFG chờ mã nguồn và Bảng quyết định 6 Rules).
+> 📐 **Chứng minh Học thuật Kiểm thử:** [**`kiem_thu_hoc_thuat_cfg_decision_table.md`**](./kiem_thu_hoc_thuat_cfg_decision_table.md) (Thiết kế CFG chờ mã nguồn và Bảng quyết định 5 Rules (R1–R4, R6)).
 
 ---
 

@@ -65,36 +65,28 @@ Dùng `Clock` cố định/thay thế trong test; không chờ 15 phút thật. 
   - **C2:** Số tầng có nằm trong dải thiết kế $1 \le \text{floor} \le 30$? (T / F)
   - **C3:** Diện tích thông thủy có strictly positive ($> 0\text{ m}^2$)? (T / F)
   - **C4:** Loại hình căn hộ có thuộc enum (`KIOT`, `COMMERCIAL`, `RESIDENTIAL`, `PENTHOUSE`)? (T / F)
-  - **C5:** Loại hình có tương thích với số tầng tòa nhà BlueMoon? (T / F)
-    * `KIOT`: Tầng 1
-    * `COMMERCIAL`: Tầng 2–5
-    * `RESIDENTIAL`: Tầng 6–29
-    * `PENTHOUSE`: Tầng 30
 - **Hành động hệ thống (Actions):**
   - **A1:** Lưu bản ghi căn hộ thành công vào CSDL.
   - **A2:** Báo lỗi trùng mã căn (`DuplicateRoomException`).
   - **A3:** Báo lỗi số tầng ngoài dải $1 \le \text{floor} \le 30$.
   - **A4:** Báo lỗi diện tích thông thủy phải lớn hơn 0.
   - **A5:** Báo lỗi loại hình căn hộ không hợp lệ.
-  - **A6:** Báo lỗi xung đột loại hình với số tầng thiết kế.
 
 ---
 
-### 2.2. Bảng Quyết định Kiểm thử Toàn diện (6 Rules)
+### 2.2. Bảng Quyết định Kiểm thử Toàn diện (5 Rules: R1–R4, R6)
 
-| Quy tắc (Rule) | R1 | R2 | R3 | R4 | R5 | R6 |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| **Điều kiện C1 (Trùng mã phòng?)** | **True** | False | False | False | False | False |
-| **Điều kiện C2 (Số tầng $1 \le \text{floor} \le 30$?)** | - | **False** (`< 1` hoặc `> 30`) | True | True | True | **True** |
-| **Điều kiện C3 (Diện tích $m^2 > 0$?)** | - | - | **False** (`\le 0`) | True | True | **True** |
-| **Điều kiện C4 (Loại hình hợp lệ?)** | - | - | - | **False** | True | **True** |
-| **Điều kiện C5 (Tương thích Tầng & Loại hình?)** | - | - | - | - | **False** | **True** |
-| **Hành động A1 (Lưu thành công CSDL)** | | | | | | **X** |
-| **Hành động A2 (Báo lỗi Trùng mã căn)** | **X** | | | | | |
-| **Hành động A3 (Báo lỗi Số tầng sai)** | | **X** | | | | |
-| **Hành động A4 (Báo lỗi Diện tích $\le 0$)** | | | **X** | | | |
-| **Hành động A5 (Báo lỗi Sai loại hình)** | | | | **X** | | |
-| **Hành động A6 (Báo lỗi Xung đột Tầng & Loại hình)** | | | | | **X** | |
+| Quy tắc (Rule) | R1 | R2 | R3 | R4 | R6 |
+|---|:---:|:---:|:---:|:---:|:---:|
+| **Điều kiện C1 (Trùng mã phòng?)** | **True** | False | False | False | False |
+| **Điều kiện C2 (Số tầng $1 \le \text{floor} \le 30$?)** | - | **False** (`< 1` hoặc `> 30`) | True | True | **True** |
+| **Điều kiện C3 (Diện tích $m^2 > 0$?)** | - | - | **False** (`\le 0`) | True | **True** |
+| **Điều kiện C4 (Loại hình hợp lệ?)** | - | - | - | **False** | **True** |
+| **Hành động A1 (Lưu thành công CSDL)** | | | | | **X** |
+| **Hành động A2 (Báo lỗi Trùng mã căn)** | **X** | | | | |
+| **Hành động A3 (Báo lỗi Số tầng sai)** | | **X** | | | |
+| **Hành động A4 (Báo lỗi Diện tích $\le 0$)** | | | **X** | | |
+| **Hành động A5 (Báo lỗi Sai loại hình)** | | | | **X** | |
 
 ---
 
@@ -105,5 +97,5 @@ Dùng `Clock` cố định/thay thế trong test; không chờ 15 phút thật. 
 4. `TC_APT_DT_03a` (R3 biên 0): Nhập `area = 0.00` $\rightarrow$ Báo lỗi diện tích phải $> 0$.
 5. `TC_APT_DT_03b` (R3 biên âm): Nhập `area = -75.50` $\rightarrow$ Báo lỗi diện tích phải $> 0$.
 6. `TC_APT_DT_04` (R4): Nhập `type = "WAREHOUSE"` $\rightarrow$ Báo lỗi loại hình không hợp lệ.
-7. `TC_APT_DT_05` (R5 xung đột): Nhập `type = "PENTHOUSE"` tại tầng 1 $\rightarrow$ Báo lỗi xung đột tầng.
+7. **TC_APT_DT_05 (hồi quy quy tắc đã bỏ, R6):** tạo hai căn có mã khác nhau cùng tầng 1, một KIOT và một PENTHOUSE, diện tích >0. Kỳ vọng cả hai lưu thành công; không có lỗi tương thích tầng–loại.
 8. `TC_APT_DT_06` (R6 hợp lệ): Nhập `room = "P.702"`, `floor = 7`, `area = 85.50`, `type = "RESIDENTIAL"` $\rightarrow$ Lưu thành công vào CSDL.

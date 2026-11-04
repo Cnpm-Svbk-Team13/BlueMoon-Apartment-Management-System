@@ -1,5 +1,5 @@
 -- BlueMoon BFMS - Synthetic Sprint 1 seed, PostgreSQL 16/17.
--- US-SEC-01/02, NFR-02 -> DB-01, SEC-02/03;
+-- US-SEC-01/02, NFR-02 -> DB-01, BE-01;
 -- US-001, RAW-001/002 -> DB-02, BE-03, QA-05, BA-03.
 -- Run AFTER schema.sql, ONLY when all seven tables are empty.
 -- Demo accounts: admin, ketoan, thuquy (active), bqt_inactive (disabled).
@@ -13,7 +13,7 @@ SET LOCAL TIME ZONE 'UTC';
 
 -- Serialize seed with other writers, then reject nonempty tables atomically.
 LOCK TABLE users, persons, apartments, households, residents,
-    apartment_owner_history, audit_logs IN SHARE ROW EXCLUSIVE MODE;
+    household_head_history, audit_logs IN SHARE ROW EXCLUSIVE MODE;
 
 DO $$
 BEGIN
@@ -21,7 +21,7 @@ BEGIN
         SELECT 1 FROM users UNION ALL SELECT 1 FROM persons
         UNION ALL SELECT 1 FROM apartments UNION ALL SELECT 1 FROM households
         UNION ALL SELECT 1 FROM residents
-        UNION ALL SELECT 1 FROM apartment_owner_history
+        UNION ALL SELECT 1 FROM household_head_history
         UNION ALL SELECT 1 FROM audit_logs
     ) THEN
         RAISE EXCEPTION 'Sprint 1 seed requires all seven tables to be empty; no data was inserted';
@@ -29,17 +29,22 @@ BEGIN
 END;
 $$;
 
--- 1. Accounts: no hard-coded generated IDs, no actual connection credentials.
-INSERT INTO users (username, password_hash, full_name, email, phone, role, is_active)
-SELECT username, '$2a$10$ljvESH1dmbST9gRG0Gr1tOKvvvsfcVe3FbO4nV8jFqPsgrxNYXVXu',
-    full_name, email, phone, role, active
+-- 1. Staff profiles and their accounts; staff need not be residents.
+INSERT INTO persons (full_name, email, phone) VALUES
+    ('Quản trị mẫu', 'admin@example.test', '0900000101'),
+    ('Kế toán mẫu', 'ketoan@example.test', '0900000102'),
+    ('Thủ quỹ mẫu', 'thuquy@example.test', '0900000103'),
+    ('Tài khoản vô hiệu hóa mẫu', 'inactive@example.test', '0900000104');
+INSERT INTO users (username, password_hash, person_id, role, is_active)
+SELECT sample.username, '$2a$10$ljvESH1dmbST9gRG0Gr1tOKvvvsfcVe3FbO4nV8jFqPsgrxNYXVXu',
+    p.id, sample.role, sample.active
 FROM (VALUES
-    ('admin', 'Quản trị mẫu', 'admin@example.test', '0900000101', 'ROLE_ADMIN', TRUE),
-    ('ketoan', 'Kế toán mẫu', 'ketoan@example.test', '0900000102', 'ROLE_ACCOUNTANT', TRUE),
-    ('thuquy', 'Thủ quỹ mẫu', 'thuquy@example.test', '0900000103', 'ROLE_CASHIER', TRUE),
-    ('bqt_inactive', 'Tài khoản vô hiệu hóa mẫu', 'inactive@example.test',
-        '0900000104', 'ROLE_ACCOUNTANT', FALSE)
-) AS sample(username, full_name, email, phone, role, active);
+    ('admin', 'admin@example.test', 'ROLE_ADMIN', TRUE),
+    ('ketoan', 'ketoan@example.test', 'ROLE_ACCOUNTANT', TRUE),
+    ('thuquy', 'thuquy@example.test', 'ROLE_CASHIER', TRUE),
+    ('bqt_inactive', 'inactive@example.test', 'ROLE_ACCOUNTANT', FALSE)
+) AS sample(username, email, role, active)
+JOIN persons p ON p.email = sample.email;
 
 -- 2. Shared identities. The child intentionally has no national ID or phone.
 INSERT INTO persons
@@ -53,17 +58,17 @@ VALUES
     ('Hoàng Cường Mẫu', '000000000005', '0900000005', 'cuong@example.test', '1975-02-18', 'MALE', '2026-09-01 08:00:00+07'),
     ('Hoàng Đức Mẫu', '000000000006', '0900000006', NULL, '2002-08-10', 'MALE', '2026-09-01 08:00:00+07');
 
--- 3. Four surface types and three apartment states.
+-- 3. Four surface types and two apartment states.
 INSERT INTO apartments
     (room_number, floor_number, area_sqm, apartment_type, status, description, created_at)
 VALUES
     ('K.101', 1, 120.00, 'KIOT', 'VACANT', 'Kiot mẫu', '2026-09-01 08:00:00+07'),
     ('TM.201', 2, 100.00, 'COMMERCIAL', 'VACANT', 'Thương mại mẫu', '2026-09-01 08:00:00+07'),
     ('P.601', 6, 75.50, 'RESIDENTIAL', 'OCCUPIED', 'Căn có lịch sử thay đại diện', '2026-09-01 08:00:00+07'),
-    ('P.602', 6, 85.00, 'RESIDENTIAL', 'OCCUPIED', 'Căn có người tạm trú', '2026-09-01 08:00:00+07'),
+    ('P.602', 6, 85.00, 'COMMERCIAL', 'OCCUPIED', 'Căn có người tạm trú', '2026-09-01 08:00:00+07'),
     ('P.701', 7, 75.50, 'RESIDENTIAL', 'VACANT', 'Căn chưa khai báo hộ', '2026-09-01 08:00:00+07'),
     ('P.1204', 12, 92.00, 'RESIDENTIAL', 'OCCUPIED', 'Căn có người tạm vắng', '2026-09-01 08:00:00+07'),
-    ('PH.3001', 30, 220.00, 'PENTHOUSE', 'RENOVATING', 'Penthouse mẫu', '2026-09-01 08:00:00+07');
+    ('PH.3001', 30, 220.00, 'PENTHOUSE', 'VACANT', 'Penthouse mẫu', '2026-09-01 08:00:00+07');
 
 -- 4. Current household representatives. P.601 changed from An to Lan on 01/11.
 INSERT INTO households
@@ -83,43 +88,45 @@ INSERT INTO residents
     (person_id, household_id, relationship_with_head, residence_status, start_date, end_date)
 SELECT p.id, h.id, sample.relationship, sample.status, sample.start_date, sample.end_date
 FROM (VALUES
-    ('Trần Lan Mẫu', 'HK-BM-00601', 'CHỦ HỘ', 'THUONG_TRU', NULL::DATE, NULL::DATE),
-    ('Bé Mẫu Không CCCD', 'HK-BM-00601', 'CON', 'THUONG_TRU', NULL, NULL),
-    ('Lê Bình Mẫu', 'HK-BM-00602', 'CHỦ HỘ', 'THUONG_TRU', NULL, NULL),
-    ('Phạm Đạt Mẫu', 'HK-BM-00602', 'KHÁCH THUÊ', 'TAM_TRU', DATE '2026-10-01', DATE '2027-09-30'),
-    ('Hoàng Cường Mẫu', 'HK-BM-01204', 'CHỦ HỘ', 'THUONG_TRU', NULL, NULL),
-    ('Hoàng Đức Mẫu', 'HK-BM-01204', 'CON', 'TAM_VANG', DATE '2026-10-01', DATE '2027-03-31')
+    ('Trần Lan Mẫu', 'HK-BM-00601', 'HEAD', 'THUONG_TRU', NULL::DATE, NULL::DATE),
+    ('Bé Mẫu Không CCCD', 'HK-BM-00601', 'CHILD', 'THUONG_TRU', NULL, NULL),
+    ('Lê Bình Mẫu', 'HK-BM-00602', 'HEAD', 'THUONG_TRU', NULL, NULL),
+    ('Phạm Đạt Mẫu', 'HK-BM-00602', 'TENANT', 'TAM_TRU', DATE '2026-10-01', DATE '2027-09-30'),
+    ('Hoàng Cường Mẫu', 'HK-BM-01204', 'HEAD', 'THUONG_TRU', NULL, NULL),
+    ('Hoàng Đức Mẫu', 'HK-BM-01204', 'CHILD', 'TAM_VANG', DATE '2026-10-01', DATE '2027-03-31')
 ) AS sample(full_name, registration_code, relationship, status, start_date, end_date)
 JOIN persons p ON p.full_name = sample.full_name
 JOIN households h ON h.registration_code = sample.registration_code;
 
--- 6. Synthetic history: actor is a users row; owners are persons rows.
+-- 6. Synthetic history: actor is a users row; heads are persons rows.
 -- Snapshots copy actual fixture fields, preserving SQL NULL email as JSON null.
-INSERT INTO apartment_owner_history
-    (apartment_id, household_id, previous_owner_id, new_owner_id, event_type,
+INSERT INTO household_head_history
+    (household_id, previous_head_person_id, new_head_person_id,
      previous_snapshot, new_snapshot, changed_at, changed_by_user_id)
-SELECT h.apartment_id, h.id, previous_owner.id, new_owner.id, sample.event_type,
-    CASE WHEN previous_owner.id IS NULL THEN NULL ELSE jsonb_build_object(
-        'full_name', previous_owner.full_name, 'national_id', previous_owner.national_id,
-        'phone', previous_owner.phone, 'email', previous_owner.email) END,
-    jsonb_build_object('full_name', new_owner.full_name, 'national_id', new_owner.national_id,
-        'phone', new_owner.phone, 'email', new_owner.email),
+SELECT h.id, previous_head.id, new_head.id,
+    CASE WHEN previous_head.id IS NULL THEN NULL ELSE jsonb_build_object(
+        'full_name', previous_head.full_name, 'national_id', previous_head.national_id,
+        'phone', previous_head.phone, 'email', previous_head.email) END,
+    jsonb_build_object('full_name', new_head.full_name, 'national_id', new_head.national_id,
+        'phone', new_head.phone, 'email', new_head.email),
     sample.changed_at, actor.id
 FROM (VALUES
-    ('HK-BM-00601', NULL::VARCHAR, '000000000001', 'ASSIGNED', TIMESTAMPTZ '2026-10-01 08:00:00+07'),
-    ('HK-BM-00601', '000000000001', '000000000002', 'REPLACED', TIMESTAMPTZ '2026-11-01 09:00:00+07'),
-    ('HK-BM-00602', NULL, '000000000003', 'ASSIGNED', TIMESTAMPTZ '2026-10-01 08:30:00+07'),
-    ('HK-BM-01204', NULL, '000000000005', 'ASSIGNED', TIMESTAMPTZ '2026-10-01 09:00:00+07')
-) AS sample(registration_code, previous_id_number, new_id_number, event_type, changed_at)
+    ('HK-BM-00601', NULL::VARCHAR, '000000000001', TIMESTAMPTZ '2026-10-01 08:00:00+07'),
+    ('HK-BM-00601', '000000000001', '000000000002', TIMESTAMPTZ '2026-11-01 09:00:00+07'),
+    ('HK-BM-00602', NULL, '000000000003', TIMESTAMPTZ '2026-10-01 08:30:00+07'),
+    ('HK-BM-01204', NULL, '000000000005', TIMESTAMPTZ '2026-10-01 09:00:00+07')
+) AS sample(registration_code, previous_id_number, new_id_number, changed_at)
 JOIN households h ON h.registration_code = sample.registration_code
-LEFT JOIN persons previous_owner ON previous_owner.national_id = sample.previous_id_number
-JOIN persons new_owner ON new_owner.national_id = sample.new_id_number
+LEFT JOIN persons previous_head ON previous_head.national_id = sample.previous_id_number
+JOIN persons new_head ON new_head.national_id = sample.new_id_number
 JOIN users actor ON actor.username = 'admin';
 
--- 7. Audit matches the synthetic ownership events, not evidence of real UAT.
+-- 7. Audit matches the synthetic head events, not evidence of real UAT.
 INSERT INTO audit_logs (user_id, action, entity_name, entity_id, details, created_at)
-SELECT changed_by_user_id, event_type, 'apartment_owner_history', id,
+SELECT changed_by_user_id, CASE WHEN previous_head_person_id IS NULL THEN 'ASSIGNED'
+    WHEN previous_head_person_id = new_head_person_id THEN 'PROFILE_UPDATED' ELSE 'REPLACED' END,
+    'household_head_history', id,
     'Dữ liệu mẫu Sprint 1: sự kiện chủ hộ', changed_at
-FROM apartment_owner_history;
+FROM household_head_history;
 
 COMMIT;

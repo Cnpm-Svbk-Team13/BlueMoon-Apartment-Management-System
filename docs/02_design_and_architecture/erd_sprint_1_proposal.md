@@ -1,166 +1,134 @@
-# ERD chi tiết Sprint 1 — đề xuất đang thảo luận
+# ERD Sprint 1 — mô hình dữ liệu 04/11/2026
 
-Cập nhật: 02/11/2026. Người phụ trách xem xét: Nguyễn Xuân Sơn.
+Truy vết: US-001 / RAW-001, RAW-002; US-SEC-01/02 / NFR-02; DB-01, DB-02, BE-01/02/03. QA-05, BA-03 kiểm tra/nghiệm thu theo phạm vi. `residents` là nền cho US-002/003, chưa triển khai các story đó.
 
-**Trạng thái 02/11/2026:** Sơn yêu cầu triển khai DDL theo ERD này vào `database/schema.sql`. Đã có bootstrap 7 bảng và trigger, đã kiểm thử trên PostgreSQL 17 cô lập; chưa áp dụng lên VM và chưa nghiệm thu nghiệp vụ/Sprint. Xem [hướng dẫn và giới hạn](../../database/README.md) và [báo cáo kiểm tra](../../database/tests/SPRINT1_SCHEMA_VERIFICATION.md).
+Đã cập nhật thiết kế, DDL và seed cho database trống; không migration, không áp dụng VM, không triển khai Java. Kết quả thực chạy xem [báo cáo](../../database/tests/ERD_REVISION_VERIFICATION.md). Không đồng nhất kiểm tra DDL với nghiệm thu Sprint.
 
-- Phạm vi: US-SEC-01, US-SEC-02 / NFR-02; US-001 / RAW-001, RAW-002.
-- Task liên quan: DB-01, BE-01, BE-02, DB-02, BE-03; kiểm thử QA-05 và UAT BA-03.
-- Nguồn quyết định: [quy chuẩn hiện hành](../PROJECT_CONVENTIONS.md), [US/AC](../01_requirements_and_planning/05_chi_tiet_us_va_acceptance_criteria.md), [backlog Sprint 1](../sprints/sprint-1/github_issues_backlog.md).
-- Đối chiếu cấu trúc hiện có: [ERD tổng thể](erd.md), [schema SQL](../../database/schema.sql).
+Nguồn: [quy chuẩn](../PROJECT_CONVENTIONS.md), [US/AC](../01_requirements_and_planning/05_chi_tiet_us_va_acceptance_criteria.md), [schema](../../database/schema.sql), [ánh xạ](../sprints/sprint-1/DATA_NAMING_CONVENTIONS.md). [Bản 02/11 lịch sử](erd_sprint_1_2026_11_02_historical.md) không còn là thiết kế hiện hành.
 
-## 1. Phân biệt các thực thể
+## 1. Thực thể, thuộc tính và quan hệ
 
-| Thực thể | Câu hỏi được trả lời | Vai trò |
-|---|---|---|
-| `users` | Ai đăng nhập và thao tác phần mềm? | Tài khoản, mật khẩu băm, quyền và khóa đăng nhập. |
-| `persons` | Người được quản lý là ai? | Nguồn hồ sơ cá nhân chung: họ tên, CCCD, liên hệ. |
-| `residents` | Người đó cư trú tại hộ nào, trạng thái gì? | Tham chiếu hồ sơ cá nhân và hộ; lưu quan hệ, trạng thái và thời hạn cư trú. |
-| `apartments` | Mặt bằng nào đang được quản lý? | Mã căn, tầng, diện tích, loại và trạng thái. |
-| `households` | Hộ nào gắn với căn hộ, ai đại diện? | Hộ hiện tại và hộ lịch sử, tham chiếu người đại diện. |
-| `apartment_owner_history` | Chủ hộ thay đổi như thế nào? | Người trước/sau, bản chụp hồ sơ, thời điểm và tài khoản thực hiện. |
-| `audit_logs` | Hệ thống đã ghi nhận thao tác gì? | Nhật ký tài khoản, căn hộ và nghiệp vụ; không lưu bí mật. |
-
-Chủ hộ không nhất thiết có tài khoản hoặc trực tiếp cư trú tại căn hộ. Nhân viên BQT có tài khoản không nhất thiết là cư dân. Chưa thiết kế liên kết `users` với `persons` cho cổng cư dân trong Sprint 1.
-
-## 2. Sơ đồ thuộc tính và quan hệ
-
-`PK`: khóa chính; `FK`: khóa ngoại; `UK`: duy nhất. `||`: đúng một; `o|`: không hoặc một; `o{`: không hoặc nhiều. Thuộc tính ghi “tùy chọn” được phép NULL. Độ dài VARCHAR và CHECK chi tiết sẽ được chốt trong DDL; sơ đồ không thay thế DDL.
+`persons` lưu hồ sơ cá nhân dùng chung cho cư dân, chủ hộ và nhân viên có tài khoản. `users` chỉ lưu tài khoản/quyền; `residents` lưu hồ sơ cư trú hiện tại. Chủ hộ là vai trò trong hộ, không phải quyền sở hữu căn hộ. Không quản lý mua bán/chuyển nhượng.
 
 ```mermaid
 erDiagram
-    direction TB
-
-    USERS {
-        bigint id PK
-        varchar username UK "Bắt buộc"
-        varchar password_hash "Bắt buộc - BCrypt"
-        varchar full_name "Bắt buộc"
-        varchar email UK "Bắt buộc"
-        varchar phone "Bắt buộc - 10 chữ số"
-        varchar role "ROLE_ADMIN, ROLE_ACCOUNTANT, ROLE_CASHIER, ROLE_RESIDENT"
-        integer failed_attempts "Bắt buộc - mặc định 0"
-        timestamptz locked_until "Tùy chọn"
-        boolean is_active "Bắt buộc - mặc định true"
-        timestamptz created_at "Bắt buộc"
-        timestamptz updated_at "Bắt buộc"
-    }
-
-    AUDIT_LOGS {
-        bigint id PK
-        bigint user_id FK "Tùy chọn - có thể không xác định tài khoản"
-        varchar action "Bắt buộc"
-        varchar entity_name "Bắt buộc"
-        bigint entity_id "Tùy chọn - ID đối tượng bị tác động"
-        text details "Tùy chọn - không ghi bí mật"
-        varchar ip_address "Tùy chọn"
-        timestamptz created_at "Bắt buộc"
-    }
-
-    APARTMENTS {
-        bigint id PK
-        varchar room_number UK "Bắt buộc - mã căn"
-        integer floor_number "Bắt buộc - từ 1 đến 30"
-        decimal area_sqm "DECIMAL(12,2) - lớn hơn 0"
-        varchar apartment_type "KIOT, COMMERCIAL, RESIDENTIAL, PENTHOUSE"
-        varchar status "VACANT, OCCUPIED, RENOVATING"
-        text description "Tùy chọn"
-        timestamptz created_at "Bắt buộc"
-        timestamptz updated_at "Bắt buộc"
-    }
-
     PERSONS {
-        bigint id PK
-        varchar full_name "Bắt buộc"
-        varchar national_id UK "12 chữ số - tùy chọn với cư dân"
-        varchar phone "10 chữ số nếu có"
-        varchar email "Tùy chọn"
-        date date_of_birth "Tùy chọn ở hồ sơ chung"
-        varchar gender "MALE, FEMALE, OTHER - tùy chọn"
-        timestamptz created_at "Bắt buộc"
-        timestamptz updated_at "Bắt buộc"
+        bigserial id PK
+        varchar full_name
+        varchar national_id UK
+        varchar phone
+        varchar email
+        date date_of_birth
+        varchar gender
+        timestamptz created_at
+        timestamptz updated_at
     }
-
+    USERS {
+        bigserial id PK
+        varchar username UK
+        varchar password_hash
+        bigint person_id FK,UK
+        varchar role
+        integer failed_attempts
+        timestamptz locked_until
+        boolean is_active
+        timestamptz created_at
+        timestamptz updated_at
+    }
+    APARTMENTS {
+        bigserial id PK
+        varchar room_number UK
+        integer floor_number
+        decimal area_sqm
+        varchar apartment_type
+        varchar status
+        text description
+        timestamptz created_at
+        timestamptz updated_at
+    }
     HOUSEHOLDS {
-        bigint id PK
-        bigint apartment_id FK "Bắt buộc"
-        bigint head_person_id FK "Bắt buộc - người đại diện"
-        varchar registration_code UK "Bắt buộc - mã hộ"
-        date moved_in_date "Bắt buộc"
-        varchar status "ACTIVE, MOVED_OUT, TRANSFERRED"
-        timestamptz created_at "Bắt buộc"
-        timestamptz updated_at "Bắt buộc"
+        bigserial id PK
+        bigint apartment_id FK
+        bigint head_person_id FK
+        varchar registration_code UK
+        date moved_in_date
+        varchar status
+        timestamptz created_at
+        timestamptz updated_at
     }
-
     RESIDENTS {
-        bigint id PK
-        bigint person_id FK,UK "Bắt buộc - một hồ sơ cư trú mỗi người"
-        bigint household_id FK "Bắt buộc"
-        varchar relationship_with_head "Bắt buộc"
-        varchar residence_status "THUONG_TRU, TAM_TRU, TAM_VANG"
-        date start_date "Bắt buộc nếu tạm trú hoặc tạm vắng"
-        date end_date "Bắt buộc nếu tạm trú hoặc tạm vắng"
-        text notes "Tùy chọn"
-        timestamptz created_at "Bắt buộc"
-        timestamptz updated_at "Bắt buộc"
+        bigserial id PK
+        bigint person_id FK,UK
+        bigint household_id FK
+        varchar relationship_with_head
+        varchar residence_status
+        date start_date
+        date end_date
+        text notes
+        timestamptz created_at
+        timestamptz updated_at
     }
-
-    APARTMENT_OWNER_HISTORY {
-        bigint id PK
-        bigint apartment_id FK "Bắt buộc"
-        bigint household_id FK "Bắt buộc - hộ sau thay đổi"
-        bigint previous_owner_id FK "Tùy chọn - NULL khi gán lần đầu"
-        bigint new_owner_id FK "Bắt buộc"
-        varchar event_type "ASSIGNED, REPLACED, PROFILE_UPDATED"
-        jsonb previous_snapshot "Tùy chọn khi gán lần đầu"
-        jsonb new_snapshot "Bắt buộc"
-        timestamptz changed_at "Bắt buộc"
-        bigint changed_by_user_id FK "Bắt buộc"
+    HOUSEHOLD_HEAD_HISTORY {
+        bigserial id PK
+        bigint household_id FK
+        bigint previous_head_person_id FK
+        bigint new_head_person_id FK
+        jsonb previous_snapshot
+        jsonb new_snapshot
+        timestamptz changed_at
+        bigint changed_by_user_id FK
     }
-
-    USERS o|--o{ AUDIT_LOGS : "thực hiện thao tác"
-    USERS ||--o{ APARTMENT_OWNER_HISTORY : "ghi nhận thay đổi"
-    APARTMENTS ||--o{ HOUSEHOLDS : "có các hộ qua thời gian"
-    PERSONS ||--o{ HOUSEHOLDS : "làm người đại diện"
+    AUDIT_LOGS {
+        bigserial id PK
+        bigint user_id FK
+        varchar action
+        varchar entity_name
+        bigint entity_id
+        text details
+        varchar ip_address
+        timestamptz created_at
+    }
+    PERSONS ||--o| USERS : "có tài khoản"
+    PERSONS ||--o| RESIDENTS : "cư trú hiện tại"
+    PERSONS ||--o{ HOUSEHOLDS : "là chủ hộ"
+    APARTMENTS ||--o{ HOUSEHOLDS : "các hộ qua thời gian"
     HOUSEHOLDS ||--o{ RESIDENTS : "có thành viên"
-    PERSONS ||--o| RESIDENTS : "có hồ sơ cư trú"
-    APARTMENTS ||--o{ APARTMENT_OWNER_HISTORY : "có lịch sử"
-    HOUSEHOLDS ||--o{ APARTMENT_OWNER_HISTORY : "là hộ sau thay đổi"
-    PERSONS o|--o{ APARTMENT_OWNER_HISTORY : "là chủ trước"
-    PERSONS ||--o{ APARTMENT_OWNER_HISTORY : "là chủ sau"
+    HOUSEHOLDS ||--o{ HOUSEHOLD_HEAD_HISTORY : "có lịch sử"
+    PERSONS o|--o{ HOUSEHOLD_HEAD_HISTORY : "chủ trước"
+    PERSONS ||--o{ HOUSEHOLD_HEAD_HISTORY : "chủ sau"
+    USERS ||--o{ HOUSEHOLD_HEAD_HISTORY : "ghi nhận"
+    USERS o|--o{ AUDIT_LOGS : "thao tác"
 ```
 
-## 3. Ràng buộc bổ sung ngoài đường nối ERD
+## 2. Quy tắc dữ liệu
 
-| Nội dung | Quy tắc đề xuất |
-|---|---|
-| Hộ hoạt động | Unique index trên `households(apartment_id)` với điều kiện `status='ACTIVE'`; không đặt UNIQUE thông thường trên `apartment_id`. |
-| Hồ sơ chủ hộ | Người được `head_person_id` tham chiếu phải có CCCD và SĐT hợp lệ. |
-| Tầng và loại | Tầng 1 KIOT; 2–5 COMMERCIAL; 6–29 RESIDENTIAL; 30 PENTHOUSE. |
-| Thời hạn cư trú | Tạm trú/tạm vắng bắt buộc đủ ngày, `end_date >= start_date`. |
-| Lịch sử và hộ | `household_id` trong lịch sử phải thuộc `apartment_id` của sự kiện. |
-| Gán lần đầu | Chủ trước và snapshot trước NULL. |
-| Thay đại diện | Chủ trước và chủ sau khác nhau. |
-| Sửa hồ sơ | Chủ trước và chủ sau cùng ID; lưu snapshot trước/sau. |
+- `users.person_id`: FK, NOT NULL, UNIQUE. Người có thể chưa có tài khoản; nhân viên có tài khoản không bắt buộc cư trú. Tên, email, điện thoại chỉ lưu tại persons.
+- Người có tài khoản phải có điện thoại 10 số và email đúng dạng cơ bản. Email duy nhất giữa những người có tài khoản (kể cả tài khoản vô hiệu hóa), so sánh chính xác như UNIQUE cũ; cư dân chưa có tài khoản được trùng email. Email tối đa 255 ký tự. DTO/Service phải kiểm tra định dạng; CHECK không chứng minh email có thể nhận thư.
+- Diện tích DECIMAL(12,2) > 0; tầng 1–30; loại thuộc KIOT/COMMERCIAL/RESIDENTIAL/PENTHOUSE độc lập tầng. Một tầng có thể có nhiều loại. Không thêm bảng Floor.
+- `apartments.status`: VACANT/OCCUPIED do BQT xác nhận, không tự suy từ hộ ACTIVE. Sửa chữa ngoài phạm vi Sprint 1.
+- Hộ gắn cố định một căn; đổi apartment_id bị chặn. Chuyển căn: kết thúc hộ cũ, tạo hộ mới và dùng lại persons. Tối đa một hộ ACTIVE/căn; household khác vẫn được lưu như lịch sử.
+- Chủ hộ có CCCD và SĐT hợp lệ; không bắt buộc có dòng residents. Không tự suy vai trò đăng nhập từ vai trò chủ hộ.
+- `residents.person_id` duy nhất: một hồ sơ hiện tại/người, chưa phải bảng các lần cư trú. Quan hệ HEAD/SPOUSE/CHILD/PARENT/TENANT/OTHER. HEAD tương đương person_id = head_person_id của chính hộ đó; kiểm tra cuối transaction cả khi đổi chủ hộ hoặc đổi cư trú.
+- Trạng thái THUONG_TRU/TAM_TRU/TAM_VANG; tạm trú/vắng cần ngày bắt đầu/kết thúc, kết thúc không trước bắt đầu.
+- Lịch sử chỉ giữ household_id; truy căn qua hộ. Chủ trước NULL và snapshot trước NULL khi gán đầu; các lần khác phải có cả hai. Hai ID khác nhau là REPLACED, bằng nhau là PROFILE_UPDATED; loại được suy ra, không lưu event_type.
+- Snapshot là hồ sơ lúc xảy ra sự kiện (full_name, national_id, phone, email), không phải hồ sơ hiện tại. Bảo vệ snapshot như dữ liệu cá nhân; không dùng để công khai. Lịch sử/audit chỉ thêm, không sửa/xóa/truncate bằng quyền ứng dụng thông thường.
 
-Một người có thể đại diện nhiều hộ, nhưng `UNIQUE(residents.person_id)` giữ chính sách một hồ sơ cư trú mỗi người của đề xuất Sprint 1. Chưa mở rộng cư trú nhiều–nhiều; mâu thuẫn với risk log cũ cần được nhóm chốt riêng.
+## 3. Transaction và trách nhiệm ứng dụng
 
-## 4. Giải thích lịch sử chủ hộ
+Các lượt ghi persons/users/households/residents lấy chung advisory transaction lock `(3180,13)` trước khi khóa hàng. Chỉ hỗ trợ READ COMMITTED cho các lượt ghi này; mức cô lập khác bị từ chối để tránh kiểm tra với snapshot cũ. Khóa tồn tại đến COMMIT/ROLLBACK. Đổi email/cấp tài khoản và đổi chủ/cư trú được kiểm tra cuối transaction trên trạng thái đã cập nhật. Đây là khóa thô ưu tiên tính đúng trong Sprint 1; chưa chứng minh NFR chịu tải.
 
-Snapshot là bản chụp họ tên, CCCD, SĐT, email tại thời điểm xảy ra sự kiện, lưu bằng JSONB. ID giúp nhận diện người; snapshot giúp giữ thông tin lúc bàn giao dù hồ sơ hiện tại được sửa. Snapshot không phải nguồn hồ sơ hiện hành và cần được bảo vệ như hồ sơ gốc.
+Service phải cập nhật chủ hộ, rà soát quan hệ các thành viên, chụp thông tin trước/sau, ghi lịch sử và audit trong cùng `@Transactional(rollbackFor = Exception.class)` — tương đương BEGIN/COMMIT/ROLLBACK. Actor lấy từ phiên đăng nhập. Trigger không tự sinh lịch sử, không xác minh snapshot là dữ liệu trước/sau thật, không thay phân quyền. Cấm thao tác SQL quản trị phá chuỗi lịch sử trong luồng nghiệp vụ.
 
-`changed_by_user_id` tham chiếu `users.id`: tài khoản đăng nhập đã thực hiện thay đổi, không phải chủ mới hoặc chủ cũ. Backend lấy ID từ phiên đăng nhập, không nhận tùy ý từ form. `changed_at` là thời điểm thao tác.
+## 4. Khóa ứng viên và phụ thuộc hàm
 
-Ví dụ: An bàn giao cho Lan, kế toán Bình xác nhận trong phần mềm. `previous_owner_id` trỏ hồ sơ An; `new_owner_id` trỏ hồ sơ Lan; `changed_by_user_id` trỏ tài khoản Bình.
+| Bảng | Khóa ứng viên | Phụ thuộc và nhận định |
+|---|---|---|
+| persons | id | id xác định hồ sơ; CCCD nullable chỉ duy nhất khi có, không là khóa cho mọi dòng. |
+| users | id; username; person_id | Mỗi khóa xác định dữ liệu tài khoản; không sao chép hồ sơ người. |
+| apartments | id; room_number | Khóa xác định tầng, loại, diện tích, trạng thái; tầng không quyết định loại theo quy tắc mới. |
+| households | id; registration_code | Khóa xác định căn và chủ hộ; partial unique hộ ACTIVE không là khóa cho mọi dòng. |
+| residents | id; person_id | Khóa xác định cư trú hiện tại; không lưu lại tên/CCCD. |
+| household_head_history | id | id xác định sự kiện; không lưu căn suy ra qua hộ. Snapshot là dữ liệu tài liệu lịch sử có chủ đích. |
+| audit_logs | id | id xác định lần thao tác; entity_name + entity_id xác định đối tượng, không xác định duy nhất lần thao tác. |
 
-## 5. Ảnh hưởng tới database hiện có
-
-- Thêm `persons` và `apartment_owner_history`.
-- Thay `households.head_name` bằng `head_person_id`; chuyển thông tin cá nhân từ `residents` sang `persons`.
-- Theo yêu cầu ghi đè schema tập trung Sprint 1, bootstrap hiện chỉ tạo 7 bảng trong sơ đồ này. Thiết kế tài chính trước đây được lưu ở [schema cũ](../../database/legacy/schema_before_sprint1.sql); chưa tạo `invoices` hoặc ràng buộc phiếu thu trong bootstrap mới. Phần nền DB-01 cho tài chính phải được bổ sung lại trước khi triển khai phân hệ đó; không ghi toàn bộ DB-01 đã hoàn thành.
-- **Không yêu cầu xóa toàn bộ database.** Sơn cho biết VM chưa có dữ liệu; vẫn cần kiểm tra cấu trúc thực tế trước khi triển khai. Không chạy DROP/TRUNCATE hoặc chuyển đổi dữ liệu chỉ dựa vào tài liệu đề xuất này.
-- Schema SQL, seed và bảng ánh xạ đã đồng bộ theo 7 bảng này. Seed dùng dữ liệu giả, chỉ chạy khi cả 7 bảng không có bản ghi. Entity/Service cần triển khai theo bảng ánh xạ; chưa có migration chuyển đổi cấu trúc.
-
-## 6. Nội dung tiếp tục hỏi đáp
-
-Tiếp tục xem xét sự cần thiết của từng bảng/trường, cách lưu snapshot và quy tắc thay chủ hộ. Tài liệu ghi lại phương án đã trao đổi để cả nhóm cùng đọc; không biến các đề xuất thành quyết định đã nghiệm thu.
+Không còn hai phụ thuộc bắc cầu đã nêu trong rà soát. Các cột quan hệ có cấu trúc hướng tới 3NF theo những phụ thuộc đã xác định; không tuyên bố các trường JSONB/text nội bộ được chứng minh 1NF–3NF. Audit dùng đích đa hình, không có FK thông thường tới mọi loại đối tượng.

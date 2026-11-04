@@ -123,7 +123,7 @@ Nhóm 13 gồm 5 thành viên được phân công giữ nguyên vẹn chuyên m
 |---|---|---|:---:|---|
 | **QA-01** | Thiết lập Khung & Môi trường Kiểm thử Tự động (Shift-Left) | • Cấu hình môi trường kiểm thử độc lập `application-test.yml` (H2 in-memory DB / mocks) cho phép chạy test tự động không cần môi trường DB bên ngoài.<br>• Thiết lập thư viện JUnit 5, Mockito, MockMvc, AssertJ.<br>• Xây dựng các lớp cơ sở (Base Test Classes) và bộ dữ liệu fixture dùng chung cho nhóm từ Ngày 1. | 4 giờ (1 SP) | • Chạy lệnh `mvn test` sạch sẽ không báo lỗi môi trường.<br>• Khung kiểm thử tự động sẵn sàng cho tầng Service và Controller. |
 | **QA-02** | Lập trình Ca Kiểm thử CFG Basis Path (AuthService) | • Dựng trước khung kiểm thử `AuthServiceTest.java` (Test Stubs) từ Ngày 2.<br>• Chuyển hóa đồ thị dòng điều khiển CFG và các Basis Paths theo CFG đã chốt đã thiết kế trong Section 5 thành mã nguồn JUnit 5 thực thi ngay khi Hoà vừa push code.<br>• Bao phủ 100% các Basis Paths theo CFG đã chốt (`TC_LOGIN_BP_01` $\rightarrow$ `05`) và các ca biên vô hiệu hóa, reset, trước/đúng/sau thời điểm hết khóa theo tài liệu CFG. | 6 giờ (1 SP) | • Toàn bộ ca kiểm thử đã chốt luồng đăng nhập pass 100%.<br>• Báo cáo độ bao phủ nhánh rẽ đạt 100%. |
-| **QA-03** | Lập trình Ca Kiểm thử Tham số hóa Decision Table (ApartmentService) | • Chuyển hóa Black-box Decision Table (6 Rules $R_1 \rightarrow R_6$ đã thiết kế trong Section 5) thành các ca kiểm thử tham số hóa `@ParameterizedTest` trong `ApartmentServiceTest.java`.<br>• Kiểm tra biên diện tích $\le 0$, số tầng ngoài dải $1 \le \text{floor} \le 30$, xung đột loại hình với số tầng. | 5 giờ (1 SP) | • Bắt chính xác 100% các ngoại lệ nghiệp vụ theo từng rule.<br>• Dữ liệu test tham số hóa bao phủ đầy đủ các hoán vị điều kiện biên. |
+| **QA-03** | Lập trình Ca Kiểm thử Tham số hóa Decision Table (ApartmentService) | • Chuyển hóa Black-box Decision Table (5 Rules R1–R4 và R6 đã thiết kế trong Section 5) thành các ca kiểm thử tham số hóa `@ParameterizedTest` trong `ApartmentServiceTest.java`.<br>• Kiểm tra biên diện tích $\le 0$, số tầng ngoài dải $1 \le \text{floor} \le 30$, loại hình ngoài danh mục. | 5 giờ (1 SP) | • Bắt chính xác 100% các ngoại lệ nghiệp vụ theo từng rule.<br>• Dữ liệu test tham số hóa bao phủ đầy đủ các hoán vị điều kiện biên. |
 | **QA-04** | Lập trình Web Integration Test (MockMvc) & Đo lường Coverage | • Viết bộ ca kiểm thử tích hợp Controller với `MockMvc` cho `AuthController` và `AdminController`.<br>• Thực thi kiểm thử tự động, đo độ bao phủ mã nguồn (Line Coverage $\ge 85\%$).<br>• Đóng gói Báo cáo Tổng kết Đo lường Chất lượng Sprint 1 (`SPRINT_1_TEST_REPORT.md`) nộp SoICT. | 5 giờ (1 SP) | • 100% ca kiểm thử pass xanh (`BUILD SUCCESS`).<br>• Đo độ bao phủ đạt $\ge 85\%$ dòng lệnh cho tầng Service/Controller. |
 
 ---
@@ -227,7 +227,7 @@ DELIVERABLES SPRINT 1 (31/10 - 06/11/2026)
 
 ### Deliverable D2: Schema/seed PostgreSQL Sprint 1 và bằng chứng bàn giao
 - **Vị trí:** `database/schema.sql`, `database/seed_data.sql`; cách chạy và dữ liệu kỳ vọng: [database/README.md](../database/README.md).
-- **Nội dung:** 7 bảng users, persons, apartments, households, residents, apartment_owner_history, audit_logs; FK/CHECK/UNIQUE/index/trigger theo schema hiện hành.
+- **Nội dung:** 7 bảng users, persons, apartments, households, residents, household_head_history, audit_logs; FK/CHECK/UNIQUE/index/trigger theo schema hiện hành.
 - **Kiểm tra:** khởi tạo trên PostgreSQL trống/cô lập, seed khi cả 7 bảng rỗng, xác nhận số bản ghi và ràng buộc với dữ liệu hợp lệ/sai; ghi phiên bản, lệnh, kết quả và giới hạn chưa kiểm tra.
 - **Bàn giao:** Sơn cung cấp phiên bản SQL, cách kết nối không lộ bí mật và dữ liệu mẫu cho Hoà/Huy. Database đang có dữ liệu không chạy lại bootstrap/seed.
 - **Giới hạn:** hóa đơn/biên lai/quỹ thuộc triển khai tài chính sau này; các bất biến vẫn phải được thực hiện trước khi nghiệm thu phân hệ đó. Tạo schema không chứng minh hoàn thành US hoặc đăng nhập web.
@@ -259,7 +259,7 @@ DELIVERABLES SPRINT 1 (31/10 - 06/11/2026)
 - **Vị trí lưu trữ:** `src/test/java/com/bluemoon/bfms/`, `docs/sprints/sprint-1/SPRINT_1_TEST_REPORT.md`
 - **Mô tả kiểm thử:**
   - `AuthServiceTest.java`: Bộ ca kiểm thử đơn vị cho luồng đăng nhập, áp dụng phân tích đồ thị dòng điều khiển CFG (Control Flow Graph), tính Cyclomatic Complexity từ mã đã review và bao phủ 100% các Basis Paths theo CFG đã chốt.
-  - `ApartmentServiceTest.java`: Bộ ca kiểm thử cho CRUD căn hộ, kiểm tra biên diện tích $m^2 \le 0$, diện tích hợp lệ, trùng mã căn hộ theo Black-box Decision Table (6 Rules).
+  - `ApartmentServiceTest.java`: Bộ ca kiểm thử cho CRUD căn hộ, kiểm tra biên diện tích $m^2 \le 0$, diện tích hợp lệ, trùng mã căn hộ theo Black-box Decision Table (5 Rules: R1–R4, R6).
   - `AuthControllerIntegrationTest.java`: Kiểm thử tích hợp với `@SpringBootTest` và `MockMvc` kiểm tra đăng nhập form, chuyển hướng sau đăng nhập thành công và chặn các route yêu cầu quyền Admin.
   - Báo cáo đo lường độ bao phủ (Coverage Report) đạt $\ge 85\%$ kèm đồ thị CFG và Bảng quyết định.
 
@@ -288,42 +288,34 @@ Nguồn duy nhất cho sơ đồ, test ID và cách tính là [thiết kế ki�
   - **C3 (Biên diện tích thông thủy):** Diện tích `area_sqm` có strictly positive ($> 0$)? (T / F)
     * Phân tích biên vi phạm: `area_sqm <= 0` (ví dụ: 0 m², -50 m² bị chặn dứt điểm theo Bất biến 2).
   - **C4 (Danh mục loại hình hợp lệ):** Loại hình căn hộ (`apartment_type`) có thuộc enum (`KIOT`, `COMMERCIAL`, `RESIDENTIAL`, `PENTHOUSE`)? (T / F)
-  - **C5 (Bất biến Kiến trúc Tương thích Tầng & Loại hình - BlueMoon Invariant):** Căn hộ có đặt đúng tầng theo thiết kế tòa nhà? (T / F)
-    * `KIOT`: Tầng 1 (Kiot thương mại dịch vụ tầng trệt).
-    * `COMMERCIAL`: Tầng 2–5 (Khối đế kinh doanh / dịch vụ / kỹ thuật).
-    * `RESIDENTIAL`: Tầng 6–29 (24 tầng căn hộ sinh sống cư dân).
-    * `PENTHOUSE`: Tầng 30 (Căn hộ cao cấp Penthouse đỉnh tháp).
 - **Hành động hệ thống (Actions):**
   - **A1:** Lưu bản ghi căn hộ thành công vào CSDL.
   - **A2:** Báo lỗi "Mã phòng đã tồn tại".
   - **A3:** Báo lỗi "Số tầng không hợp lệ (phải từ tầng 1 đến tầng 30)".
   - **A4:** Báo lỗi "Diện tích thông thủy phải lớn hơn 0 m²".
   - **A5:** Báo lỗi "Loại hình căn hộ không hợp lệ".
-  - **A6:** Báo lỗi "Loại hình căn hộ không tương thích với số tầng tòa nhà (Kiot: T1; Thương mại: T2–5; Căn hộ: T6–29; Penthouse: T30)".
 
 #### Bảng Quyết định Kiểm thử Toàn diện (Comprehensive Decision Table):
 
-| Quy tắc (Rule) | R1 | R2 | R3 | R4 | R5 | R6 |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| **Điều kiện C1 (Trùng mã phòng?)** | True | False | False | False | False | False |
-| **Điều kiện C2 (Số tầng $1 \le \text{floor} \le 30$?)** | - | **False** (`< 1` hoặc `> 30`) | True | True | True | **True** |
-| **Điều kiện C3 (Diện tích $m^2 > 0$?)** | - | - | **False** (`\le 0`) | True | True | **True** |
-| **Điều kiện C4 (Loại hình hợp lệ?)** | - | - | - | **False** | True | **True** |
-| **Điều kiện C5 (Tương thích Tầng & Loại hình?)** | - | - | - | - | **False** | **True** |
-| **Hành động A1 (Lưu thành công CSDL)** | | | | | | **X** |
-| **Hành động A2 (Báo lỗi Trùng mã căn)** | **X** | | | | | |
-| **Hành động A3 (Báo lỗi Số tầng sai)** | | **X** | | | | |
-| **Hành động A4 (Báo lỗi Diện tích $\le 0$)** | | | **X** | | | |
-| **Hành động A5 (Báo lỗi Sai loại hình)** | | | | **X** | | |
-| **Hành động A6 (Báo lỗi Xung đột Tầng & Loại hình)** | | | | | **X** | |
+| Quy tắc (Rule) | R1 | R2 | R3 | R4 | R6 |
+|---|:---:|:---:|:---:|:---:|:---:|
+| **Điều kiện C1 (Trùng mã phòng?)** | True | False | False | False | False |
+| **Điều kiện C2 (Số tầng $1 \le \text{floor} \le 30$?)** | - | **False** (`< 1` hoặc `> 30`) | True | True | **True** |
+| **Điều kiện C3 (Diện tích $m^2 > 0$?)** | - | - | **False** (`\le 0`) | True | **True** |
+| **Điều kiện C4 (Loại hình hợp lệ?)** | - | - | - | **False** | **True** |
+| **Hành động A1 (Lưu thành công CSDL)** | | | | | **X** |
+| **Hành động A2 (Báo lỗi Trùng mã căn)** | **X** | | | | |
+| **Hành động A3 (Báo lỗi Số tầng sai)** | | **X** | | | |
+| **Hành động A4 (Báo lỗi Diện tích $\le 0$)** | | | **X** | | |
+| **Hành động A5 (Báo lỗi Sai loại hình)** | | | | **X** | |
 
 *Ghi chú các quy tắc kiểm thử quyết định:*
 - **Quy tắc R1:** Căn hộ trùng mã phòng đã tồn tại trong CSDL $\rightarrow$ Kích hoạt Hành động A2 (Báo lỗi `DuplicateRoomException`).
 - **Quy tắc R2:** Kiểm tra chặt biên tầng `< 1` hoặc `> 30` (ví dụ tầng 0 hoặc tầng 31) $\rightarrow$ Kích hoạt Hành động A3 (Báo lỗi "Số tầng không hợp lệ").
 - **Quy tắc R3:** Kiểm tra chặt biên diện tích: `area_sqm <= 0` (ví dụ 0 m² hoặc -75.5 m²) $\rightarrow$ Kích hoạt Hành động A4 (Báo lỗi "Diện tích thông thủy phải lớn hơn 0 m²").
 - **Quy tắc R4:** Loại hình căn hộ ngoài danh mục cho phép $\rightarrow$ Kích hoạt Hành động A5 (Báo lỗi "Loại hình căn hộ không hợp lệ").
-- **Quy tắc R5:** Xung đột loại hình với số tầng thiết kế $\rightarrow$ Kích hoạt Hành động A6 (Báo lỗi "Loại hình căn hộ không tương thích với số tầng").
-- **Quy tắc R6 (Rule R6):** Kiểm soát tương thích Loại hình Căn hộ và Số tầng (Kiot: Tầng 1; Thương mại: Tầng 2–5; Căn hộ: Tầng 6–29; Penthouse: Tầng 30), và kiểm tra chặt biên tầng `< 1` hoặc `> 30` -> Báo lỗi; `area_sqm <= 0` -> Báo lỗi. Khi và chỉ khi thỏa mãn đồng thời toàn bộ các điều kiện biên hợp lệ và tương thích tầng, hệ thống kích hoạt Hành động A1 (Lưu thành công vào CSDL).
+- **R5 cũ đã bỏ (04/11):** không còn điều kiện tương thích tầng–loại. Giữ mã R6 cho luồng thành công để không đổi truy vết cũ.
+- **Quy tắc R6:** mã căn chưa tồn tại, tầng 1–30, diện tích >0 và loại thuộc danh mục → A1 lưu thành công. Loại không phụ thuộc tầng.
 
 #### Bộ Ca Kiểm thử Tham số hóa Tương ứng (`ApartmentServiceTest.java`):
 1. **TC_APT_DT_01 (Trùng mã căn - R1):** Nhập `room_number = "P.601"` (đã tồn tại trong seed data). Kỳ vọng: Báo lỗi A2 `DuplicateRoomException`.
@@ -332,8 +324,8 @@ Nguồn duy nhất cho sơ đồ, test ID và cách tính là [thiết kế ki�
 4. **TC_APT_DT_03a (Biên diện tích bằng 0 - R3):** Nhập `area_sqm = 0.00`. Kỳ vọng: Báo lỗi A4 `InvalidAreaException` ($> 0$).
 5. **TC_APT_DT_03b (Biên diện tích âm - R3):** Nhập `area_sqm = -75.50`. Kỳ vọng: Báo lỗi A4 `InvalidAreaException`.
 6. **TC_APT_DT_04 (Sai danh mục loại hình - R4):** Nhập `apartment_type = "WAREHOUSE"`. Kỳ vọng: Báo lỗi A5 `InvalidApartmentTypeException`.
-7. **TC_APT_DT_05 (Xung đột Tầng & Loại hình - R5):** Nhập `apartment_type = "PENTHOUSE"` tại `floor_number = 1`, hoặc `KIOT` tại `floor_number = 30`. Kỳ vọng: Báo lỗi A6 `FloorTypeMismatchException`.
-8. **TC_APT_DT_06 (Rule R6: Kiểm soát tương thích Loại hình Căn hộ và Số tầng, Kiểm tra chặt biên):** Áp dụng Rule R6: Nhập `room = "P.702"`, `floor = 7`, `area = 85.50`, `type = "RESIDENTIAL"`. Kỳ vọng: Thỏa mãn toàn bộ điều kiện, hệ thống lưu thành công A1, mã căn hộ trả về không null.
+7. **TC_APT_DT_05 (hồi quy quy tắc đã bỏ, R6):** tạo hai căn có mã khác nhau cùng tầng 1, một KIOT và một PENTHOUSE, diện tích >0. Kỳ vọng cả hai lưu thành công; không có lỗi tương thích tầng–loại.
+8. **TC_APT_DT_06 (Rule R6: Tầng và loại hợp lệ độc lập, kiểm tra chặt biên):** Áp dụng Rule R6: Nhập `room = "P.702"`, `floor = 7`, `area = 85.50`, `type = "RESIDENTIAL"`. Kỳ vọng: Thỏa mãn toàn bộ điều kiện, hệ thống lưu thành công A1, mã căn hộ trả về không null.
 
 ---
 
@@ -414,3 +406,9 @@ Lịch chủ hộ: 31/10 Khánh làm BA-03; 01–02/11 Sơn làm DB-02; 03–04/
 Nghiệm thu US-001 bao gồm hồ sơ chủ hộ (họ tên, CCCD 12 số, SĐT 10 số, email theo RAW-002), một hộ ACTIVE/căn hộ, lịch sử thay chủ hộ không xóa cứng, audit và UAT. Không đẩy phần này sang Sprint sau để báo hoàn thành US-001.
 
 CI nền tảng chỉ là build/test; trước nghiệm thu chạy `clean verify -Psprint1-quality` với >=85% line coverage Service/Controller và đủ test/UAT. Báo cáo dự kiến ở `docs/sprints/sprint-1/`; chưa có báo cáo không được ghi đã nghiệm thu.
+
+## Đồng bộ dữ liệu Sprint 1 — quyết định 04/11/2026
+
+US-001 / RAW-001, RAW-002; US-SEC-01/02 / NFR-02 → DB-01, DB-02, BE-01/02/03. Giữ phân công và ước lượng hiện hành. Thiết kế 7 bảng mới dùng persons làm nguồn hồ sơ chung, users.person_id duy nhất; chủ hộ không phải chủ sở hữu. Loại mặt bằng độc lập tầng; trạng thái căn chỉ VACANT/OCCUPIED. Hộ gắn cố định một căn; lịch sử household_head_history tham chiếu hộ, không lưu căn/event_type độc lập. Quan hệ cư trú HEAD/SPOUSE/CHILD/PARENT/TENANT/OTHER được kiểm tra cuối transaction. Mỗi người có tối đa một hồ sơ cư trú hiện tại; chưa nghiệm thu US-002/003.
+
+Form tài khoản lấy/sửa hồ sơ qua Person; form căn vẫn nhập loại mặt bằng độc lập tầng. Các hướng dẫn tầng–loại cố định hoặc owner-history trong hồ sơ cũ được thay thế bằng quyết định này. Không thay lời khai phá RAW gốc. Đây là thay đổi dữ liệu/tài liệu, chưa triển khai Java, chưa áp dụng VM hoặc nghiệm thu Sprint. Handoff phải đối chiếu ERD hiện hành, bảng ánh xạ và báo cáo kiểm thử PostgreSQL 04/11.

@@ -55,7 +55,7 @@
 - **Acceptance Criteria (Checklist):**
   - [ ] `database/schema.sql` tạo đủ 7 bảng cùng FK/CHECK/UNIQUE/index/trigger trên PostgreSQL trống, không nạp vào database đã có cấu trúc.
   - [ ] `database/seed_data.sql` chỉ nạp khi cả 7 bảng rỗng; dữ liệu giả và tài khoản BCrypt khớp `database/README.md`.
-  - [ ] Kiểm tra dữ liệu hợp lệ/sai: tầng–loại, diện tích, CCCD/SĐT, ngày cư trú, một hộ ACTIVE/căn, liên kết chủ hộ và bảo vệ lịch sử/audit; ghi kết quả PostgreSQL thực chạy.
+  - [ ] Kiểm tra dữ liệu hợp lệ/sai: tầng và danh mục loại độc lập, diện tích, CCCD/SĐT, ngày cư trú, một hộ ACTIVE/căn, liên kết chủ hộ và bảo vệ lịch sử/audit; ghi kết quả PostgreSQL thực chạy.
   - [ ] Bàn giao commit/schema/seed, cách kết nối không lộ bí mật, dữ liệu mẫu, bằng chứng và giới hạn cho Hoà/Huy; không coi việc tạo bảng là đã hoàn thành nghiệp vụ.
 
 Các ràng buộc tài chính (khóa lạc quan hóa đơn, XOR biên lai, tách quỹ) vẫn bắt buộc khi triển khai phân hệ tài chính; không nằm trong bootstrap 7 bảng của DB-01 Sprint 1.
@@ -89,7 +89,7 @@ Các ràng buộc tài chính (khóa lạc quan hóa đơn, XOR biên lai, tách
 - **Layer Impact:** Service / Controller
 - **Prerequisites:** Issue #04 (Entities & Repositories)
 - **Acceptance Criteria (Checklist):**
-  - [ ] `ApartmentService` đóng gói 100% logic kiểm tra phân tầng: T1 là Kiot, T2-5 là Thương mại, T6-29 là Căn hộ ở, T30 là Penthouse.
+  - [ ] `ApartmentService` đóng gói 100% logic kiểm tra phân tầng: tầng 1–30; loại thuộc KIOT/COMMERCIAL/RESIDENTIAL/PENTHOUSE, độc lập tầng.
   - [ ] Chặn triệt để diện tích $\le 0$ và chặn trùng lặp mã phòng.
   - [ ] Thao tác thêm/sửa bọc trong `@Transactional(rollbackFor = Exception.class)`.
   - [ ] Thao tác đọc bọc trong `@Transactional(readOnly = true)`.
@@ -297,11 +297,11 @@ Các ràng buộc tài chính (khóa lạc quan hóa đơn, XOR biên lai, tách
 - **Layer Impact:** Parameterized Unit Test
 - **Prerequisites:** Issue #05 (ApartmentService) & Issue #15 (Test Setup)
 - **Acceptance Criteria (Checklist):**
-  - [ ] Áp dụng `@ParameterizedTest` bao phủ đầy đủ 6 Rules $R_1 \rightarrow R_6$ của Bảng quyết định.
+  - [ ] Áp dụng `@ParameterizedTest` bao phủ đầy đủ 5 Rules R1–R4 và R6 của Bảng quyết định.
   - [ ] Bắt chính xác ngoại lệ khi trùng mã phòng (R1).
   - [ ] Bắt chính xác ngoại lệ khi tầng $< 1$ hoặc $> 30$ (R2).
   - [ ] Bắt chính xác ngoại lệ khi diện tích $\le 0$ (R3).
-  - [ ] Bắt chính xác ngoại lệ khi xung đột tầng và loại hình (R5).
+  - [ ] Xác nhận cùng tầng có thể có hai loại khác nhau (hồi quy R5 cũ, hiện thuộc luồng R6).
   - [ ] Dữ liệu hợp lệ lưu thành công vào CSDL (R6).
 
 ---
@@ -456,3 +456,9 @@ Các hàng là phần việc con của gói cha, kế thừa người phụ trá
 | PM-03 (3h) | Review của Sơn và kiểm tra nghiệm thu nội bộ (3) | Xuyên tuần; chốt 06/11 |
 
 Tổng các phần việc con phải bằng 138h. Chuyển PM-01 không đổi tổng 36 SP/24 gói/44 phần việc; chưa xác nhận tải phù hợp khi chưa biết thời gian thực tế từng người có thể dành. Review không tự động thực hiện merge; chỉ cập nhật tài liệu trong đợt đồng bộ này, chưa tạo issue/PR trên GitHub.
+
+## Đồng bộ dữ liệu Sprint 1 — quyết định 04/11/2026
+
+US-001 / RAW-001, RAW-002; US-SEC-01/02 / NFR-02 → DB-01, DB-02, BE-01/02/03. Giữ phân công và ước lượng hiện hành. Thiết kế 7 bảng mới dùng persons làm nguồn hồ sơ chung, users.person_id duy nhất; chủ hộ không phải chủ sở hữu. Loại mặt bằng độc lập tầng; trạng thái căn chỉ VACANT/OCCUPIED. Hộ gắn cố định một căn; lịch sử household_head_history tham chiếu hộ, không lưu căn/event_type độc lập. Quan hệ cư trú HEAD/SPOUSE/CHILD/PARENT/TENANT/OTHER được kiểm tra cuối transaction. Mỗi người có tối đa một hồ sơ cư trú hiện tại; chưa nghiệm thu US-002/003.
+
+Form tài khoản lấy/sửa hồ sơ qua Person; form căn vẫn nhập loại mặt bằng độc lập tầng. Các hướng dẫn tầng–loại cố định hoặc owner-history trong hồ sơ cũ được thay thế bằng quyết định này. Không thay lời khai phá RAW gốc. Đây là thay đổi dữ liệu/tài liệu, chưa triển khai Java, chưa áp dụng VM hoặc nghiệm thu Sprint. Handoff phải đối chiếu ERD hiện hành, bảng ánh xạ và báo cáo kiểm thử PostgreSQL 04/11.

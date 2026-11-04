@@ -281,12 +281,12 @@ UNION ALL SELECT 'persons', count(*) FROM persons
 UNION ALL SELECT 'apartments', count(*) FROM apartments
 UNION ALL SELECT 'households', count(*) FROM households
 UNION ALL SELECT 'residents', count(*) FROM residents
-UNION ALL SELECT 'apartment_owner_history', count(*) FROM apartment_owner_history
+UNION ALL SELECT 'household_head_history', count(*) FROM household_head_history
 UNION ALL SELECT 'audit_logs', count(*) FROM audit_logs;
 SQL
 ```
 
-Ngay sau nạp seed, trước mọi thao tác ứng dụng, kỳ vọng: **4 users, 7 persons, 7 apartments, 3 households, 6 residents, 4 apartment_owner_history, 4 audit_logs**. Đây là dữ liệu căn mẫu đại diện các loại mặt bằng, không phải đã tạo đủ mọi căn của 30 tầng. Database đã dùng để phát triển có thể khác số bản ghi; không nạp lại seed để ép về số này.
+Ngay sau nạp seed, trước mọi thao tác ứng dụng, kỳ vọng: **4 users, 11 persons, 7 apartments, 3 households, 6 residents, 4 household_head_history, 4 audit_logs**. Đây là dữ liệu căn mẫu đại diện các loại mặt bằng, không phải đã tạo đủ mọi căn của 30 tầng. Database đã dùng để phát triển có thể khác số bản ghi; không nạp lại seed để ép về số này.
 
 Sơn bàn giao commit SQL, môi trường, kết quả thực chạy, cách kết nối qua kênh riêng và giới hạn cho Hoà/Huy. Kiểm tra ràng buộc với dữ liệu sai hoặc thao tác phá hủy phải chạy trên PostgreSQL cô lập. Tạo bảng và đếm bản ghi thành công chưa nghiệm thu nghiệp vụ đăng nhập/căn hộ/chủ hộ.
 

@@ -28,7 +28,7 @@
 - **Checklist:**
   - [ ] `database/schema.sql` tạo đủ 7 bảng cùng FK/CHECK/UNIQUE/index/trigger trên PostgreSQL trống, không nạp vào database đã có cấu trúc.
   - [ ] `database/seed_data.sql` chỉ nạp khi cả 7 bảng rỗng; dữ liệu giả và tài khoản BCrypt khớp `database/README.md`.
-  - [ ] Kiểm tra dữ liệu hợp lệ/sai: tầng–loại, diện tích, CCCD/SĐT, ngày cư trú, một hộ ACTIVE/căn, liên kết chủ hộ và bảo vệ lịch sử/audit; ghi kết quả PostgreSQL thực chạy.
+  - [ ] Kiểm tra dữ liệu hợp lệ/sai: tầng và danh mục loại độc lập, diện tích, CCCD/SĐT, ngày cư trú, một hộ ACTIVE/căn, liên kết chủ hộ và bảo vệ lịch sử/audit; ghi kết quả PostgreSQL thực chạy.
   - [ ] Bàn giao commit/schema/seed, cách kết nối không lộ bí mật, dữ liệu mẫu, bằng chứng và giới hạn cho Hoà/Huy; không coi việc tạo bảng là đã hoàn thành nghiệp vụ.
 
 Xem [hướng dẫn database](../../../database/README.md). Không chạy lại bootstrap hoặc seed trên database đã có dữ liệu; thay đổi cấu trúc đã triển khai cần phương án chuyển đổi riêng. Phần tài chính chưa có trong bootstrap Sprint 1.
@@ -40,7 +40,7 @@ Xem [hướng dẫn database](../../../database/README.md). Không chạy lại 
 - **Mã nhánh Git:** `feature/issue-04-jpa-entities-and-repositories`
 - **Các file cần tạo trong `src/main/java/com/bluemoon/bfms/`:**
   - `model/ApartmentType.java` (Enum: `KIOT`, `COMMERCIAL`, `RESIDENTIAL`, `PENTHOUSE`)
-  - `model/ApartmentStatus.java` (Enum: `VACANT`, `OCCUPIED`, `RENOVATING`)
+  - `model/ApartmentStatus.java` (Enum: `VACANT`, `OCCUPIED`)
   - `model/Apartment.java` (Entity ánh xạ bảng `apartments`, diện tích bắt buộc dùng `BigDecimal`, `@Min(1)`, `@Max(30)`)
   - `model/Household.java` (Entity ánh xạ `households`)
   - `model/Resident.java` (Entity ánh xạ `residents`, có `LocalDate startDate`, `LocalDate endDate`)
@@ -56,11 +56,7 @@ Xem [hướng dẫn database](../../../database/README.md). Không chạy lại 
   - `service/ApartmentService.java`:
     - `@Transactional(readOnly = true)` cho các hàm tìm kiếm.
     - `@Transactional(rollbackFor = Exception.class)` cho các hàm tạo mới, cập nhật.
-    - Hàm kiểm tra quy tắc phân tầng tòa nhà:
-      * Tầng 1: Loại hình phải là `KIOT`.
-      * Tầng 2–5: Loại hình phải là `COMMERCIAL`.
-      * Tầng 6–29: Loại hình phải là `RESIDENTIAL`.
-      * Tầng 30: Loại hình phải là `PENTHOUSE`.
+    - Kiểm tra tầng 1–30 và loại trong KIOT/COMMERCIAL/RESIDENTIAL/PENTHOUSE độc lập nhau; không ràng buộc loại theo tầng.
     - Kiểm tra diện tích thông thủy: `areaSqm.compareTo(BigDecimal.ZERO) > 0`.
     - Chặn trùng mã phòng bằng `existsByRoomNumber`.
   - Viết controller điều hướng danh sách căn hộ và thêm mới căn hộ trong `AdminController.java`.
@@ -102,3 +98,9 @@ git push origin feature/issue-03-sprint1-schema-seed
 ### Công việc bổ sung
 
 PM-01 thuộc Khánh (6h/2 SP); Sơn tập trung dữ liệu/backend. PM-03 giữ Sơn (3h/1 SP): review PR Hoà, kiểm tra bằng chứng test của Huy và hồ sơ/UAT Khánh tổng hợp trước khi xác nhận nghiệm thu nội bộ; không làm lại báo cáo. Task thiếu bằng chứng vẫn mở. Sơn chốt thay đổi phạm vi/ưu tiên sau trao đổi nhóm; Khánh vận hành Kanban/daily, theo dõi bàn giao và chủ trì Review/Retro. DB-02: hồ sơ/lịch sử chủ hộ 4h/1 SP (01–02/11); BE-03: transaction thay chủ và lịch sử 4h/1 SP (03–04/11). Xem #19/#20/#24 trong backlog để có AC và phụ thuộc. Đây là ước lượng, cần đối chiếu thời gian thực tế có thể dành; không tự suy ra đủ năng lực.
+
+## Đồng bộ dữ liệu Sprint 1 — quyết định 04/11/2026
+
+US-001 / RAW-001, RAW-002; US-SEC-01/02 / NFR-02 → DB-01, DB-02, BE-01/02/03. Giữ phân công và ước lượng hiện hành. Thiết kế 7 bảng mới dùng persons làm nguồn hồ sơ chung, users.person_id duy nhất; chủ hộ không phải chủ sở hữu. Loại mặt bằng độc lập tầng; trạng thái căn chỉ VACANT/OCCUPIED. Hộ gắn cố định một căn; lịch sử household_head_history tham chiếu hộ, không lưu căn/event_type độc lập. Quan hệ cư trú HEAD/SPOUSE/CHILD/PARENT/TENANT/OTHER được kiểm tra cuối transaction. Mỗi người có tối đa một hồ sơ cư trú hiện tại; chưa nghiệm thu US-002/003.
+
+Form tài khoản lấy/sửa hồ sơ qua Person; form căn vẫn nhập loại mặt bằng độc lập tầng. Các hướng dẫn tầng–loại cố định hoặc owner-history trong hồ sơ cũ được thay thế bằng quyết định này. Không thay lời khai phá RAW gốc. Đây là thay đổi dữ liệu/tài liệu, chưa triển khai Java, chưa áp dụng VM hoặc nghiệm thu Sprint. Handoff phải đối chiếu ERD hiện hành, bảng ánh xạ và báo cáo kiểm thử PostgreSQL 04/11.

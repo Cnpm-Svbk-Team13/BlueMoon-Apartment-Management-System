@@ -9,25 +9,7 @@
 -- Run with psql --set=ON_ERROR_STOP=1 --file=database/schema.sql.
 
 BEGIN;
--- 1. Accounts. BCrypt, login lock expiry and sessions belong to Service.
-CREATE TABLE users (
-    id BIGSERIAL PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE CHECK (btrim(username) <> ''),
-    password_hash VARCHAR(255) NOT NULL CHECK (btrim(password_hash) <> ''),
-    full_name VARCHAR(100) NOT NULL CHECK (btrim(full_name) <> ''),
-    email VARCHAR(255) NOT NULL UNIQUE CHECK (btrim(email) <> ''),
-    phone VARCHAR(20) NOT NULL CHECK (phone ~ '^[0-9]{10}$'),
-    role VARCHAR(20) NOT NULL CHECK (
-        role IN ('ROLE_ADMIN', 'ROLE_ACCOUNTANT', 'ROLE_CASHIER', 'ROLE_RESIDENT')
-    ),
-    failed_attempts INTEGER NOT NULL DEFAULT 0 CHECK (failed_attempts >= 0),
-    locked_until TIMESTAMPTZ,
-    is_active BOOLEAN NOT NULL DEFAULT TRUE,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
--- 2. Shared personal identity. Children may have no national ID or phone.
+-- 1. Shared personal identity. Children may have no national ID or phone.
 CREATE TABLE persons (
     id BIGSERIAL PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL CHECK (btrim(full_name) <> ''),
@@ -49,7 +31,23 @@ CREATE TABLE persons (
     )
 );
 
--- 3. Usable area and floor/type agree with the building layout.
+-- 2. Accounts. BCrypt, login lock expiry and sessions belong to Service.
+CREATE TABLE users (
+    id BIGSERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE CHECK (btrim(username) <> ''),
+    password_hash VARCHAR(255) NOT NULL CHECK (btrim(password_hash) <> ''),
+    person_id BIGINT NOT NULL UNIQUE REFERENCES persons(id) ON DELETE RESTRICT,
+    role VARCHAR(20) NOT NULL CHECK (
+        role IN ('ROLE_ADMIN', 'ROLE_ACCOUNTANT', 'ROLE_CASHIER', 'ROLE_RESIDENT')
+    ),
+    failed_attempts INTEGER NOT NULL DEFAULT 0 CHECK (failed_attempts >= 0),
+    locked_until TIMESTAMPTZ,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 3. Usable area; type is independent of floor (RAW-001, decision 2026-11-04).
 CREATE TABLE apartments (
     id BIGSERIAL PRIMARY KEY,
     room_number VARCHAR(20) NOT NULL UNIQUE CHECK (btrim(room_number) <> ''),
@@ -57,15 +55,12 @@ CREATE TABLE apartments (
     area_sqm DECIMAL(12, 2) NOT NULL CHECK (area_sqm > 0),
     apartment_type VARCHAR(20) NOT NULL,
     status VARCHAR(20) NOT NULL DEFAULT 'VACANT'
-        CHECK (status IN ('VACANT', 'OCCUPIED', 'RENOVATING')),
+        CHECK (status IN ('VACANT', 'OCCUPIED')),
     description TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT chk_apartments_floor_type CHECK (
-        (floor_number = 1 AND apartment_type = 'KIOT')
-        OR (floor_number BETWEEN 2 AND 5 AND apartment_type = 'COMMERCIAL')
-        OR (floor_number BETWEEN 6 AND 29 AND apartment_type = 'RESIDENTIAL')
-        OR (floor_number = 30 AND apartment_type = 'PENTHOUSE')
+    CONSTRAINT chk_apartments_type CHECK (
+        apartment_type IN ('KIOT', 'COMMERCIAL', 'RESIDENTIAL', 'PENTHOUSE')
     )
 );
 
@@ -80,22 +75,20 @@ CREATE TABLE households (
     status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE'
         CHECK (status IN ('ACTIVE', 'MOVED_OUT', 'TRANSFERRED')),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    -- Target for the composite history FK below.
-    CONSTRAINT uq_households_id_apartment UNIQUE (id, apartment_id)
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE UNIQUE INDEX uq_active_household_per_apt
     ON households(apartment_id) WHERE status = 'ACTIVE';
 
 -- 5. Residence data, not duplicate identity data.
--- Canonical relationship codes remain a team decision; reject blank values.
+-- Current residence only. HEAD must agree with household head at transaction end.
 CREATE TABLE residents (
     id BIGSERIAL PRIMARY KEY,
     person_id BIGINT NOT NULL REFERENCES persons(id) ON DELETE RESTRICT,
     household_id BIGINT NOT NULL REFERENCES households(id) ON DELETE RESTRICT,
     relationship_with_head VARCHAR(50) NOT NULL
-        CHECK (btrim(relationship_with_head) <> ''),
+        CHECK (relationship_with_head IN ('HEAD', 'SPOUSE', 'CHILD', 'PARENT', 'TENANT', 'OTHER')),
     residence_status VARCHAR(20) NOT NULL DEFAULT 'THUONG_TRU'
         CHECK (residence_status IN ('THUONG_TRU', 'TAM_TRU', 'TAM_VANG')),
     start_date DATE,
@@ -111,30 +104,21 @@ CREATE TABLE residents (
 );
 
 -- 6. Service writes snapshots and authenticated actor in the SAME transaction
--- as the ownership/profile change. A DB connection user is NOT a website user.
-CREATE TABLE apartment_owner_history (
+-- as the head/profile change. A DB connection user is NOT a website user.
+CREATE TABLE household_head_history (
     id BIGSERIAL PRIMARY KEY,
-    apartment_id BIGINT NOT NULL REFERENCES apartments(id) ON DELETE RESTRICT,
-    household_id BIGINT NOT NULL,
-    previous_owner_id BIGINT REFERENCES persons(id) ON DELETE RESTRICT,
-    new_owner_id BIGINT NOT NULL REFERENCES persons(id) ON DELETE RESTRICT,
-    event_type VARCHAR(20) NOT NULL,
+    household_id BIGINT NOT NULL REFERENCES households(id) ON DELETE RESTRICT,
+    previous_head_person_id BIGINT REFERENCES persons(id) ON DELETE RESTRICT,
+    new_head_person_id BIGINT NOT NULL REFERENCES persons(id) ON DELETE RESTRICT,
     previous_snapshot JSONB,
     new_snapshot JSONB NOT NULL,
     changed_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     changed_by_user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
-    CONSTRAINT fk_owner_history_household_apartment
-        FOREIGN KEY (household_id, apartment_id)
-        REFERENCES households(id, apartment_id) ON DELETE RESTRICT,
-    CONSTRAINT chk_owner_history_event CHECK (
-        (event_type = 'ASSIGNED' AND previous_owner_id IS NULL
-            AND previous_snapshot IS NULL)
-        OR (event_type = 'REPLACED' AND previous_owner_id IS NOT NULL
-            AND previous_owner_id <> new_owner_id AND previous_snapshot IS NOT NULL)
-        OR (event_type = 'PROFILE_UPDATED' AND previous_owner_id IS NOT NULL
-            AND previous_owner_id = new_owner_id AND previous_snapshot IS NOT NULL)
+    CONSTRAINT chk_head_history_previous CHECK (
+        (previous_head_person_id IS NULL AND previous_snapshot IS NULL)
+        OR (previous_head_person_id IS NOT NULL AND previous_snapshot IS NOT NULL)
     ),
-    CONSTRAINT chk_owner_history_snapshots CHECK (
+    CONSTRAINT chk_head_history_snapshots CHECK (
         jsonb_typeof(new_snapshot) = 'object'
         AND new_snapshot ?& ARRAY['full_name', 'national_id', 'phone', 'email']
         AND (previous_snapshot IS NULL OR (
@@ -162,12 +146,11 @@ CREATE INDEX idx_apartments_floor ON apartments(floor_number);
 CREATE INDEX idx_households_apartment ON households(apartment_id);
 CREATE INDEX idx_households_head_person ON households(head_person_id);
 CREATE INDEX idx_residents_household ON residents(household_id);
-CREATE INDEX idx_owner_history_apartment_time
-    ON apartment_owner_history(apartment_id, changed_at, id);
-CREATE INDEX idx_owner_history_household ON apartment_owner_history(household_id);
-CREATE INDEX idx_owner_history_previous_owner ON apartment_owner_history(previous_owner_id);
-CREATE INDEX idx_owner_history_new_owner ON apartment_owner_history(new_owner_id);
-CREATE INDEX idx_owner_history_actor ON apartment_owner_history(changed_by_user_id);
+CREATE INDEX idx_head_history_household_time
+    ON household_head_history(household_id, changed_at, id);
+CREATE INDEX idx_head_history_previous_person ON household_head_history(previous_head_person_id);
+CREATE INDEX idx_head_history_new_person ON household_head_history(new_head_person_id);
+CREATE INDEX idx_head_history_actor ON household_head_history(changed_by_user_id);
 CREATE INDEX idx_audit_logs_user ON audit_logs(user_id);
 CREATE INDEX idx_audit_logs_entity_time
     ON audit_logs(entity_name, entity_id, created_at);
@@ -202,17 +185,17 @@ CREATE TRIGGER trg_residents_updated_at
     BEFORE UPDATE ON residents
     FOR EACH ROW EXECUTE FUNCTION set_row_updated_at();
 
--- 10. Cross-table owner validation (US-001 / DB-02).
--- Lock the person row: assigning an owner must serialize with editing that
+-- 10. Cross-table head validation (US-001 / DB-02).
+-- Lock the person row: assigning a head must serialize with editing that
 -- person's required contact data. A plain EXISTS check is insufficient here.
 CREATE FUNCTION validate_household_head()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 AS $$
 DECLARE
-    owner_record RECORD;
+    head_record RECORD;
 BEGIN
-    SELECT national_id, phone INTO owner_record
+    SELECT national_id, phone INTO head_record
     FROM persons WHERE id = NEW.head_person_id
     FOR UPDATE;
 
@@ -220,7 +203,7 @@ BEGIN
         RAISE EXCEPTION 'Household head must reference an existing person'
             USING ERRCODE = '23503';
     END IF;
-    IF owner_record.national_id IS NULL OR owner_record.phone IS NULL THEN
+    IF head_record.national_id IS NULL OR head_record.phone IS NULL THEN
         RAISE EXCEPTION 'Household head requires national ID and phone'
             USING ERRCODE = '23514';
     END IF;
@@ -232,7 +215,7 @@ CREATE TRIGGER trg_households_validate_head
     BEFORE INSERT OR UPDATE OF head_person_id ON households
     FOR EACH ROW EXECUTE FUNCTION validate_household_head();
 
--- Guard the reverse direction too: a valid owner cannot lose required fields.
+-- Guard the reverse direction too: a valid head cannot lose required fields.
 -- All referenced households count, including historical/inactive households.
 CREATE FUNCTION protect_household_head_profile()
 RETURNS TRIGGER
@@ -264,11 +247,95 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER trg_owner_history_append_only
-    BEFORE UPDATE OR DELETE OR TRUNCATE ON apartment_owner_history
+CREATE TRIGGER trg_head_history_append_only
+    BEFORE UPDATE OR DELETE OR TRUNCATE ON household_head_history
     FOR EACH STATEMENT EXECUTE FUNCTION reject_history_mutation();
 CREATE TRIGGER trg_audit_logs_append_only
     BEFORE UPDATE OR DELETE OR TRUNCATE ON audit_logs
     FOR EACH STATEMENT EXECUTE FUNCTION reject_history_mutation();
+
+-- 12. Serialize cross-table invariants before row locks. READ COMMITTED is
+-- required so VOLATILE trigger queries see commits after advisory-lock waits.
+-- Deliberately coarse for Sprint 1: persons/users/households/residents writers
+-- serialize for the transaction. This is not a claim of NFR throughput.
+CREATE FUNCTION lock_identity_household_writes()
+RETURNS TRIGGER LANGUAGE plpgsql AS $$
+BEGIN
+    IF current_setting('transaction_isolation') <> 'read committed' THEN
+        RAISE EXCEPTION 'Identity/household writes require READ COMMITTED'
+            USING ERRCODE = '25000';
+    END IF;
+    PERFORM pg_advisory_xact_lock(3180, 13);
+    RETURN NULL;
+END;
+$$;
+CREATE TRIGGER trg_persons_write_lock BEFORE INSERT OR UPDATE OR DELETE ON persons
+    FOR EACH STATEMENT EXECUTE FUNCTION lock_identity_household_writes();
+CREATE TRIGGER trg_users_write_lock BEFORE INSERT OR UPDATE OR DELETE ON users
+    FOR EACH STATEMENT EXECUTE FUNCTION lock_identity_household_writes();
+CREATE TRIGGER trg_households_write_lock BEFORE INSERT OR UPDATE OR DELETE ON households
+    FOR EACH STATEMENT EXECUTE FUNCTION lock_identity_household_writes();
+CREATE TRIGGER trg_residents_write_lock BEFORE INSERT OR UPDATE OR DELETE ON residents
+    FOR EACH STATEMENT EXECUTE FUNCTION lock_identity_household_writes();
+
+CREATE FUNCTION keep_household_apartment()
+RETURNS TRIGGER LANGUAGE plpgsql AS $$
+BEGIN
+    IF NEW.apartment_id IS DISTINCT FROM OLD.apartment_id THEN
+        RAISE EXCEPTION 'A household stays with its apartment; close it and create a new household'
+            USING ERRCODE = '23514';
+    END IF;
+    RETURN NEW;
+END;
+$$;
+CREATE TRIGGER trg_households_fixed_apartment BEFORE UPDATE OF apartment_id ON households
+    FOR EACH ROW EXECUTE FUNCTION keep_household_apartment();
+
+-- Check final state, allowing coordinated edits in either order. Account email
+-- comparison is exact (same semantics as the former users.email UNIQUE).
+-- Ordinary persons may share email; only account holders must have unique email.
+CREATE FUNCTION validate_account_profiles()
+RETURNS TRIGGER LANGUAGE plpgsql AS $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM users u JOIN persons p ON p.id = u.person_id
+        WHERE p.phone IS NULL OR p.email IS NULL
+            OR p.email !~ '^[^[:space:]@]+@[^[:space:]@]+[.][^[:space:]@]+$'
+    ) THEN
+        RAISE EXCEPTION 'Account holder requires valid email and phone'
+            USING ERRCODE = '23514';
+    END IF;
+    IF EXISTS (
+        SELECT p.email FROM users u JOIN persons p ON p.id = u.person_id
+        GROUP BY p.email HAVING count(*) > 1
+    ) THEN
+        RAISE EXCEPTION 'Account holder email must be unique'
+            USING ERRCODE = '23505';
+    END IF;
+    RETURN NULL;
+END;
+$$;
+CREATE CONSTRAINT TRIGGER trg_users_account_profile AFTER INSERT OR UPDATE ON users
+    DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION validate_account_profiles();
+CREATE CONSTRAINT TRIGGER trg_persons_account_profile AFTER INSERT OR UPDATE ON persons
+    DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION validate_account_profiles();
+
+CREATE FUNCTION validate_resident_head()
+RETURNS TRIGGER LANGUAGE plpgsql AS $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM residents r JOIN households h ON h.id = r.household_id
+        WHERE (r.relationship_with_head = 'HEAD') <> (r.person_id = h.head_person_id)
+    ) THEN
+        RAISE EXCEPTION 'HEAD relationship must agree with household head'
+            USING ERRCODE = '23514';
+    END IF;
+    RETURN NULL;
+END;
+$$;
+CREATE CONSTRAINT TRIGGER trg_residents_head AFTER INSERT OR UPDATE ON residents
+    DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION validate_resident_head();
+CREATE CONSTRAINT TRIGGER trg_households_head AFTER INSERT OR UPDATE ON households
+    DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION validate_resident_head();
 
 COMMIT;

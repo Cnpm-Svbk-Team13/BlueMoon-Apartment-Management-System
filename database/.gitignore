@@ -1,0 +1,8 @@
+scratch/
+legacy/
+!legacy/schema_before_sprint1.sql
+tests/*
+!tests/verify_erd_revision.py
+!tests/ERD_REVISION_VERIFICATION.md
+!tests/SPRINT1_SCHEMA_VERIFICATION.md
+!tests/sprint1_schema_checks.sql

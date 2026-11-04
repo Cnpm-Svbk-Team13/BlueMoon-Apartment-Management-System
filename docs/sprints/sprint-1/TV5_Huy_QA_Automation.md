@@ -8,7 +8,7 @@
 
 ## 🎯 1. TỔNG QUAN VAI TRÒ & SẢN PHẨM BÀN GIAO (DELIVERABLES)
 
-- **Vai trò chính:** Thiết lập môi trường kiểm thử tự động, áp dụng phương pháp luận **Shift-Left Testing** (chuẩn bị khung test và dữ liệu giả lập ngay từ Ngày 1 song song với Dev), lập trình bộ ca kiểm thử đơn vị theo đồ thị CFG (các Basis Paths theo CFG đã chốt), ca kiểm thử tham số hóa theo Bảng quyết định (6 Rules), kiểm thử tích hợp `MockMvc` và đo lường độ bao phủ mã nguồn $\ge 85\%$ nộp cho Bộ môn CNPM (SoICT / HUST).
+- **Vai trò chính:** Thiết lập môi trường kiểm thử tự động, áp dụng phương pháp luận **Shift-Left Testing** (chuẩn bị khung test và dữ liệu giả lập ngay từ Ngày 1 song song với Dev), lập trình bộ ca kiểm thử đơn vị theo đồ thị CFG (các Basis Paths theo CFG đã chốt), ca kiểm thử tham số hóa theo Bảng quyết định (5 Rules (R1–R4, R6)), kiểm thử tích hợp `MockMvc` và đo lường độ bao phủ mã nguồn $\ge 85\%$ nộp cho Bộ môn CNPM (SoICT / HUST).
 - **Tổng thời gian cam kết:** **24 giờ ước lượng** (5 Story Points).
 - **Quyền quản trị mã nguồn:**
   - `src/test/java/com/bluemoon/bfms/` (Toàn bộ các lớp kiểm thử JUnit 5 & Mockito).
@@ -50,12 +50,12 @@
 - **Mã nhánh Git:** `feature/issue-17-apartment-decision-table-tests`
 - **File cần tạo:** `src/test/java/com/bluemoon/bfms/service/ApartmentServiceTest.java`
 - **Quy trình thực thi:**
-  - Áp dụng kiểm thử tham số hóa `@ParameterizedTest` với `@CsvSource` hoặc `@MethodSource` bao phủ 100% 6 Rules của Bảng quyết định (SoICT Chapter 9):
+  - Áp dụng kiểm thử tham số hóa `@ParameterizedTest` với `@CsvSource` hoặc `@MethodSource` bao phủ 100% 5 Rules (R1–R4, R6) của Bảng quyết định (SoICT Chapter 9):
     * Rule R1: Trùng mã phòng $\rightarrow$ ném `DuplicateRoomException`.
     * Rule R2: Biên tầng $< 1$ hoặc $> 30$ $\rightarrow$ ném ngoại lệ tầng không hợp lệ.
     * Rule R3: Biên diện tích $\le 0$ ($0\text{ m}^2$, $-50\text{ m}^2$) $\rightarrow$ ném ngoại lệ diện tích.
     * Rule R4: Sai enum loại hình căn hộ.
-    * Rule R5: Xung đột tầng và loại hình (ví dụ Penthouse tầng 1, hoặc Kiot tầng 30).
+    * R5 cũ đã bỏ: kiểm tra hồi quy Penthouse tầng 1 và Kiot tầng 30 đều hợp lệ (R6); loại UNKNOWN bị chặn theo R4.
     * Rule R6: Dữ liệu hợp lệ $\rightarrow$ Lưu thành công vào CSDL.
 
 ---
@@ -75,7 +75,7 @@
 - [ ] **Ngày 1 (31/10):** Cấu hình `application-test.yml` và bộ dữ liệu fixture mẫu (Shift-Left khởi động).
 - [ ] **Ngày 2 (01/11):** Vẽ đồ thị CFG và dựng trước khung Test Stubs rỗng cho `AuthServiceTest`.
 - [ ] **Ngày 3 (02/11):** Ráp test thật vào `AuthService` của Hoà vừa push. Xác nhận các Basis Paths theo CFG đã chốt pass xanh.
-- [ ] **Ngày 4 (03/11):** Thiết kế Bảng quyết định 6 Rules cho Căn hộ; viết trước khung `@ParameterizedTest`.
+- [ ] **Ngày 4 (03/11):** Thiết kế Bảng quyết định 5 Rules (R1–R4, R6) cho Căn hộ; viết trước khung `@ParameterizedTest`.
 - [ ] **Ngày 5 (04/11):** Chạy bộ test Bảng quyết định trên `ApartmentService` của Sơn; bắt và báo các lỗi biên.
 - [ ] **Ngày 6 (05/11):** Viết `MockMvc` Integration Test cho Controller; kiểm tra form đăng nhập và route bảo mật.
 - [ ] **Ngày 7 (06/11):** Chạy đo độ bao phủ Line Coverage $\ge 85\%$; xuất báo cáo `SPRINT_1_TEST_REPORT.md` nộp bộ môn.

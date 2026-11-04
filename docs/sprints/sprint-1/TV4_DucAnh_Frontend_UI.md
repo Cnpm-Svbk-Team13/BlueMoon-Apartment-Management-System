@@ -2,7 +2,7 @@
 
 > Bắt đầu với [đồ thị luồng công việc](WORKFLOW_GUIDE.md): đầu vào, bàn giao và điều kiện kết thúc của từng người. Phân công hiện hành: Khánh điều phối/BA/UAT, Sơn DB/Backend và nghiệm thu; review PR Sơn–Hoà.
 
-> Trước khi dựng form, dùng [bảng tên DB → Java → DTO/form](DATA_NAMING_CONVENTIONS.md). Input phải khớp thuộc tính DTO (`roomNumber`, `areaSqm`, `active`), nhãn vẫn dùng tiếng Việt; thống nhất cùng chủ backend trước khi đổi tên. Form chủ hộ lồng `owner.*` hiện là đề xuất chờ DB-02/BE-03 xác nhận.
+> Trước khi dựng form, dùng [bảng tên DB → Java → DTO/form](DATA_NAMING_CONVENTIONS.md). Input phải khớp thuộc tính DTO (`roomNumber`, `areaSqm`, `active`), nhãn vẫn dùng tiếng Việt; thống nhất cùng chủ backend trước khi đổi tên. Form chủ hộ lồng `headPerson.*` hiện là đề xuất chờ DB-02/BE-03 xác nhận.
 ## Vai trò: Frontend Developer & UI/UX Specialist
 ### Dự án: BlueMoon BFMS (IT3180 - Team 13)
 
@@ -105,3 +105,9 @@ git push origin feature/issue-11-master-layout-thymeleaf
 ### FE-05 — hồ sơ/lịch sử chủ hộ
 
 Bổ sung 4h/1 SP ngày 04–05/11: form họ tên, CCCD, SĐT, email và danh sách lịch sử; hợp đồng dữ liệu theo BE-03, tiêu chí #21 trong backlog. Thông báo login trả lỗi chung, không hiển thị thông tin để dò username.
+
+## Đồng bộ dữ liệu Sprint 1 — quyết định 04/11/2026
+
+US-001 / RAW-001, RAW-002; US-SEC-01/02 / NFR-02 → DB-01, DB-02, BE-01/02/03. Giữ phân công và ước lượng hiện hành. Thiết kế 7 bảng mới dùng persons làm nguồn hồ sơ chung, users.person_id duy nhất; chủ hộ không phải chủ sở hữu. Loại mặt bằng độc lập tầng; trạng thái căn chỉ VACANT/OCCUPIED. Hộ gắn cố định một căn; lịch sử household_head_history tham chiếu hộ, không lưu căn/event_type độc lập. Quan hệ cư trú HEAD/SPOUSE/CHILD/PARENT/TENANT/OTHER được kiểm tra cuối transaction. Mỗi người có tối đa một hồ sơ cư trú hiện tại; chưa nghiệm thu US-002/003.
+
+Form tài khoản lấy/sửa hồ sơ qua Person; form căn vẫn nhập loại mặt bằng độc lập tầng. Các hướng dẫn tầng–loại cố định hoặc owner-history trong hồ sơ cũ được thay thế bằng quyết định này. Không thay lời khai phá RAW gốc. Đây là thay đổi dữ liệu/tài liệu, chưa triển khai Java, chưa áp dụng VM hoặc nghiệm thu Sprint. Handoff phải đối chiếu ERD hiện hành, bảng ánh xạ và báo cáo kiểm thử PostgreSQL 04/11.
