@@ -1,4 +1,2 @@
-/**
- * TODO: Define JPA entities and PostgreSQL table mappings in this package.
- */
+/** JPA entities and enum types for BlueMoon BFMS domain data. */
 package com.bluemoon.bfms.model;

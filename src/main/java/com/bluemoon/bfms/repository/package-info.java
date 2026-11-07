@@ -1,4 +1,2 @@
-/**
- * TODO: Add Spring Data repositories for PostgreSQL-backed entities.
- */
+/** Spring Data JPA repositories for querying BlueMoon BFMS entities. */
 package com.bluemoon.bfms.repository;
