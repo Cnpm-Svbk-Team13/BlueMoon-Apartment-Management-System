@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Household head | BlueMoon</title>
+    <style>
+        body { font-family: system-ui, sans-serif; margin: 2rem auto; max-width: 54rem; padding: 0 1rem; }
+        label { display: block; margin-top: .75rem; }
+        .error { color: #a31621; }
+        input, select, button { font: inherit; padding: .35rem; }
+        td, th { padding: .5rem; text-align: left; }
+    </style>
+</head>
+<body>
+<main>
+    <a th:href="@{/admin/apartments}">Back to apartments</a>
+    <h1 th:text="|Household for ${apartment.roomNumber}|"></h1>
+    <p role="status" th:if="${successMessage}" th:text="${successMessage}"></p>
+    <section th:if="${apartment.currentHead != null}">
+        <h2>Current head</h2>
+        <p th:text="${apartment.currentHead.fullName}"></p>
+        <a th:if="${!editing}" th:href="@{/admin/apartments/{id}/household(id=${apartment.apartmentId},editProfile=true)}">Edit current profile</a>
+        <a th:if="${editing}" th:href="@{/admin/apartments/{id}/household(id=${apartment.apartmentId})}">Cancel profile edit</a>
+    </section>
+    <h2 th:text="${editing ? 'Edit current profile' : (apartment.headPersonId == null ? 'Assign first head' : 'Replace head')}"></h2>
+    <form method="post" th:object="${headForm}"
+          th:action="${editing} ? @{/admin/apartments/{id}/household/profile(id=${apartment.apartmentId})} : @{/admin/apartments/{id}/household(id=${apartment.apartmentId})}">
+        <input type="hidden" th:field="*{expectedHeadPersonId}">
+        <div class="error" role="alert" th:if="${#fields.hasGlobalErrors()}">
+            <p th:each="error : ${#fields.globalErrors()}" th:text="${error}"></p>
+        </div>
+        <label for="nationalId">National ID</label>
+        <input id="nationalId" th:field="*{headPerson.nationalId}" required inputmode="numeric" pattern="[0-9]{12}">
+        <button th:if="${!editing}" type="submit" formnovalidate
+                th:formaction="@{/admin/apartments/{id}/household/lookup(id=${apartment.apartmentId})}">
+            Look up existing person
+        </button>
+        <p class="error" th:errors="*{headPerson.nationalId}"></p>
+        <p th:if="${lookupMessage}" th:text="${lookupMessage}"></p>
+        <label th:if="${existingPerson != null}">
+            <input type="checkbox" name="confirmedPersonId" th:value="${existingPerson.id}" required>
+            Confirm use of the existing profile shown below
+        </label>
+        <label for="fullName">Full name</label>
+        <input id="fullName" th:field="*{headPerson.fullName}" required maxlength="100">
+        <p class="error" th:errors="*{headPerson.fullName}"></p>
+        <label for="phone">Phone number</label>
+        <input id="phone" th:field="*{headPerson.phone}" required inputmode="numeric" pattern="[0-9]{10}">
+        <p class="error" th:errors="*{headPerson.phone}"></p>
+        <label for="email">Email</label>
+        <input id="email" type="email" th:field="*{headPerson.email}" maxlength="255">
+        <p class="error" th:errors="*{headPerson.email}"></p>
+        <div th:if="${!editing and apartment.headPersonId == null}">
+            <label for="movedInDate">Move-in date</label>
+            <input type="date" th:field="*{movedInDate}" required>
+            <p class="error" th:errors="*{movedInDate}"></p>
+        </div>
+        <div th:if="${!editing and apartment.previousHeadResidence}">
+            <label for="previousHeadRelationship">Previous head's new relationship</label>
+            <select th:field="*{previousHeadRelationship}" required>
+                <option value="">Select a relationship</option>
+                <option th:each="relationship : ${relationships}"
+                        th:value="${relationship}" th:text="${relationship}"></option>
+            </select>
+            <p class="error" th:errors="*{previousHeadRelationship}"></p>
+        </div>
+        <button type="submit">Save</button>
+    </form>
+    <section>
+        <h2>Head history</h2>
+        <p th:if="${#lists.isEmpty(apartment.history)}">No history recorded.</p>
+        <table th:unless="${#lists.isEmpty(apartment.history)}">
+            <thead><tr><th>Change</th><th>Previous profile</th><th>New profile</th><th>Changed at</th><th>User ID</th></tr></thead>
+            <tbody>
+            <tr th:each="entry : ${apartment.history}">
+                <td th:text="${entry.eventType}"></td>
+                <td th:if="${entry.previousSnapshot != null}"
+                    th:with="profile=${entry.previousSnapshot}" th:insert="~{:: snapshot}"></td>
+                <td th:if="${entry.previousSnapshot == null}">—</td>
+                <td th:with="profile=${entry.newSnapshot}" th:insert="~{:: snapshot}"></td>
+                <td th:text="${entry.changedAt}"></td>
+                <td th:text="${entry.changedByUserId}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+<template th:remove="all">
+    <div th:fragment="snapshot">
+        <div th:text="${profile.path('full_name').asText('')}"></div>
+        <div th:text="${profile.path('national_id').asText('')}"></div>
+        <div th:text="${profile.path('phone').asText('')}"></div>
+        <div th:text="${profile.path('email').asText('')}"></div>
+    </div>
+</template>
+</body>
+</html>

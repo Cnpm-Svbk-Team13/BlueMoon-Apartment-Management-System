@@ -56,6 +56,27 @@ public class Apartment{
     protected Apartment(){
     }
 
+    public Apartment(String roomNumber, Integer floorNumber, BigDecimal areaSqm, ApartmentType apartmentType) {
+        this.roomNumber = roomNumber;
+        this.floorNumber = floorNumber;
+        this.areaSqm = areaSqm;
+        this.apartmentType = apartmentType;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void updateDetails(String roomNumber, Integer floorNumber, BigDecimal areaSqm,
+            ApartmentType apartmentType, ApartmentStatus status, String description) {
+        this.roomNumber = roomNumber;
+        this.floorNumber = floorNumber;
+        this.areaSqm = areaSqm;
+        this.apartmentType = apartmentType;
+        this.apartmentStatus = status;
+        this.description = description;
+    }
+
     public String getRoomNumber(){
         return roomNumber;
     }
