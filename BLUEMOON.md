@@ -166,61 +166,19 @@ Spring Data JPA cung cấp lớp ORM/repository; PostgreSQL JDBC driver cung c�
 
 Dùng Spring Boot parent/BOM để quản lý phiên bản dependencies; không tự chọn phiên bản PostgreSQL JDBC driver nếu phiên bản Spring Boot đang dùng đã quản lý dependency này.
 
-### Cấu hình `src/main/resources/application.yml`
+### Cấu hình ứng dụng
 
-```yaml
-spring:
-  datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/bluemoon}
-    username: ${DB_USERNAME:bluemoon_app}
-    password: ${DB_PASSWORD}
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    open-in-view: false
-
-server:
-  port: 8080
-```
-
-Tạo database `bluemoon` bằng owner, chạy `schema.sql` và `permissions.sql`, sau đó cho ứng dụng kết nối bằng role ít quyền `bluemoon_app`. Cấu hình `DB_URL`, `DB_USERNAME` và `DB_PASSWORD` trong môi trường chạy; không ghi mật khẩu thật vào `application.yml` hoặc commit lên Git. `ddl-auto: validate` chỉ xác minh Entity khớp schema, không tự sửa database.
+Spring Boot đọc `.env` từ thư mục làm việc. Đặt `DB_URL`, `DB_USERNAME` và `DB_PASSWORD` theo môi trường và chạy Hibernate với `JPA_DDL_AUTO=validate`. Với PostgreSQL local, owner khởi tạo dữ liệu và ứng dụng dùng role `bluemoon_app`.
 
 ## 6. Cài đặt và chạy thử
 
-### Windows PowerShell
-
-```powershell
-git clone <repository-url>
-cd <repository-folder>
-# Đảm bảo PostgreSQL đang chạy, database bluemoon đã được tạo,
-# và DB_USERNAME / DB_PASSWORD đã được cấu hình trong môi trường.
-mvn spring-boot:run
-```
-
-Nếu Maven Wrapper có trong repository, có thể chạy thay bằng:
+Xem [hướng dẫn chạy localhost](docs/03_operations_and_guides/local-development.md) để tạo `.env`, bootstrap và đăng nhập demo. Chạy từ thư mục gốc:
 
 ```powershell
 .\mvnw.cmd spring-boot:run
 ```
 
-### macOS/Linux
-
-```bash
-git clone <repository-url>
-cd <repository-folder>
-# Đảm bảo PostgreSQL đang chạy, database bluemoon đã được tạo,
-# và DB_USERNAME / DB_PASSWORD đã được cấu hình trong môi trường.
-./mvnw spring-boot:run
-```
-
-Nếu không có Maven Wrapper, dùng `mvn spring-boot:run`.
-
-Khi ứng dụng khởi động thành công, truy cập `http://localhost:8080/`. Các route Admin/Portal được bổ sung theo controller và chức năng được triển khai. Build và chạy tests bằng:
-
-```bash
-mvn test
-mvn package
-```
+Trên Linux/macOS, dùng `sh ./mvnw spring-boot:run`. Trang demo là [danh mục căn hộ](http://127.0.0.1:8080/admin/apartments).
 
 ## 7. Quy ước đặt tên
 
