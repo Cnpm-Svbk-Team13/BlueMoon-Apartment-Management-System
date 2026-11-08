@@ -4,6 +4,8 @@ Scope: DB-01, BE-01, BE-02, DB-02 and BE-03. Traceability: US-001, RAW-001/002, 
 
 ## Database and authentication
 
+For workstation setup, including the local demo account and troubleshooting, follow the [localhost guide](../../03_operations_and_guides/local-development.md).
+
 - The SQL baseline is commit `e40c1cbeaf33fadd7d7be99a28a8da053e2758f1` for [schema, permissions and seed](../../../database/README.md). Prepare the scripts in that order on an empty, isolated database with synthetic seed data.
 - Run bootstrap and seed as the database owner. Configure the application with the `bluemoon_app` role and supply `DB_URL`, `DB_USERNAME` and `DB_PASSWORD` through local environment settings. Hibernate uses schema validation.
 - The apartment and household controllers resolve the authenticated principal username to an active `ROLE_ADMIN` or `ROLE_ACCOUNTANT` in `users`. Hoà's login integration must expose the canonical database username as the Spring Security principal name.
@@ -36,7 +38,17 @@ Run the local suite and quality gate on Windows:
 
 MockMvc and H2 exercise form binding, server-side access checks, database writes and rollback with synthetic users. The H2 head tests replace the PostgreSQL advisory lock with a mock.
 
-Local result on 2026-11-07: `clean verify -Psprint1-quality` succeeded. 32 tests passed and the two opt-in PostgreSQL tests were skipped. JaCoCo measured 300 of 331 Service and Controller lines, or 90.6%. PostgreSQL execution, database-backed login and UAT remain pending for acceptance.
+Local verification on 2026-11-07:
+
+| Check | Result |
+| --- | --- |
+| Fresh localhost setup | `docker compose config --quiet` passed. A separate PostgreSQL 17 container on `127.0.0.1:15432` bootstrapped the schema, privileges and seed. The app role read all seven sample apartments over TCP. |
+| Application demo | The packaged app used the generated local `.env` and Hibernate `validate` on port `18080`. The demo admin received HTTP 200 from the apartment list and a household page. |
+| Existing volume | Stopping and starting the verification container preserved all seven sample apartments. The app role could reconnect over TCP. |
+| H2 and MockMvc | `clean verify -Psprint1-quality` passed in a separate build directory. 32 tests passed and the two opt-in PostgreSQL cases were skipped in this run. JaCoCo measured 300 of 331 Service and Controller lines, or 90.6%. |
+| PostgreSQL business cases | `-Dtest=Sprint1PostgresTest test` ran both cases on a separate disposable database. 2 passed, 0 skipped. |
+
+Database-backed login, review and UAT remain pending for Sprint acceptance.
 
 For the PostgreSQL scenarios, prepare a disposable local database named `bluemoon_sprint1_test` with the three SQL scripts above. The opt-in test accepts a loopback JDBC URL and uses `bluemoon_app`. It commits synthetic test records for independent connection checks, so use a disposable database.
 
@@ -48,6 +60,6 @@ Remove-Item Env:BLUEMOON_PG_TEST_PASSWORD
 Remove-Item Env:BLUEMOON_PG_TEST_URL
 ```
 
-Check the report for two executed PostgreSQL cases covering concurrent apartment creation and concurrent head assignment/replacement. Run the existing isolated schema verification for constraints, grants and deferred trigger behavior. Docker engine connectivity was unavailable during this implementation.
+Check the report for two executed PostgreSQL cases covering concurrent apartment creation and concurrent head assignment/replacement. Run the existing isolated schema verification for broader constraint, grant and deferred trigger checks.
 
 Huy supplies PostgreSQL and business test evidence. Khánh compiles UAT results. Hoà reviews Sơn's PR, and Sơn reviews Hoà's PR and checks the acceptance evidence under PM-03. Logical deletion remains open for a team scope decision.

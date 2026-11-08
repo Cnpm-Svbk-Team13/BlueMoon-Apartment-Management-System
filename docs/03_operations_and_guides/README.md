@@ -18,7 +18,7 @@ Giai đoạn 3 cung cấp toàn bộ hướng dẫn kỹ thuật để thiết l
 ```text
 docs/03_operations_and_guides/
 ├── README.md                      # Tổng quan và hướng dẫn điều hướng Giai đoạn 3
-├── local-development.md           # Hướng dẫn thiết lập môi trường, kết nối GCP, Docker & Run tests
+├── local-development.md           # PostgreSQL local, Spring Boot, demo và kiểm thử
 └── google-cloud-database-guide.md # Cẩm nang chi tiết triển khai PostgreSQL trên Google Cloud VM
 ```
 
@@ -35,8 +35,8 @@ docs/03_operations_and_guides/
 
 | Mục tiêu | Công cụ / Lệnh | Tài liệu chi tiết |
 |---|---|---|
-| **Chạy kết nối Google Cloud** | Cấu hình `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` trong IDE hoặc PowerShell | [google-cloud-database-guide.md](./google-cloud-database-guide.md) & [local-development.md](./local-development.md#2-thiết-lập-cơ-sở-dữ-liệu-database-setup) |
-| **Chạy Docker Postgres Local** | `docker compose up -d` | [Mục 2 trong local-development.md](./local-development.md#phương-án-b-chạy-postgresql-cục-bộ-bằng-docker-offline-development) |
-| **Khởi động ứng dụng Spring Boot** | `.\mvnw.cmd spring-boot:run` (truy cập `http://localhost:8080/`) | [Mục 4 trong local-development.md](./local-development.md#4-chạy-và-kiểm-thử-ứng-dụng) |
-| **Chạy kiểm thử độc lập (H2)** | `.\mvnw.cmd test` | [Mục 4 trong local-development.md](./local-development.md#chạy-kiểm-thử-độc-lập-unit--integration-tests) |
+| **Kết nối Google Cloud** | Cấu hình JDBC do nhóm cấp | [Hướng dẫn Google Cloud](./google-cloud-database-guide.md) |
+| **Chạy PostgreSQL local** | Tạo `.env`, khởi động Compose và bootstrap database mới | [Khởi động PostgreSQL](./local-development.md#2-khởi-động-postgresql) |
+| **Chạy ứng dụng và demo** | `.\mvnw.cmd spring-boot:run` và mở `/admin/apartments` | [Chạy trên trình duyệt](./local-development.md#3-chạy-và-thử-trên-trình-duyệt) |
+| **Chạy kiểm thử độc lập** | Maven Wrapper với profile kiểm thử H2 | [Kiểm thử và đóng gói](./local-development.md#5-kiểm-thử-đóng-gói-và-sao-lưu) |
 | **Quy trình cập nhật Schema CSDL** | Chỉnh sửa DDL $\rightarrow$ `database/schema.sql` $\rightarrow$ Review PR $\rightarrow$ Deploy Cloud | [database/README.md](../../database/README.md) |

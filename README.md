@@ -53,62 +53,13 @@ Cổng Cư dân ───────┘                            │
 
 ## Bắt đầu phát triển
 
-### 1. Yêu cầu môi trường
-
-- **Java Development Kit:** JDK 25 LTS (chuẩn hóa toàn đội).
-- **Maven Wrapper:** Đi kèm sẵn trong dự án (`mvnw` / `mvnw.cmd`), không bắt buộc cài Maven toàn cục.
-- **Cơ sở dữ liệu (Chọn 1 trong 2 phương án):**
-  - **Phương án A (Khuyên dùng cho toàn đội — KHÔNG CẦN CÀI DOCKER):** Kết nối trực tiếp vào máy chủ CSDL PostgreSQL 17 dùng chung của nhóm trên **Google Cloud Platform**. Thành viên không cần cài đặt Docker Desktop, tiết kiệm 4GB RAM cho máy tính.
-  - **Phương án B (Dành cho ai muốn phát triển offline):** Cài đặt Docker Desktop và chạy `docker compose up -d` tại thư mục gốc để khởi động PostgreSQL 17 cục bộ.
-
-### 2. Cấu hình biến môi trường (`.env`)
-
-Sao chép tệp mẫu [`.env.example`](./.env.example) thành tệp `.env` tại thư mục gốc:
-
-```bash
-# Phương án A: Kết nối Google Cloud Database dùng chung của nhóm
-DB_URL=jdbc:postgresql://<GCP_HOST_OR_IP>:5432/bluemoon?sslmode=prefer
-DB_USERNAME=bluemoon_app
-DB_PASSWORD=your_secure_password_here
-JPA_DDL_AUTO=validate
-PORT=8080
-```
-*(Chi tiết thông số IP và mật khẩu Google Cloud được quản trị viên CSDL chia sẻ nội bộ qua kênh bảo mật của nhóm).*
-
-### 3. Khởi động Ứng dụng 1-Click (1-Click Run)
-
-Nhóm đã tích hợp sẵn bộ script tự động nạp file `.env` và khởi chạy Spring Boot:
-
-- **Trên Windows PowerShell:**
-  ```powershell
-  .\run.ps1
-  ```
-- **Trên Windows Command Prompt (CMD):**
-  ```cmd
-  run
-  ```
-- **Trên Linux / macOS / Git Bash:**
-  ```bash
-  chmod +x run.sh && ./run.sh
-  ```
-- **Hoặc chạy bằng lệnh Maven Wrapper truyền thống:**
-  ```powershell
-  .\mvnw.cmd spring-boot:run
-  ```
-
-Sau khi ứng dụng khởi động thành công, mở trình duyệt và truy cập: **`http://localhost:8080/`**.
-
-### 4. Chạy kiểm thử tự động (Unit & Integration Tests)
-
-Dự án đã cấu hình H2 In-Memory Database độc lập cho kiểm thử, không phụ thuộc vào kết nối mạng:
+Cài JDK 25 và Docker Desktop. Dùng [hướng dẫn chạy local](docs/03_operations_and_guides/local-development.md) để tạo `.env`, khởi tạo PostgreSQL mẫu và chạy Spring Boot từ thư mục gốc.
 
 ```powershell
-# Windows
-.\mvnw.cmd test
-
-# Linux / macOS
-./mvnw test
+.\mvnw.cmd spring-boot:run
 ```
+
+Mở [danh mục căn hộ](http://127.0.0.1:8080/admin/apartments) và đăng nhập bằng tài khoản demo được cấu hình trong `.env`. Trên Linux/macOS, dùng `sh ./mvnw spring-boot:run`. Nếu nhóm cấp môi trường cloud, xem [hướng dẫn kết nối Google Cloud](docs/03_operations_and_guides/google-cloud-database-guide.md).
 
 ## Tài liệu Dự án
 

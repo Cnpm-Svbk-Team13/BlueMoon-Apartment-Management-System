@@ -1,134 +1,124 @@
-[🏠 Trang chủ Docs](../README.md) > [Giai đoạn 3: Vận hành & CSDL](./README.md) > **local-development.md**
+# Chạy BlueMoon trên localhost
 
----
+Mỗi thành viên chạy ứng dụng và PostgreSQL trên máy mình với dữ liệu mẫu. Cài JDK 25, mở Docker Desktop và chạy các lệnh từ thư mục gốc dự án. Maven Wrapper đi kèm repo. [Hướng dẫn Google Cloud](google-cloud-database-guide.md)
 
-# HƯỚNG DẪN PHÁT TRIỂN CỤC BỘ (LOCAL DEVELOPMENT GUIDE)
-## Hệ thống Quản lý Thu phí và Dân cư Chung cư BlueMoon (BlueMoon BFMS)
+## 1. Tạo cấu hình local
 
----
+Nếu chưa có `.env`, sao chép mẫu:
 
-## 1. Yêu cầu Tiền đề (Prerequisites)
-- **Java Development Kit (JDK):** Phiên bản 25 LTS. Kiểm tra bằng lệnh:
-  ```bash
-  java -version
-  ```
-- **Docker & Docker Compose:** Dùng để chạy máy chủ cơ sở dữ liệu PostgreSQL cục bộ.
-  ```bash
-  docker compose version
-  ```
-- **Maven:** Đi kèm sẵn trong dự án thông qua Maven Wrapper (`mvnw` trên Linux/macOS hoặc `mvnw.cmd` trên Windows). Không bắt buộc cài Maven toàn cục.
-- **Git:** Quản lý mã nguồn.
+```powershell
+Copy-Item .env.example .env
+```
 
----
+Nếu đã có `.env`, đối chiếu từng khóa với mẫu và giữ cặp tài khoản PostgreSQL đang sử dụng. Spring Boot đọc `.env` như file Java properties. Dùng tên có dấu chấm cho các khóa Spring và khởi chạy từ thư mục gốc.
 
-## 2. Khởi động Cơ sở Dữ liệu PostgreSQL qua Docker Compose
+| Khóa | Dùng để làm gì |
+| --- | --- |
+| `POSTGRES_OWNER_USERNAME`, `POSTGRES_OWNER_PASSWORD` | Tài khoản owner bootstrap PostgreSQL. Volume mới mặc định dùng `bluemoon_owner`. |
+| `DB_USERNAME`, `DB_PASSWORD` | Tài khoản ứng dụng `bluemoon_app` và mật khẩu đặt khi tạo role. |
+| `spring.security.user.name`, `spring.security.user.password` | Tài khoản demo trên trình duyệt. Dùng username `admin` và mật khẩu demo riêng. |
+| `POSTGRES_LOCAL_PORT`, `DB_URL` | Cổng PostgreSQL và URL JDBC. Nếu đổi cổng sang `15432`, dùng `jdbc:postgresql://127.0.0.1:15432/bluemoon`. |
+| `PORT`, `server.address` | Cổng HTTP, mặc định `8080`, và địa chỉ loopback `127.0.0.1`. |
+| `JPA_DDL_AUTO` | Dùng `validate` để Hibernate kiểm tra schema. |
 
-Dự án đã cấu hình sẵn tập tin `docker-compose.yml` tại thư mục gốc.
+Thay cả ba placeholder bằng mật khẩu khác nhau. Dùng chuỗi chữ và số dài để tránh ký tự được Compose hoặc Java properties diễn giải. Giữ mật khẩu trong `.env` local đã được Git bỏ qua. Biến môi trường từ terminal hoặc IDE được ưu tiên hơn `.env`. Mở terminal mới hoặc xóa các giá trị ghi đè cũ trong cấu hình Run của IDE nếu gặp sai lệch.
 
-### 2.1. Khởi động Container Database
-Sao chép `.env.example` thành `.env`, đặt `POSTGRES_OWNER_PASSWORD`, `DB_PASSWORD` bằng hai mật khẩu khác nhau và không commit `.env`. Sau đó mở terminal tại thư mục gốc và chạy:
-```bash
+## 2. Khởi động PostgreSQL
+
+```powershell
+docker compose config --quiet
 docker compose up -d
-```
-Lệnh này sẽ tải và khởi động container PostgreSQL 17 với thông số:
-- **Tên container:** `bluemoon-postgres`
-- **Port:** `5432`
-- **Database:** `bluemoon`
-- **Owner:** `bluemoon_owner` (chỉ bootstrap/quản trị)
-- **App role:** `bluemoon_app` (tạo riêng, dùng cho Spring Boot)
-
-Với volume local mới, tạo app role bằng lời nhắc mật khẩu rồi chạy ba script theo thứ tự:
-
-```bash
-docker exec -it bluemoon-postgres createuser -U bluemoon_owner --login --pwprompt bluemoon_app
-docker exec -i bluemoon-postgres psql -U bluemoon_owner -d bluemoon -v ON_ERROR_STOP=1 < database/schema.sql
-docker exec -i bluemoon-postgres psql -U bluemoon_owner -d bluemoon -v ON_ERROR_STOP=1 < database/permissions.sql
-docker exec -i bluemoon-postgres psql -U bluemoon_owner -d bluemoon -v ON_ERROR_STOP=1 < database/seed_data.sql
-```
-
-Seed chỉ chạy khi ứng dụng đã dừng và cả bảy bảng rỗng. Việc đổi `POSTGRES_OWNER_*` không thay user trong volume đã khởi tạo trước đó; database cũ cần kế hoạch chuyển đổi riêng, không tự xóa volume có dữ liệu.
-
-### 2.2. Kiểm tra Trạng thái Container
-```bash
 docker compose ps
 ```
 
-### 2.3. Dừng Container khi không dùng
+### Database mới
+
+Đợi PostgreSQL sẵn sàng trước khi tạo role. Các lệnh dưới đây dùng owner mặc định từ mẫu. Nếu đặt owner khác, thay `bluemoon_owner` trong các lệnh bằng tên đó.
+
+```powershell
+docker compose exec postgres pg_isready -U bluemoon_owner -d bluemoon
+docker compose exec postgres createuser -U bluemoon_owner --login --pwprompt bluemoon_app
+docker compose cp database/schema.sql postgres:/tmp/bluemoon-schema.sql
+docker compose cp database/permissions.sql postgres:/tmp/bluemoon-permissions.sql
+docker compose cp database/seed_data.sql postgres:/tmp/bluemoon-seed.sql
+docker compose exec -T postgres psql -X -U bluemoon_owner -d bluemoon -v ON_ERROR_STOP=1 -f /tmp/bluemoon-schema.sql
+docker compose exec -T postgres psql -X -U bluemoon_owner -d bluemoon -v ON_ERROR_STOP=1 -f /tmp/bluemoon-permissions.sql
+docker compose exec -T postgres psql -X -U bluemoon_owner -d bluemoon -v ON_ERROR_STOP=1 -f /tmp/bluemoon-seed.sql
+```
+
+Ở lời nhắc của `createuser`, nhập đúng mật khẩu bạn đặt cho `DB_PASSWORD`. Chỉ chuyển sang lệnh tiếp theo khi lệnh trước thành công. Dùng `docker compose cp` và `psql -f` để giữ nguyên UTF-8 của file SQL trên cả PowerShell và Bash.
+
+### Database đã có
+
+Dùng lại volume, tên owner và mật khẩu đã được thiết lập lúc khởi tạo. Giá trị `POSTGRES_OWNER_*` trong Compose chỉ áp dụng cho quá trình khởi tạo volume mới. Nếu app role đã có, kiểm tra bằng mật khẩu hiện tại. Bootstrap chỉ dùng cho database trống. Seed chỉ chạy khi ứng dụng đã dừng và cả bảy bảng rỗng. [Quy trình database](../../database/README.md)
+
+Kiểm tra bằng kết nối TCP để PostgreSQL thực sự xác thực mật khẩu app role:
+
+```powershell
+docker compose exec postgres psql -X -h 127.0.0.1 -U bluemoon_app -d bluemoon -W -v ON_ERROR_STOP=1 -c "SELECT current_user, count(*) FROM apartments;"
+```
+
+Kết quả phải hiện `bluemoon_app`. Sau đó kiểm tra phiên bản schema bằng lần khởi động Hibernate ở bước 3. Khi cần dừng database, `docker compose stop postgres` giữ lại container và volume.
+
+## 3. Chạy và thử trên trình duyệt
+
+Windows PowerShell:
+
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+Linux/macOS:
+
 ```bash
-docker compose down
+sh ./mvnw spring-boot:run
 ```
-*(Dữ liệu CSDL được lưu bền vững trong Docker volume `postgres_data`).*
 
----
+Mở [danh mục căn hộ](http://127.0.0.1:8080/admin/apartments). Nếu đã đổi `PORT`, thay cổng trong URL. Spring Security sẽ chuyển tới `/login`. Đăng nhập bằng `admin` và mật khẩu ở `spring.security.user.password`. Đây là tài khoản demo local của Spring Security. Phần đăng nhập bằng tài khoản database do Hoà tích hợp.
 
-## 3. Cấu hình Biến Môi trường (Environment Variables)
+- Kiểm tra danh sách và bộ lọc tầng.
+- Mở **Create apartment** hoặc **Edit** trên dữ liệu mẫu.
+- Mở **Household** của một căn để xem hồ sơ chủ hộ và lịch sử.
 
-Ứng dụng Spring Boot đọc thông tin kết nối CSDL từ `src/main/resources/application.yml` thông qua các biến môi trường:
+## 4. Xử lý lỗi thường gặp
 
-| Tên biến môi trường | Giá trị mặc định khi chạy Local | Mô tả |
-|---|---|---|
-| `DB_URL` | `jdbc:postgresql://localhost:5432/bluemoon` | Địa chỉ JDBC tới CSDL PostgreSQL |
-| `DB_USERNAME` | `bluemoon_app` | Role ứng dụng ít quyền, không phải owner |
-| `DB_PASSWORD` | Không có mặc định | Mật khẩu lấy từ secret hoặc `.env` không commit |
-| `JPA_DDL_AUTO` | `validate` | Chỉ xác minh Entity, không tự sửa schema |
+| Triệu chứng | Kiểm tra |
+| --- | --- |
+| Cổng đã được sử dụng | Đổi `POSTGRES_LOCAL_PORT` cùng cổng trong `DB_URL`, hoặc đổi `PORT` nếu xung đột ở ứng dụng. |
+| `password authentication failed` | Kiểm tra đúng cặp `DB_USERNAME` và `DB_PASSWORD` của volume đang chạy. Thử lệnh TCP ở mục 2. |
+| Đăng nhập thất bại | Kiểm tra mật khẩu demo, thư mục chạy và cấu hình ghi đè từ terminal/IDE. Khởi động lại ứng dụng sau khi sửa `.env`. |
+| `403` khi mở danh mục | Mở cửa sổ ẩn danh mới, đăng nhập bằng `admin` và kiểm tra database local có dòng `admin` đang hoạt động với quyền `ROLE_ADMIN`. |
+| `Schema-validation` | Kiểm tra URL trỏ đúng database, phiên bản schema và quyền app role. Dùng quy trình chuyển đổi riêng cho database đã có dữ liệu. |
 
-Trên Windows PowerShell, bạn có thể thiết lập tạm thời cho phiên làm việc hiện tại:
+Kiểm tra dòng demo mà không truy xuất mật khẩu:
+
 ```powershell
-$env:DB_URL="jdbc:postgresql://localhost:5432/bluemoon"
-$env:DB_USERNAME="bluemoon_app"
-$env:DB_PASSWORD="<LOCAL_APP_PASSWORD>"
-$env:JPA_DDL_AUTO="validate"
+docker compose exec postgres psql -X -h 127.0.0.1 -U bluemoon_app -d bluemoon -W -c "SELECT username, role, is_active FROM users WHERE username = 'admin';"
 ```
 
----
+## 5. Kiểm thử, đóng gói và sao lưu
 
-## 4. Biên dịch và Chạy Ứng dụng
+Nếu đang chạy file JAR trên Windows, dừng ứng dụng trước khi chạy `clean` để Maven có thể ghi lại file.
 
-### 4.1. Chạy Ứng dụng qua Maven Wrapper
-- **Trên Windows PowerShell:**
-  ```powershell
-  .\mvnw.cmd spring-boot:run
-  ```
-- **Trên Linux / macOS:**
-  ```bash
-  ./mvnw spring-boot:run
-  ```
-
-Sau khi khởi động thành công, các URL mục tiêu dưới đây cần controller/security hoàn chỉnh mới dùng được; scaffold hiện chưa có các route nghiệp vụ:
-- **Trang chủ / Cổng cư dân:** [http://localhost:8080/](http://localhost:8080/)
-- **Trang Đăng nhập BQT:** [http://localhost:8080/login](http://localhost:8080/login)
-- **Trang Quản trị (Admin Dashboard):** [http://localhost:8080/admin/dashboard](http://localhost:8080/admin/dashboard)
-
-### 4.2. Chạy Kiểm thử Tự động (Unit & Integration Tests)
 ```powershell
-.\mvnw.cmd test
-```
-
-### 4.3. Đóng gói Ứng dụng thành file JAR
-```powershell
-.\mvnw.cmd clean package -DskipTests
-```
-File JAR thực thi sẽ nằm trong thư mục `target/bluemoon-bfms-0.0.1-SNAPSHOT.jar`. Để chạy:
-```bash
+.\mvnw.cmd --batch-mode --no-transfer-progress clean verify
+.\mvnw.cmd --batch-mode --no-transfer-progress clean verify -Psprint1-quality
 java -jar target/bluemoon-bfms-0.0.1-SNAPSHOT.jar
 ```
 
----
+Bộ test H2/MockMvc chạy độc lập với PostgreSQL. Khi nghiệm thu Sprint, cổng chất lượng yêu cầu độ bao phủ dòng Service + Controller từ 85% và bằng chứng kiểm thử nghiệp vụ, PostgreSQL, UAT. [Quy chuẩn dự án](../PROJECT_CONVENTIONS.md) · [Hướng dẫn kiểm thử PostgreSQL](../sprints/sprint-1/SON_BACKEND_HANDOFF.md#verification)
 
-## 5. Sao lưu và Khôi phục Cơ sở Dữ liệu (Backup & Restore)
+Để sao lưu bằng owner mặc định, ghi file trong container rồi sao chép ra máy.
 
-### 5.1. Sao lưu dữ liệu ra file SQL
-```bash
-docker exec -t bluemoon-postgres pg_dump -U postgres bluemoon > backup_bluemoon.sql
+```powershell
+docker compose exec -T postgres pg_dump -U bluemoon_owner -d bluemoon -f /tmp/bluemoon-backup.sql
+docker compose cp postgres:/tmp/bluemoon-backup.sql backup_bluemoon.sql
 ```
 
-### 5.2. Khôi phục dữ liệu từ file SQL
-```bash
-docker exec -i bluemoon-postgres psql -U postgres -d bluemoon < backup_bluemoon.sql
+Để kiểm tra bản sao lưu, tạo một database trống riêng và khôi phục vào đó.
+
+```powershell
+docker compose exec -T postgres createdb -U bluemoon_owner bluemoon_restore
+docker compose cp backup_bluemoon.sql postgres:/tmp/bluemoon-restore.sql
+docker compose exec -T postgres psql -X -U bluemoon_owner -d bluemoon_restore -v ON_ERROR_STOP=1 -f /tmp/bluemoon-restore.sql
 ```
-
-## Kiểm tra và skills Sprint 1
-
-Xem [quy chuẩn](../PROJECT_CONVENTIONS.md). Chạy `.\mvnw.cmd --batch-mode --no-transfer-progress clean verify` để build, smoke test H2 và tạo báo cáo JaCoCo. Nghiệm thu chạy thêm `-Psprint1-quality`, kiểm tra >=85% line coverage gộp Service/Controller và đầy đủ UAT. Smoke test không cần PostgreSQL; test schema/migration vẫn cần PostgreSQL thật cô lập. Mockito được nạp sẵn bằng javaagent cùng JaCoCo để tránh tự attach khi test trên Java 25.
-
-Spring Boot hiện không tự nạp file `.env`; đặt biến môi trường qua PowerShell/IDE. Ba skill repo ở `.agents/skills/`, kéo Git rồi mở phiên Codex mới nếu chưa thấy. Không tự thực thi migration hoặc tạo issue trên GitHub.
