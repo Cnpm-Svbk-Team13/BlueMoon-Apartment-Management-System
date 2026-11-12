@@ -4,8 +4,10 @@ import com.bluemoon.bfms.dto.ApartmentForm;
 import com.bluemoon.bfms.model.Apartment;
 import com.bluemoon.bfms.model.ApartmentType;
 import com.bluemoon.bfms.model.AuditLog;
+import com.bluemoon.bfms.model.User;
 import com.bluemoon.bfms.repository.ApartmentRepository;
 import com.bluemoon.bfms.repository.AuditLogRepository;
+import com.bluemoon.bfms.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,12 +39,15 @@ class ApartmentServiceTest {
     @Mock
     private AuditLogRepository auditLogRepository;
 
+    @Mock
+    private UserRepository userRepository;
+
     private ApartmentService service;
     private ApartmentForm form;
 
     @BeforeEach
     void setUp() {
-        service = new ApartmentService(apartmentRepository, auditLogRepository);
+        service = new ApartmentService(apartmentRepository, auditLogRepository, userRepository);
         form = new ApartmentForm();
         form.setRoomNumber(" a0601 ");
         form.setFloorNumber(6);
@@ -53,6 +58,9 @@ class ApartmentServiceTest {
     @Test
     void createsNormalizedApartmentAndRecordsActorAndEntityId() {
         Apartment persisted = mock(Apartment.class);
+        User actor = mock(User.class);
+        when(actor.getId()).thenReturn(7L);
+        when(userRepository.getReferenceById(7L)).thenReturn(actor);
         when(persisted.getId()).thenReturn(42L);
         when(persisted.getRoomNumber()).thenReturn("A0601");
         when(apartmentRepository.saveAndFlush(any(Apartment.class))).thenReturn(persisted);

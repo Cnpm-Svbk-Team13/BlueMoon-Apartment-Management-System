@@ -47,13 +47,10 @@ public class HouseholdDetailsService {
         boolean headResidesHere = head != null && residents.findByPersonId(head.getId())
                 .filter(resident -> resident.getHousehold().getId().equals(household.getId())).isPresent();
         var entries = history.findByHouseholdApartmentIdOrderByChangedAtDescIdDesc(apartmentId).stream()
-                .map(entry -> {
-                    String event = entry.getPreviousHeadPerson() == null ? "ASSIGNED"
-                            : entry.getPreviousHeadPerson().getId().equals(entry.getNewHeadPerson().getId())
-                                    ? "PROFILE_UPDATED" : "REPLACED";
-                    return new ApartmentHouseholdView.HistoryEntry(event, entry.getPreviousSnapshot(),
-                            entry.getNewSnapshot(), entry.getChangedAt(), entry.getChangedByUserId());
-                }).toList();
+                .map(entry -> new ApartmentHouseholdView.HistoryEntry(entry.getEventType(),
+                        entry.getPreviousSnapshot(), entry.getNewSnapshot(),
+                        entry.getChangedAt(), entry.getChangedByUserId()))
+                .toList();
         return new ApartmentHouseholdView(apartment.getId(), apartment.getRoomNumber(),
                 head == null ? null : head.getId(), head == null ? null : toForm(head), headResidesHere, entries);
     }

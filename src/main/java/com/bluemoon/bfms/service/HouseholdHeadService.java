@@ -25,19 +25,21 @@ public class HouseholdHeadService {
     private final ResidentRepository residents;
     private final HouseholdHeadHistoryRepository history;
     private final AuditLogRepository audits;
+    private final UserRepository users;
     private final HouseholdWriteLock writeLock;
     private final Validator validator;
 
     public HouseholdHeadService(ApartmentRepository apartments, PersonRepository persons,
             HouseholdRepository households, ResidentRepository residents,
             HouseholdHeadHistoryRepository history, AuditLogRepository audits,
-            HouseholdWriteLock writeLock, Validator validator) {
+            UserRepository users, HouseholdWriteLock writeLock, Validator validator) {
         this.apartments = apartments;
         this.persons = persons;
         this.households = households;
         this.residents = residents;
         this.history = history;
         this.audits = audits;
+        this.users = users;
         this.writeLock = writeLock;
         this.validator = validator;
     }
@@ -186,7 +188,9 @@ public class HouseholdHeadService {
 
     private void recordChange(Household household, Person previous, Person next, JsonNode before,
             Long actorId, String ipAddress, String action) {
-        history.save(new HouseholdHeadHistory(household, previous, next, before, snapshot(next), actorId));
-        audits.save(new AuditLog(actorId, action, "Household", household.getId(), null, ipAddress));
+        // Tạo cùng một tham chiếu tài khoản cho cả lịch sử và audit trong transaction hiện tại.
+        User actor = users.getReferenceById(actorId);
+        history.save(new HouseholdHeadHistory(household, previous, next, before, snapshot(next), actor));
+        audits.save(new AuditLog(actor, action, "Household", household.getId(), null, ipAddress));
     }
 }

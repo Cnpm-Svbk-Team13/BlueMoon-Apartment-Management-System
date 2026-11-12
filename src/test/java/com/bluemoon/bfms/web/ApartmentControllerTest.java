@@ -38,17 +38,24 @@ class ApartmentControllerTest {
 
     @BeforeEach
     void seedActors() {
-        // Synthetic authentication fixtures; the application does not map users yet.
-        jdbc.execute("""
-                CREATE TABLE IF NOT EXISTS users (
-                    id BIGINT PRIMARY KEY, username VARCHAR(50), role VARCHAR(20), is_active BOOLEAN
-                )
-                """);
-        jdbc.update("DELETE FROM users");
-        jdbc.update("INSERT INTO users VALUES (7, 'son', 'ROLE_ADMIN', TRUE)");
-        jdbc.update("INSERT INTO users VALUES (8, 'accountant', 'ROLE_ACCOUNTANT', TRUE)");
-        jdbc.update("INSERT INTO users VALUES (9, 'cashier', 'ROLE_CASHIER', TRUE)");
-        jdbc.update("INSERT INTO users VALUES (10, 'disabled', 'ROLE_ADMIN', FALSE)");
+        // Tạo hồ sơ và tài khoản giả theo đúng cấu trúc entity/schema hiện hành.
+        insertActor(7L, "son", "ROLE_ADMIN", true);
+        insertActor(8L, "accountant", "ROLE_ACCOUNTANT", true);
+        insertActor(9L, "cashier", "ROLE_CASHIER", true);
+        insertActor(10L, "disabled", "ROLE_ADMIN", false);
+    }
+
+    private void insertActor(Long userId, String username, String role, boolean active) {
+        String email = username + "@example.test";
+        jdbc.update("INSERT INTO persons (full_name, phone, email) VALUES (?, ?, ?)",
+                "Test " + username, "0900000000", email);
+        Long personId = jdbc.queryForObject(
+                "SELECT id FROM persons WHERE email = ?", Long.class, email);
+        jdbc.update("""
+                INSERT INTO users
+                    (id, username, password_hash, person_id, role, failed_attempts, locked_until, is_active)
+                VALUES (?, ?, 'test-hash', ?, ?, 0, NULL, ?)
+                """, userId, username, personId, role, active);
     }
 
     private MockHttpServletRequestBuilder creation(String room, String area, String type) {
@@ -79,6 +86,10 @@ class ApartmentControllerTest {
         assertEquals(7L, audit.getUserId());
         assertEquals("CREATE", audit.getAction());
         assertEquals("Apartment", audit.getEntityName());
+        assertEquals(1, audits.findAllByUser_IdOrderByCreatedAtDescIdDesc(7L).size());
+        assertEquals(audit.getId(), audits
+                .findAllByEntityNameAndEntityIdOrderByCreatedAtDescIdDesc("Apartment", apartment.getId())
+                .getFirst().getId());
     }
 
     @Test
