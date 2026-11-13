@@ -2,15 +2,23 @@ package com.bluemoon.bfms.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import java.time.OffsetDateTime;
 
 /**
- * Maps audit records for Sprint 1 task BE-02 (US-001, RAW-001 and RAW-002).
+ * Ánh xạ một bản ghi nhật ký kiểm toán trong bảng {@code audit_logs}.
+ *
+ * <p>Người thực hiện được ánh xạ thành quan hệ tới {@link User}, tương ứng
+ * khóa ngoại {@code user_id}. Giá trị này có thể null khi chưa xác định được
+ * tài khoản; nhật ký không lưu mật khẩu, hash mật khẩu hoặc dữ liệu định danh
+ * cá nhân đầy đủ.</p>
  */
 @Entity
 @Table(name = "audit_logs")
@@ -20,8 +28,9 @@ public class AuditLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id")
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "action", nullable = false, length = 50)
     private String action;
@@ -45,24 +54,24 @@ public class AuditLog {
     }
 
     /**
-     * Creates an audit record; the database supplies its ID and creation time.
+     * Tạo bản ghi kiểm toán; khóa chính và thời điểm tạo do database sinh.
      *
-     * @param userId acting user ID, or null when the actor is unknown
-     * @param action recorded operation
-     * @param entityName affected entity name
-     * @param entityId affected entity ID, or null when unavailable
-     * @param details optional operation details
-     * @param ipAddress optional client IP address
+     * @param user tài khoản thực hiện, hoặc null nếu chưa xác định được
+     * @param action mã hành động được ghi nhận
+     * @param entityName tên loại đối tượng bị tác động
+     * @param entityId khóa đối tượng bị tác động, hoặc null nếu không có
+     * @param details mô tả tùy chọn, không chứa bí mật/dữ liệu cá nhân đầy đủ
+     * @param ipAddress địa chỉ IP tùy chọn của client
      */
     public AuditLog(
-            Long userId,
+            User user,
             String action,
             String entityName,
             Long entityId,
             String details,
             String ipAddress) {
 
-        this.userId = userId;
+        this.user = user;
         this.action = action;
         this.entityName = entityName;
         this.entityId = entityId;
@@ -74,8 +83,19 @@ public class AuditLog {
         return id;
     }
 
+    /** @return tài khoản liên kết hoặc null nếu actor chưa xác định */
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * Trả ID để duy trì read-model hiện tại mà không buộc nơi gọi tải toàn bộ
+     * hồ sơ tài khoản.
+     *
+     * @return ID tài khoản hoặc null nếu nhật ký chưa có actor
+     */
     public Long getUserId() {
-        return userId;
+        return user == null ? null : user.getId();
     }
 
     public String getAction() {

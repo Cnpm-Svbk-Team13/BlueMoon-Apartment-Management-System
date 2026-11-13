@@ -2,6 +2,7 @@ package com.bluemoon.bfms.web;
 
 import com.bluemoon.bfms.model.Apartment;
 import com.bluemoon.bfms.model.ApartmentType;
+import com.bluemoon.bfms.model.Household;
 import com.bluemoon.bfms.model.Person;
 import com.bluemoon.bfms.repository.ApartmentRepository;
 import com.bluemoon.bfms.repository.HouseholdHeadHistoryRepository;
@@ -10,6 +11,7 @@ import com.bluemoon.bfms.model.HouseholdStatus;
 import com.bluemoon.bfms.repository.HouseholdWriteLock;
 import com.bluemoon.bfms.repository.PersonRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,6 +48,7 @@ class HouseholdHeadWebTest {
     @Autowired private HouseholdHeadHistoryRepository history;
     @Autowired private HouseholdRepository households;
     @Autowired private EntityManager entityManager;
+    @Autowired private EntityManagerFactory entityManagerFactory;
 
     @MockitoBean
     private HouseholdWriteLock writeLock;
@@ -54,12 +58,16 @@ class HouseholdHeadWebTest {
 
     @BeforeEach
     void seed() {
-        jdbc.execute("""
-                CREATE TABLE IF NOT EXISTS users (
-                    id BIGINT PRIMARY KEY, username VARCHAR(50), role VARCHAR(20), is_active BOOLEAN
-                )
-                """);
-        jdbc.update("INSERT INTO users VALUES (97, 'head-editor', 'ROLE_ADMIN', TRUE)");
+        // Tạo actor giả bằng các bảng đã được entity ánh xạ, không tự khai báo users rút gọn.
+        jdbc.update("INSERT INTO persons (full_name, phone, email) VALUES (?, ?, ?)",
+                "Head editor", "0900000097", "head-editor@example.test");
+        Long editorPersonId = jdbc.queryForObject(
+                "SELECT id FROM persons WHERE email = ?", Long.class, "head-editor@example.test");
+        jdbc.update("""
+                INSERT INTO users
+                    (id, username, password_hash, person_id, role, failed_attempts, locked_until, is_active)
+                VALUES (97, 'head-editor', 'test-hash', ?, 'ROLE_ADMIN', 0, NULL, TRUE)
+                """, editorPersonId);
         apartmentId = apartments.save(new Apartment("HEAD-TEST", 6,
                 new BigDecimal("75.50"), ApartmentType.RESIDENTIAL)).getId();
         url = "/admin/apartments/" + apartmentId + "/household";
@@ -87,6 +95,12 @@ class HouseholdHeadWebTest {
         assertEquals("Next Head", entries.get(0).getPreviousSnapshot().get("full_name").asText());
         assertEquals("First Head", entries.get(1).getPreviousSnapshot().get("full_name").asText());
         assertEquals(97L, entries.get(0).getChangedByUserId());
+        Long householdId = households.findByApartmentIdAndStatus(apartmentId, HouseholdStatus.ACTIVE)
+                .orElseThrow().getId();
+        assertEquals(3, history.findByHousehold_IdOrderByChangedAtDescIdDesc(householdId).size());
+        assertEquals("PROFILE_UPDATED",
+                history.findFirstByHousehold_IdOrderByChangedAtDescIdDesc(householdId)
+                        .orElseThrow().getEventType());
         assertEquals("First Head", persons.findById(firstId).orElseThrow().getFullName());
         mvc.perform(get(url)).andExpect(status().isOk())
                 .andExpect(content().string(containsString("PROFILE_UPDATED")))
@@ -117,6 +131,21 @@ class HouseholdHeadWebTest {
                 .andExpect(model().attributeHasFieldErrors(
                         "headForm", "headPerson.nationalId", "headPerson.phone"));
         assertTrue(history.findByHouseholdApartmentIdOrderByChangedAtDescIdDesc(apartmentId).isEmpty());
+    }
+
+    @Test
+    void loadsActiveHouseholdHeadWithRepositoryEntityGraph() {
+        Person head = persons.save(new Person("Graph Head", "000000000008", "0123456789", null));
+        households.save(new Household(apartments.findById(apartmentId).orElseThrow(),
+                head, "HK-GRAPH-TEST", LocalDate.of(2026, 11, 1)));
+        entityManager.flush();
+        entityManager.clear();
+
+        Household loaded = households.findByApartmentIdAndStatus(apartmentId, HouseholdStatus.ACTIVE)
+                .orElseThrow();
+
+        assertTrue(entityManagerFactory.getPersistenceUnitUtil().isLoaded(loaded, "headPerson"));
+        assertEquals("Graph Head", loaded.getHeadPerson().getFullName());
     }
 
     @Test

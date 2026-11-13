@@ -3,6 +3,7 @@ package com.bluemoon.bfms.service;
 import com.bluemoon.bfms.model.Apartment;
 import com.bluemoon.bfms.model.ApartmentType;
 import com.bluemoon.bfms.model.AuditLog;
+import com.bluemoon.bfms.repository.UserRepository;
 import com.bluemoon.bfms.repository.ApartmentRepository;
 import com.bluemoon.bfms.repository.AuditLogRepository;
 import com.bluemoon.bfms.dto.ApartmentForm;
@@ -24,12 +25,15 @@ import java.util.Locale;
 public class ApartmentService {
     private final ApartmentRepository apartmentRepository;
     private final AuditLogRepository auditLogRepository;
+    private final UserRepository userRepository;
 
     public ApartmentService(
             ApartmentRepository apartmentRepository,
-            AuditLogRepository auditLogRepository) {
+            AuditLogRepository auditLogRepository,
+            UserRepository userRepository) {
         this.apartmentRepository = apartmentRepository;
         this.auditLogRepository = auditLogRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -153,8 +157,9 @@ public class ApartmentService {
             throw exception;
         }
 
+        // Dùng proxy theo ID để JPA ghi khóa ngoại user_id mà không tải cả hồ sơ.
         AuditLog auditLog = new AuditLog(
-                currentUserId, action, "Apartment", savedApartment.getId(),
+                userRepository.getReferenceById(currentUserId), action, "Apartment", savedApartment.getId(),
                 action.equals("CREATE") ? "Created apartment " + savedApartment.getRoomNumber()
                         : "Updated apartment " + savedApartment.getRoomNumber(),
                 clientIpAddress);

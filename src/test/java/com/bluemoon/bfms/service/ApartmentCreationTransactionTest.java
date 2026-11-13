@@ -5,13 +5,18 @@ import com.bluemoon.bfms.dto.HouseholdHeadForm;
 import com.bluemoon.bfms.model.Apartment;
 import com.bluemoon.bfms.model.ApartmentType;
 import com.bluemoon.bfms.model.AuditLog;
+import com.bluemoon.bfms.model.Person;
+import com.bluemoon.bfms.model.User;
+import com.bluemoon.bfms.model.UserRole;
 import com.bluemoon.bfms.repository.ApartmentRepository;
 import com.bluemoon.bfms.repository.AuditLogRepository;
 import com.bluemoon.bfms.repository.HouseholdHeadHistoryRepository;
 import com.bluemoon.bfms.repository.HouseholdRepository;
 import com.bluemoon.bfms.repository.HouseholdWriteLock;
 import com.bluemoon.bfms.repository.PersonRepository;
+import com.bluemoon.bfms.repository.UserRepository;
 import com.bluemoon.bfms.model.HouseholdStatus;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,6 +54,17 @@ class ApartmentCreationTransactionTest {
     @Autowired private HouseholdRepository households;
     @Autowired private HouseholdHeadHistoryRepository history;
     @Autowired private PersonRepository persons;
+    @Autowired private UserRepository users;
+    private Long actorId;
+
+    @BeforeEach
+    void seedActor() {
+        String username = "actor-" + System.nanoTime();
+        Person person = persons.save(new Person(
+                "Synthetic Actor", null, "0900000007", username + "@example.test"));
+        User actor = users.save(new User(username, "test-hash", person, UserRole.ROLE_ADMIN));
+        actorId = actor.getId();
+    }
 
     @Test
     void rollsBackFlushedApartmentWhenAuditWriteFails() {
@@ -61,7 +77,7 @@ class ApartmentCreationTransactionTest {
                 .thenThrow(new IllegalStateException("Simulated audit write failure."));
 
         assertThrows(IllegalStateException.class,
-                () -> service.createApartment(form, 7L, "127.0.0.1"));
+                () -> service.createApartment(form, actorId, "127.0.0.1"));
 
         assertFalse(apartmentRepository.existsByRoomNumber("ROLLBACK-TEST"));
     }
@@ -78,7 +94,7 @@ class ApartmentCreationTransactionTest {
         when(auditLogRepository.save(any(AuditLog.class)))
                 .thenThrow(new IllegalStateException("Simulated household audit write failure."));
 
-        assertThrows(IllegalStateException.class, () -> headService.assignOrReplace(id, form, 7L, null));
+        assertThrows(IllegalStateException.class, () -> headService.assignOrReplace(id, form, actorId, null));
 
         assertTrue(persons.findByNationalId("000000000099").isEmpty());
         assertTrue(households.findByApartmentIdAndStatus(id, HouseholdStatus.ACTIVE).isEmpty());
