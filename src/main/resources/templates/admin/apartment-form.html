@@ -4,58 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Apartment form | BlueMoon</title>
-    <style>
-        body { font-family: system-ui, sans-serif; max-width: 36rem; margin: 2rem auto; padding: 0 1rem; }
-        label { display: block; margin-top: 1rem; }
-        input, select, button { box-sizing: border-box; width: 100%; padding: .65rem; font: inherit; }
-        button { margin-top: 1.5rem; }
-        .error { color: #a31621; }
-        .success { color: #176b35; }
-        [aria-invalid="true"] { border: 2px solid #a31621; }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <script defer th:src="@{/js/app.js}"></script>
 </head>
 <body>
-<main>
-    <h1 th:text="${apartmentId == null ? 'Create apartment' : 'Edit apartment'}"></h1>
-    <a th:href="@{/admin/apartments}">Back to apartments</a>
-    <p class="success" role="status" th:if="${successMessage}" th:text="${successMessage}"></p>
-    <form method="post" th:action="${apartmentId == null} ? @{/admin/apartments} : @{/admin/apartments/{id}(id=${apartmentId})}" th:object="${apartmentForm}">
-        <div class="error" role="alert" th:if="${#fields.hasGlobalErrors()}">
-            <p th:each="error : ${#fields.globalErrors()}" th:text="${error}"></p>
-        </div>
-        <label for="roomNumber">Room number</label>
-        <input th:field="*{roomNumber}" required maxlength="20"
-               aria-describedby="roomNumberError" th:attr="aria-invalid=${#fields.hasErrors('roomNumber')}">
-        <p id="roomNumberError" class="error" th:errors="*{roomNumber}"></p>
+<div class="app-shell">
+    <aside th:replace="~{fragments/layout :: sidebar}"></aside>
 
-        <label for="floorNumber">Floor number</label>
-        <input type="number" th:field="*{floorNumber}" required min="1" max="30"
-               aria-describedby="floorNumberError" th:attr="aria-invalid=${#fields.hasErrors('floorNumber')}">
-        <p id="floorNumberError" class="error" th:errors="*{floorNumber}"></p>
+    <div class="main-panel">
+        <header th:replace="~{fragments/layout :: header}"></header>
 
-        <label for="areaSqm">Usable area (m²)</label>
-        <input type="number" th:field="*{areaSqm}" required min="0.01" max="9999999999.99" step="0.01"
-               aria-describedby="areaSqmError" th:attr="aria-invalid=${#fields.hasErrors('areaSqm')}">
-        <p id="areaSqmError" class="error" th:errors="*{areaSqm}"></p>
+        <main class="content">
+            <h1 th:text="${apartmentId == null ? 'Create apartment' : 'Edit apartment'}"></h1>
+            <a th:href="@{/admin/apartments}">Back to apartments</a>
+            <div th:replace="~{fragments/flash-messages :: messages}"></div>
+            <form method="post" th:action="${apartmentId == null} ? @{/admin/apartments} : @{/admin/apartments/{id}(id=${apartmentId})}" th:object="${apartmentForm}">
+                <div class="error" role="alert" th:if="${#fields.hasGlobalErrors()}">
+                    <p th:each="error : ${#fields.globalErrors()}" th:text="${error}"></p>
+                </div>
+                <label for="roomNumber">Room number</label>
+                <input th:field="*{roomNumber}" required maxlength="20"
+                       aria-describedby="roomNumberError" th:attr="aria-invalid=${#fields.hasErrors('roomNumber')}">
+                <p id="roomNumberError" class="error" th:errors="*{roomNumber}"></p>
 
-        <label for="apartmentType">Apartment type</label>
-        <select th:field="*{apartmentType}" required aria-describedby="apartmentTypeError"
-                th:attr="aria-invalid=${#fields.hasErrors('apartmentType')}">
-            <option value="">Select an apartment type</option>
-            <option th:each="type : ${apartmentTypes}" th:value="${type}" th:text="${type}"></option>
-        </select>
-        <p id="apartmentTypeError" class="error" th:errors="*{apartmentType}"></p>
-        <div th:if="${apartmentId != null}">
-            <label for="status">Status</label>
-            <select th:field="*{status}" required>
-                <option th:each="status : ${apartmentStatuses}" th:value="${status}" th:text="${status}"></option>
-            </select>
-            <p class="error" th:errors="*{status}"></p>
-        </div>
-        <label for="description">Description</label>
-        <textarea th:field="*{description}"></textarea>
-        <button type="submit">Save</button>
-    </form>
-</main>
+                <label for="floorNumber">Floor number</label>
+                <input type="number" th:field="*{floorNumber}" required min="1" max="30"
+                       aria-describedby="floorNumberError" th:attr="aria-invalid=${#fields.hasErrors('floorNumber')}">
+                <p id="floorNumberError" class="error" th:errors="*{floorNumber}"></p>
+
+                <label for="areaSqm">Usable area (m²)</label>
+                <input type="number" th:field="*{areaSqm}" required min="0.01" max="9999999999.99" step="0.01"
+                       aria-describedby="areaSqmError" th:attr="aria-invalid=${#fields.hasErrors('areaSqm')}">
+                <p id="areaSqmError" class="error" th:errors="*{areaSqm}"></p>
+
+                <label for="apartmentType">Apartment type</label>
+                <select th:field="*{apartmentType}" required aria-describedby="apartmentTypeError"
+                        th:attr="aria-invalid=${#fields.hasErrors('apartmentType')}">
+                    <option value="">Select an apartment type</option>
+                    <option th:each="type : ${apartmentTypes}" th:value="${type}" th:text="${type}"></option>
+                </select>
+                <p id="apartmentTypeError" class="error" th:errors="*{apartmentType}"></p>
+                <div th:if="${apartmentId != null}">
+                    <label for="status">Status</label>
+                    <select th:field="*{status}" required>
+                        <option th:each="status : ${apartmentStatuses}" th:value="${status}" th:text="${status}"></option>
+                    </select>
+                    <p class="error" th:errors="*{status}"></p>
+                </div>
+                <label for="description">Description</label>
+                <textarea th:field="*{description}"></textarea>
+                <button type="submit">Save</button>
+            </form>
+
+            <footer th:replace="~{fragments/layout :: footer}"></footer>
+        </main>
+    </div>
+</div>
 </body>
 </html>

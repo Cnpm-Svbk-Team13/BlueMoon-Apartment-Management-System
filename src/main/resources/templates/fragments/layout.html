@@ -1,9 +1,78 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <body>
-    <!-- TODO: Define reusable Thymeleaf layout, navigation, and page fragments. -->
-    <header th:fragment="header">
-        <h1>BlueMoon</h1>
-    </header>
+
+<aside class="sidebar" th:fragment="sidebar">
+    <a class="brand" th:href="@{/admin/apartments}">
+        <span class="brand-mark">BM</span>
+        <span class="brand-copy">
+            <strong>BlueMoon</strong>
+            <small>Apartment Management</small>
+        </span>
+    </a>
+
+    <nav class="nav-menu" aria-label="Điều hướng chính">
+        <a class="nav-item" th:href="@{/admin/apartments}">
+            <span class="nav-icon">⌂</span>
+            <span>Tổng quan</span>
+        </a>
+        <a class="nav-item active" th:href="@{/admin/apartments}">
+            <span class="nav-icon">▦</span>
+            <span>Quản lý căn hộ</span>
+        </a>
+        <a class="nav-item" href="#" aria-disabled="true" title="Phân hệ đang được phát triển">
+            <span class="nav-icon">♙</span>
+            <span>Quản lý cư dân</span>
+        </a>
+        <a class="nav-item" href="#" aria-disabled="true" title="Phân hệ đang được phát triển">
+            <span class="nav-icon">＄</span>
+            <span>Quản lý thu phí</span>
+        </a>
+        <a class="nav-item" href="#" aria-disabled="true" title="Phân hệ đang được phát triển">
+            <span class="nav-icon">▤</span>
+            <span>Báo cáo</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <span class="status-dot"></span>
+        <span>Hệ thống hoạt động</span>
+    </div>
+</aside>
+
+<header class="topbar" th:fragment="header">
+    <div class="topbar-left">
+        <button class="menu-toggle" type="button" aria-label="Mở hoặc đóng menu" aria-expanded="false"
+                data-sidebar-toggle>
+            ☰
+        </button>
+        <div>
+            <p class="eyebrow">BLUE MOON · QUẢN TRỊ</p>
+            <h1 class="topbar-title">Hệ thống quản lý chung cư</h1>
+        </div>
+    </div>
+
+    <div class="topbar-right">
+        <div class="user-info">
+            <span class="user-avatar">BM</span>
+            <span class="user-copy">
+                <!-- <strong th:text="${#request.remoteUser != null ? #request.remoteUser : 'Tài khoản'}">Tài khoản</strong> -->
+                <strong>Tài khoản</strong>
+                <small>Người dùng hệ thống</small>
+            </span>
+        </div>
+
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit" class="button button-quiet">Đăng xuất</button>
+        </form>
+    </div>
+</header>
+
+<footer class="app-footer" th:fragment="footer">
+    <span>© Nhóm 13 · IT3180</span>
+    <span>BlueMoon Apartment Management System</span>
+</footer>
+
 </body>
 </html>
