@@ -20,13 +20,14 @@ import java.util.Optional;
 import java.util.List;
 import java.util.Locale;
 
-
+/** Nghiệp vụ tạo, tra cứu và cập nhật căn hộ theo BE-02 / US-001. */
 @Service
 public class ApartmentService {
     private final ApartmentRepository apartmentRepository;
     private final AuditLogRepository auditLogRepository;
     private final UserRepository userRepository;
 
+    /** Spring tiêm các Repository lưu căn hộ, nhật ký và tham chiếu tài khoản thực hiện. */
     public ApartmentService(
             ApartmentRepository apartmentRepository,
             AuditLogRepository auditLogRepository,
@@ -37,17 +38,17 @@ public class ApartmentService {
     }
 
     /**
-     * Creates an apartment and its audit record atomically for BE-02 (US-001,
-     * RAW-001 and RAW-002).
+     * Tạo căn hộ và bản ghi audit trong cùng một transaction theo BE-02
+     * (US-001, RAW-001, RAW-002).
      *
-     * @param form apartment details
-     * @param currentUserId authenticated actor ID supplied by the server
-     * @param clientIpAddress optional client IP address, at most 50 characters
-     * @return the persisted apartment
-     * @throws IllegalArgumentException if the input is invalid or the room number is taken
-     * @throws org.springframework.dao.DataIntegrityViolationException if a database
-     *         constraint fails, including a concurrent duplicate room number
+     * @param form dữ liệu căn hộ đã được nhập
+     * @param currentUserId ID tài khoản thực hiện lấy từ phiên xác thực phía server
+     * @param clientIpAddress IP client tùy chọn, tối đa 50 ký tự
+     * @return căn hộ đã được lưu
+     * @throws IllegalArgumentException nếu dữ liệu không hợp lệ hoặc mã căn đã tồn tại
+     * @throws DataIntegrityViolationException nếu vi phạm constraint, kể cả trùng mã do ghi đồng thời
      */
+    // BEGIN/COMMIT bao trọn việc lưu căn hộ và audit; rollbackFor cũng rollback với checked exception.
     @Transactional(rollbackFor = Exception.class)
     public Apartment createApartment(ApartmentForm form, Long currentUserId, String clientIpAddress) {
         validateApartmentDetails(form);
@@ -61,27 +62,28 @@ public class ApartmentService {
     }
 
     /**
-     * Lists apartments in floor and room order.
-     * @param floorNumber optional floor filter
-     * @return matching apartments
-     * @throws IllegalArgumentException if the floor is outside 1 to 30
+     * Liệt kê căn hộ theo tầng và mã căn.
+     *
+     * @param floorNumber tầng cần lọc; null nghĩa là lấy tất cả tầng
+     * @return danh sách căn hộ thỏa bộ lọc
+     * @throws IllegalArgumentException nếu tầng nằm ngoài khoảng 1 đến 30
      */
+    // Đánh dấu transaction chỉ đọc để Spring/JPA xử lý truy vấn theo chế độ không ghi dữ liệu.
     @Transactional(readOnly = true)
     public List<Apartment> listApartments(Integer floorNumber) {
         if (floorNumber == null) {
             return apartmentRepository.findAll(Sort.by("floorNumber", "roomNumber"));
         }
-        if (floorNumber < 1 || floorNumber > 30) {
-            throw new IllegalArgumentException("Floor number must be between 1 and 30.");
-        }
+        validateFloorNumber(floorNumber);
         return apartmentRepository.findByFloorNumberOrderByRoomNumber(floorNumber);
     }
 
     /**
-     * Loads the editable values of an apartment.
-     * @param id apartment ID
-     * @return populated apartment form
-     * @throws ApartmentNotFoundException if the apartment does not exist
+     * Tải dữ liệu hiện có và chuyển thành form chỉnh sửa.
+     *
+     * @param id ID căn hộ cần sửa
+     * @return form đã điền các giá trị đang lưu
+     * @throws ApartmentNotFoundException nếu không tìm thấy căn hộ
      */
     @Transactional(readOnly = true)
     public ApartmentForm getApartmentForEdit(Long id) {
@@ -97,16 +99,18 @@ public class ApartmentService {
     }
 
     /**
-     * Updates an apartment and writes its audit record in one transaction.
-     * @param id apartment ID
-     * @param form proposed changes
-     * @param currentUserId authenticated actor ID
-     * @param clientIpAddress optional client IP address
-     * @return the updated apartment
-     * @throws ApartmentNotFoundException if the apartment does not exist
-     * @throws IllegalArgumentException if the changes or actor are invalid
-     * @throws DataIntegrityViolationException if a storage constraint fails
+     * Cập nhật thông tin căn hộ và ghi audit trong cùng transaction.
+     *
+     * @param id ID căn hộ cần cập nhật
+     * @param form các giá trị mới do người dùng gửi
+     * @param currentUserId ID tài khoản thực hiện lấy từ phiên xác thực phía server
+     * @param clientIpAddress IP client tùy chọn
+     * @return căn hộ sau khi cập nhật
+     * @throws ApartmentNotFoundException nếu không tìm thấy căn hộ
+     * @throws IllegalArgumentException nếu thông tin hoặc tài khoản thực hiện không hợp lệ
+     * @throws DataIntegrityViolationException nếu vi phạm constraint lưu trữ
      */
+    // Thay đổi trạng thái chỉ được thực hiện qua form cập nhật có chỉ định trạng thái rõ ràng.
     @Transactional(rollbackFor = Exception.class)
     public Apartment updateApartment(
             Long id, ApartmentForm form, Long currentUserId, String clientIpAddress) {
@@ -137,6 +141,7 @@ public class ApartmentService {
 
     private String normalizedDescription(ApartmentForm form) {
         String description = form.getDescription();
+        // Chuỗi trống chỉ mang ý nghĩa "không có mô tả", nên lưu thành null thay vì giữ khoảng trắng.
         return description == null || description.isBlank() ? null : description.strip();
     }
 
@@ -146,6 +151,7 @@ public class ApartmentService {
         try {
             savedApartment = apartmentRepository.saveAndFlush(apartment);
         } catch (DataIntegrityViolationException exception) {
+            // Kiểm tra trước không ngăn được hai transaction cùng tạo mã căn; nhận diện unique constraint từ DB.
             Throwable cause = exception.getCause();
             while (cause != null) {
                 if (cause instanceof ConstraintViolationException violation
@@ -157,7 +163,7 @@ public class ApartmentService {
             throw exception;
         }
 
-        // Dùng proxy theo ID để JPA ghi khóa ngoại user_id mà không tải cả hồ sơ.
+        // Dùng proxy theo ID để JPA ghi khóa ngoại user_id mà không tải toàn bộ hồ sơ User.
         AuditLog auditLog = new AuditLog(
                 userRepository.getReferenceById(currentUserId), action, "Apartment", savedApartment.getId(),
                 action.equals("CREATE") ? "Created apartment " + savedApartment.getRoomNumber()
@@ -167,23 +173,49 @@ public class ApartmentService {
         return savedApartment;
     }
 
+    /**
+     * Tra cứu căn hộ theo mã căn.
+     *
+     * @param roomNumber mã căn cần tìm
+     * @return căn hộ có mã khớp chính xác, hoặc Optional rỗng nếu chưa có
+     */
     @Transactional(readOnly = true)
-    public Optional<Apartment> findByRoomNumber(String roomNumber){
-        return apartmentRepository.findByRoomNumber(roomNumber);
-    } 
-
-    @Transactional(readOnly = true)
-    public boolean existsByRoomNumber(String roomNumber){
-        return apartmentRepository.existsByRoomNumber(roomNumber);
+    public Optional<Apartment> findByRoomNumber(String roomNumber) {
+        return apartmentRepository.findByRoomNumber(normalizeRoomNumber(roomNumber));
     }
 
+    /**
+     * Kiểm tra mã căn đã tồn tại hay chưa.
+     *
+     * @param roomNumber mã căn cần kiểm tra
+     * @return true nếu mã căn đã được sử dụng
+     */
     @Transactional(readOnly = true)
-    public List<Apartment> findByFloorNumber(Integer floorNumber){
-        return apartmentRepository.findByFloorNumber(floorNumber);
+    public boolean existsByRoomNumber(String roomNumber) {
+        return apartmentRepository.existsByRoomNumber(normalizeRoomNumber(roomNumber));
+    }
+
+    /**
+     * Lấy các căn hộ thuộc một tầng cụ thể.
+     *
+     * @param floorNumber số tầng cần tra cứu
+     * @return danh sách căn hộ thuộc tầng đó
+     */
+    @Transactional(readOnly = true)
+    public List<Apartment> findByFloorNumber(Integer floorNumber) {
+        validateFloorNumber(floorNumber);
+        return apartmentRepository.findByFloorNumberOrderByRoomNumber(floorNumber);
+    }
+
+    private void validateFloorNumber(Integer floorNumber) {
+        if (floorNumber == null || floorNumber < 1 || floorNumber > 30) {
+            throw new IllegalArgumentException("Floor number must be between 1 and 30.");
+        }
     }
 
     private String validateNewRoomNumber(String roomNumber) {
         String normalizedRoomNumber = normalizeRoomNumber(roomNumber);
+        // Kiểm tra sớm để trả lỗi thân thiện; unique constraint vẫn là chốt cuối khi có ghi đồng thời.
         if (apartmentRepository.existsByRoomNumber(normalizedRoomNumber)) {
             throw new DuplicateRoomNumberException();
         }
@@ -195,6 +227,7 @@ public class ApartmentService {
             throw new IllegalArgumentException("Please enter a room number.");
         }
 
+        // Mã căn lưu dạng uppercase để tìm kiếm/so sánh không phụ thuộc cách nhập hoa-thường.
         String normalizedRoomNumber = roomNumber.trim().toUpperCase(Locale.ROOT);
 
         if (normalizedRoomNumber.length() > 20) {
@@ -216,6 +249,7 @@ public class ApartmentService {
         }
 
         BigDecimal areaSqm = form.getAreaSqm();
+        // Diện tích thông thủy phải dương, tối đa hai chữ số thập phân và vừa DECIMAL(12,2).
         if (areaSqm == null || areaSqm.compareTo(BigDecimal.ZERO) <= 0){
             throw new IllegalArgumentException("Area Sqm must be larger than 0.");
         }

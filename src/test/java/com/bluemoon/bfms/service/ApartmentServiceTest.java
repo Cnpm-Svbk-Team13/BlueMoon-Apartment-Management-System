@@ -21,6 +21,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -150,5 +152,38 @@ class ApartmentServiceTest {
         assertSame(failure, assertThrows(DataIntegrityViolationException.class,
                 () -> service.createApartment(form, 7L, null)));
         verifyNoInteractions(auditLogRepository);
+    }
+
+    @Test
+    void normalizesRoomNumbersForReadAndExistenceChecks() {
+        when(apartmentRepository.findByRoomNumber("A0601")).thenReturn(Optional.empty());
+        when(apartmentRepository.existsByRoomNumber("A0601")).thenReturn(true);
+
+        assertTrue(service.findByRoomNumber(" a0601 ").isEmpty());
+        assertTrue(service.existsByRoomNumber(" a0601 "));
+
+        verify(apartmentRepository).findByRoomNumber("A0601");
+        verify(apartmentRepository).existsByRoomNumber("A0601");
+    }
+
+    @Test
+    void rejectsInvalidRoomNumberBeforeReadQuery() {
+        assertThrows(IllegalArgumentException.class, () -> service.findByRoomNumber(" "));
+        assertThrows(IllegalArgumentException.class, () -> service.existsByRoomNumber("x".repeat(21)));
+
+        verifyNoInteractions(apartmentRepository);
+    }
+
+    @Test
+    void validatesFloorForDirectLookupAndReturnsStableRoomOrder() {
+        when(apartmentRepository.findByFloorNumberOrderByRoomNumber(6)).thenReturn(List.of());
+
+        assertTrue(service.findByFloorNumber(6).isEmpty());
+
+        verify(apartmentRepository).findByFloorNumberOrderByRoomNumber(6);
+        assertThrows(IllegalArgumentException.class, () -> service.findByFloorNumber(null));
+        assertThrows(IllegalArgumentException.class, () -> service.findByFloorNumber(0));
+        assertThrows(IllegalArgumentException.class, () -> service.findByFloorNumber(31));
+        verifyNoMoreInteractions(apartmentRepository);
     }
 }

@@ -30,4 +30,3 @@ Thumbs.db
 .agents/*
 !.agents/skills/
 docs/source_files/
-.hoa/
