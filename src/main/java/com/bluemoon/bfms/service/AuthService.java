@@ -76,8 +76,8 @@ public class AuthService {
             return AuthenticationResult.failed(LoginStatus.USER_NOT_FOUND);
         }
 
-        // Đọc thường để không giữ khóa hàng trước advisory lock; username không tồn tại chỉ cần ghi audit.
-        if (users.findByUsername(normalizedUsername).isEmpty()) {
+        // Chỉ kiểm tra tồn tại để không nạp User vào persistence context trước advisory lock.
+        if (!users.existsByUsername(normalizedUsername)) {
             auditFailure(null, ipAddress);
             return AuthenticationResult.failed(LoginStatus.USER_NOT_FOUND);
         }

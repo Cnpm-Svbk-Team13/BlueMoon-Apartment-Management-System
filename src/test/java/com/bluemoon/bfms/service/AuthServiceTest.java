@@ -57,7 +57,7 @@ class AuthServiceTest {
             lockedUntil.set(null);
             return null;
         }).when(user).resetLoginFailureState();
-        when(users.findByUsername("operator")).thenReturn(Optional.of(user));
+        when(users.existsByUsername("operator")).thenReturn(true);
         when(users.findByUsernameForUpdate("operator")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("wrong", "encoded")).thenReturn(false);
     }
@@ -73,7 +73,7 @@ class AuthServiceTest {
         assertEquals(NOW.plusMinutes(15), lockedUntil.get());
         verify(audits).save(argThat(audit -> "LOGIN_FAILURE".equals(audit.getAction())));
         InOrder lockOrder = inOrder(users, writeLock);
-        lockOrder.verify(users).findByUsername("operator");
+        lockOrder.verify(users).existsByUsername("operator");
         lockOrder.verify(writeLock).acquire();
         lockOrder.verify(users).findByUsernameForUpdate("operator");
     }
@@ -127,7 +127,7 @@ class AuthServiceTest {
         var disabled = service.authenticate("operator", "correct", null);
         assertEquals(AuthService.LoginStatus.DISABLED, disabled.status());
 
-        when(users.findByUsername("missing")).thenReturn(Optional.empty());
+        when(users.existsByUsername("missing")).thenReturn(false);
         var unknown = service.authenticate("missing", "correct", null);
         assertEquals(AuthService.LoginStatus.USER_NOT_FOUND, unknown.status());
 
