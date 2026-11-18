@@ -5,21 +5,29 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** Checks apartment editor access for BE-02, US-001 and NFR-02. */
+/**
+ * Kiểm tra quyền thao tác căn hộ theo BE-02, US-001 và NFR-02.
+ *
+ * <p>Username phải lấy từ principal đã xác thực ở phía server; không dùng username
+ * do trình duyệt tự gửi để xác định tài khoản thực hiện thao tác.</p>
+ */
 @Service
 public class ApartmentAccessService {
     private final ApartmentActorRepository actorRepository;
 
+    /** Spring tiêm Repository có truy vấn kiểm tra tài khoản và vai trò được phép. */
     public ApartmentAccessService(ApartmentActorRepository actorRepository) {
         this.actorRepository = actorRepository;
     }
 
     /**
-     * Resolves an active editor from the authenticated server-side username.
-     * @param username authenticated username
-     * @return database user ID for the audit record
-     * @throws AccessDeniedException if the user cannot manage apartments
+     * Tìm ID tài khoản đang hoạt động được phép sửa thông tin căn hộ.
+     *
+     * @param username username lấy từ principal phía server
+     * @return ID tài khoản để Service nghiệp vụ ghi vào audit
+     * @throws AccessDeniedException nếu tài khoản không tồn tại, không hoạt động hoặc không có quyền
      */
+    // Giao việc lọc trạng thái/vai trò cho Repository; nếu không có kết quả thì từ chối ngay tại server.
     @Transactional(readOnly = true)
     public Long requireEditorId(String username) {
         return actorRepository.findActiveEditorId(username)

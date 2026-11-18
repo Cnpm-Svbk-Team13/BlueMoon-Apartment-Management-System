@@ -16,6 +16,7 @@ import com.bluemoon.bfms.repository.HouseholdWriteLock;
 import com.bluemoon.bfms.repository.PersonRepository;
 import com.bluemoon.bfms.repository.UserRepository;
 import com.bluemoon.bfms.model.HouseholdStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,11 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -51,6 +54,7 @@ class ApartmentCreationTransactionTest {
     private HouseholdWriteLock writeLock;
 
     @Autowired private HouseholdHeadService headService;
+    @Autowired private AuthService authService;
     @Autowired private HouseholdRepository households;
     @Autowired private HouseholdHeadHistoryRepository history;
     @Autowired private PersonRepository persons;
@@ -99,5 +103,27 @@ class ApartmentCreationTransactionTest {
         assertTrue(persons.findByNationalId("000000000099").isEmpty());
         assertTrue(households.findByApartmentIdAndStatus(id, HouseholdStatus.ACTIVE).isEmpty());
         assertTrue(history.findByHouseholdApartmentIdOrderByChangedAtDescIdDesc(id).isEmpty());
+    }
+
+    @Test
+    void locksPersistedAccountAtFifthFailureUsingTheRepositoryLockQuery() {
+        String username = "lock-" + System.nanoTime();
+        Person person = persons.save(new Person("Lockout Fixture", null, "0900000088",
+                username + "@example.test"));
+        User account = new User(username, new BCryptPasswordEncoder(10).encode("correct-pass"),
+                person, UserRole.ROLE_ADMIN);
+        account.updateLoginFailureState(4, null);
+        users.save(account);
+
+        var result = authService.authenticate(username, "wrong-pass", null);
+
+        assertEquals(AuthService.LoginStatus.LOCKED_NOW, result.status());
+        User persisted = users.findByUsername(username).orElseThrow();
+        assertEquals(5, persisted.getFailedAttempts());
+        assertNotNull(persisted.getLockedUntil());
+        OffsetDateTime now = OffsetDateTime.now();
+        assertTrue(persisted.getLockedUntil().isAfter(now.plusMinutes(14)));
+        assertTrue(persisted.getLockedUntil().isBefore(now.plusMinutes(16)));
+        verify(auditLogRepository).save(any(AuditLog.class));
     }
 }

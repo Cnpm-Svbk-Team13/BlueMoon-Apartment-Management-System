@@ -2,7 +2,13 @@ package com.bluemoon.bfms.repository;
 
 import com.bluemoon.bfms.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import jakarta.persistence.LockModeType;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -21,6 +27,26 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return tài khoản nếu tồn tại
      */
     Optional<User> findByUsername(String username);
+
+    /**
+     * Tìm và khóa bản ghi tài khoản tới khi transaction kết thúc để các lần
+     * đăng nhập sai đồng thời không ghi đè bộ đếm của nhau.
+     *
+     * @param username tên đăng nhập đã chuẩn hóa
+     * @return tài khoản nếu tồn tại
+     */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select account from User account where account.username = :username")
+    Optional<User> findByUsernameForUpdate(@Param("username") String username);
+
+    /**
+     * Tải danh sách tài khoản kèm hồ sơ cá nhân trong cùng truy vấn để tránh
+     * phát sinh một truy vấn bổ sung cho mỗi hồ sơ khi tạo read model.
+     *
+     * @return tài khoản sắp xếp theo ID tăng dần
+     */
+    @EntityGraph(attributePaths = "person")
+    List<User> findAllByOrderByIdAsc();
 
     /**
      * Kiểm tra tên đăng nhập đã được sử dụng hay chưa.
