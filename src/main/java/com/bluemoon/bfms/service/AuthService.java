@@ -4,6 +4,7 @@ import com.bluemoon.bfms.model.AuditLog;
 import com.bluemoon.bfms.model.User;
 import com.bluemoon.bfms.model.UserRole;
 import com.bluemoon.bfms.repository.AuditLogRepository;
+import com.bluemoon.bfms.repository.HouseholdWriteLock;
 import com.bluemoon.bfms.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,6 +30,7 @@ public class AuthService {
 
     private final UserRepository users;
     private final AuditLogRepository audits;
+    private final HouseholdWriteLock writeLock;
     private final PasswordEncoder passwordEncoder;
     private final Clock clock;
 
@@ -37,14 +39,17 @@ public class AuthService {
      * Clock UTC giúp mốc khóa không phụ thuộc múi giờ máy chạy ứng dụng.
      */
     @Autowired
-    public AuthService(UserRepository users, AuditLogRepository audits) {
-        this(users, audits, new BCryptPasswordEncoder(10), Clock.systemUTC());
+    public AuthService(UserRepository users, AuditLogRepository audits, HouseholdWriteLock writeLock) {
+        this(users, audits, writeLock, new BCryptPasswordEncoder(10), Clock.systemUTC());
     }
 
     /** Constructor package-private để test có thể thay PasswordEncoder và thời gian. */
-    AuthService(UserRepository users, AuditLogRepository audits, PasswordEncoder passwordEncoder, Clock clock) {
+    AuthService(
+            UserRepository users, AuditLogRepository audits, HouseholdWriteLock writeLock,
+            PasswordEncoder passwordEncoder, Clock clock) {
         this.users = users;
         this.audits = audits;
+        this.writeLock = writeLock;
         this.passwordEncoder = passwordEncoder;
         this.clock = clock;
     }
@@ -71,10 +76,17 @@ public class AuthService {
             return AuthenticationResult.failed(LoginStatus.USER_NOT_FOUND);
         }
 
-        // PESSIMISTIC_WRITE khóa hàng đến hết transaction; các lần thử đồng thời lần lượt cập nhật bộ đếm.
+        // Đọc thường để không giữ khóa hàng trước advisory lock; username không tồn tại chỉ cần ghi audit.
+        if (users.findByUsername(normalizedUsername).isEmpty()) {
+            auditFailure(null, ipAddress);
+            return AuthenticationResult.failed(LoginStatus.USER_NOT_FOUND);
+        }
+
+        // Lấy advisory lock trước PESSIMISTIC_WRITE để khớp thứ tự khóa của trigger PostgreSQL.
+        writeLock.acquire();
         User user = users.findByUsernameForUpdate(normalizedUsername).orElse(null);
         if (user == null) {
-            // Ghi audit với tác nhân null vì không tìm được tài khoản tương ứng.
+            // Tài khoản có thể đã đổi username trong lúc chờ khóa; không dùng dữ liệu từ lần đọc cũ.
             auditFailure(null, ipAddress);
             return AuthenticationResult.failed(LoginStatus.USER_NOT_FOUND);
         }
@@ -132,6 +144,8 @@ public class AuthService {
         if (userId == null || userId <= 0) {
             throw new IllegalArgumentException("An authenticated account is required.");
         }
+        // Không đọc User trước advisory lock để tránh giữ dữ liệu cũ khi chờ một transaction ghi khác.
+        writeLock.acquire();
         User user = users.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Account does not exist."));
         if (!user.isActive()) {

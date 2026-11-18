@@ -5,10 +5,12 @@ import com.bluemoon.bfms.model.Gender;
 import com.bluemoon.bfms.model.User;
 import com.bluemoon.bfms.model.UserRole;
 import com.bluemoon.bfms.repository.AuditLogRepository;
+import com.bluemoon.bfms.repository.HouseholdWriteLock;
 import com.bluemoon.bfms.repository.PersonRepository;
 import com.bluemoon.bfms.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
@@ -26,12 +28,13 @@ class UserServiceTest {
     private final UserRepository users = mock(UserRepository.class);
     private final PersonRepository persons = mock(PersonRepository.class);
     private final AuditLogRepository audits = mock(AuditLogRepository.class);
+    private final HouseholdWriteLock writeLock = mock(HouseholdWriteLock.class);
     private final User actor = mock(User.class);
     private UserService service;
 
     @BeforeEach
     void setUp() {
-        service = new UserService(users, persons, audits, new BCryptPasswordEncoder(10));
+        service = new UserService(users, persons, audits, writeLock, new BCryptPasswordEncoder(10));
         when(actor.getId()).thenReturn(10L);
         when(actor.isActive()).thenReturn(true);
         when(actor.getRole()).thenReturn(UserRole.ROLE_ADMIN);
@@ -56,6 +59,9 @@ class UserServiceTest {
         verify(users).save(argThat(user -> user.getPasswordHash().startsWith("$2a$10$")
                 && new BCryptPasswordEncoder(10).matches("starter-pass", user.getPasswordHash())));
         verify(audits).save(argThat(audit -> "CREATE_USER".equals(audit.getAction())));
+        InOrder lockOrder = inOrder(writeLock, users);
+        lockOrder.verify(writeLock).acquire();
+        lockOrder.verify(users).findById(10L);
     }
 
     @Test
@@ -97,6 +103,7 @@ class UserServiceTest {
                 "new@example.test", LocalDate.of(1990, 1, 1), null);
         verify(target).updateAccount("new-cashier", UserRole.ROLE_CASHIER, false);
         verify(audits).save(argThat(audit -> "UPDATE_USER".equals(audit.getAction())));
+        verify(writeLock).acquire();
     }
 
     @Test
@@ -113,6 +120,7 @@ class UserServiceTest {
         assertEquals("Person Name", accounts.getFirst().fullName());
         assertFalse(accounts.getFirst().active());
         verify(users).findAllByOrderByIdAsc();
+        verify(writeLock).acquire();
     }
 
     @Test
@@ -126,6 +134,7 @@ class UserServiceTest {
         assertTrue(new BCryptPasswordEncoder(10).matches("replacement-pass", hash.getValue()));
         verify(target).resetLoginFailureState();
         verify(audits).save(argThat(audit -> "RESET_USER_PASSWORD".equals(audit.getAction())));
+        verify(writeLock).acquire();
     }
 
     private User targetAccount() {

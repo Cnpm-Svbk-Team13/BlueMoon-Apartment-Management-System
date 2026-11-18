@@ -3,9 +3,11 @@ package com.bluemoon.bfms.service;
 import com.bluemoon.bfms.model.User;
 import com.bluemoon.bfms.model.UserRole;
 import com.bluemoon.bfms.repository.AuditLogRepository;
+import com.bluemoon.bfms.repository.HouseholdWriteLock;
 import com.bluemoon.bfms.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Clock;
@@ -27,6 +29,7 @@ class AuthServiceTest {
 
     private final UserRepository users = mock(UserRepository.class);
     private final AuditLogRepository audits = mock(AuditLogRepository.class);
+    private final HouseholdWriteLock writeLock = mock(HouseholdWriteLock.class);
     private final PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
     private final User user = mock(User.class);
     private final AtomicInteger failedAttempts = new AtomicInteger();
@@ -36,7 +39,7 @@ class AuthServiceTest {
     @BeforeEach
     void setUp() {
         Clock clock = Clock.fixed(Instant.parse("2026-11-14T04:30:00Z"), ZoneOffset.UTC);
-        service = new AuthService(users, audits, passwordEncoder, clock);
+        service = new AuthService(users, audits, writeLock, passwordEncoder, clock);
         when(user.getId()).thenReturn(7L);
         when(user.getUsername()).thenReturn("operator");
         when(user.getRole()).thenReturn(UserRole.ROLE_ADMIN);
@@ -54,6 +57,7 @@ class AuthServiceTest {
             lockedUntil.set(null);
             return null;
         }).when(user).resetLoginFailureState();
+        when(users.findByUsername("operator")).thenReturn(Optional.of(user));
         when(users.findByUsernameForUpdate("operator")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("wrong", "encoded")).thenReturn(false);
     }
@@ -68,6 +72,10 @@ class AuthServiceTest {
         assertEquals(5, failedAttempts.get());
         assertEquals(NOW.plusMinutes(15), lockedUntil.get());
         verify(audits).save(argThat(audit -> "LOGIN_FAILURE".equals(audit.getAction())));
+        InOrder lockOrder = inOrder(users, writeLock);
+        lockOrder.verify(users).findByUsername("operator");
+        lockOrder.verify(writeLock).acquire();
+        lockOrder.verify(users).findByUsernameForUpdate("operator");
     }
 
     @Test
@@ -119,12 +127,13 @@ class AuthServiceTest {
         var disabled = service.authenticate("operator", "correct", null);
         assertEquals(AuthService.LoginStatus.DISABLED, disabled.status());
 
-        when(users.findByUsernameForUpdate("missing")).thenReturn(Optional.empty());
+        when(users.findByUsername("missing")).thenReturn(Optional.empty());
         var unknown = service.authenticate("missing", "correct", null);
         assertEquals(AuthService.LoginStatus.USER_NOT_FOUND, unknown.status());
 
         verify(passwordEncoder, never()).matches(any(), any());
         verify(audits, times(2)).save(argThat(audit -> "LOGIN_FAILURE".equals(audit.getAction())));
+        verify(writeLock, times(1)).acquire();
     }
 
     @Test
@@ -135,6 +144,9 @@ class AuthServiceTest {
 
         service.changePassword(7L, "current", "new-password", "new-password", null);
 
+        InOrder lockOrder = inOrder(writeLock, users);
+        lockOrder.verify(writeLock).acquire();
+        lockOrder.verify(users).findById(7L);
         verify(user).changePasswordHash("new-encoded");
         verify(audits).save(argThat(audit -> "PASSWORD_CHANGE".equals(audit.getAction())));
     }

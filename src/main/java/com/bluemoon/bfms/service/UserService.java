@@ -5,6 +5,7 @@ import com.bluemoon.bfms.model.Person;
 import com.bluemoon.bfms.model.User;
 import com.bluemoon.bfms.model.UserRole;
 import com.bluemoon.bfms.repository.AuditLogRepository;
+import com.bluemoon.bfms.repository.HouseholdWriteLock;
 import com.bluemoon.bfms.repository.PersonRepository;
 import com.bluemoon.bfms.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,23 +30,27 @@ public class UserService {
     private final UserRepository users;
     private final PersonRepository persons;
     private final AuditLogRepository audits;
+    private final HouseholdWriteLock writeLock;
     private final PasswordEncoder passwordEncoder;
 
     /**
      * Constructor Spring sử dụng; bộ mã hóa BCrypt có cấu hình 10 rounds theo AC.
      */
     @Autowired
-    public UserService(UserRepository users, PersonRepository persons, AuditLogRepository audits) {
-        this(users, persons, audits, new BCryptPasswordEncoder(10));
+    public UserService(
+            UserRepository users, PersonRepository persons, AuditLogRepository audits,
+            HouseholdWriteLock writeLock) {
+        this(users, persons, audits, writeLock, new BCryptPasswordEncoder(10));
     }
 
     /** Constructor package-private để test có thể thay PasswordEncoder bằng bản giả lập. */
     UserService(
             UserRepository users, PersonRepository persons, AuditLogRepository audits,
-            PasswordEncoder passwordEncoder) {
+            HouseholdWriteLock writeLock, PasswordEncoder passwordEncoder) {
         this.users = users;
         this.persons = persons;
         this.audits = audits;
+        this.writeLock = writeLock;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -73,6 +78,8 @@ public class UserService {
         AccountDetails details = validateDetails(username, fullName, email, phone, role);
         validatePassword(initialPassword);
         validateIpAddress(ipAddress);
+        // Tuân cùng thứ tự advisory lock trước khi đọc actor/kiểm tra trùng và ghi Person/User.
+        writeLock.acquire();
         User actor = requireAdministrator(actorId);
         if (users.existsByUsername(details.username())) {
             throw new IllegalArgumentException("Username is already in use.");
@@ -113,6 +120,7 @@ public class UserService {
             UserRole role, boolean active, Long actorId, String ipAddress) {
         AccountDetails details = validateDetails(username, fullName, email, phone, role);
         validateIpAddress(ipAddress);
+        writeLock.acquire();
         User actor = requireAdministrator(actorId);
         User user = findUser(userId);
         if (!details.username().equals(user.getUsername()) && users.existsByUsername(details.username())) {
@@ -146,6 +154,7 @@ public class UserService {
     @Transactional(rollbackFor = Exception.class)
     public UserSummary toggleUserStatus(Long userId, boolean active, Long actorId, String ipAddress) {
         validateIpAddress(ipAddress);
+        writeLock.acquire();
         User actor = requireAdministrator(actorId);
         User user = findUser(userId);
         user.updateAccount(user.getUsername(), user.getRole(), active);
@@ -181,6 +190,7 @@ public class UserService {
     public void resetPassword(Long userId, String newPassword, Long actorId, String ipAddress) {
         validatePassword(newPassword);
         validateIpAddress(ipAddress);
+        writeLock.acquire();
         User actor = requireAdministrator(actorId);
         User user = findUser(userId);
         user.changePasswordHash(passwordEncoder.encode(newPassword));
