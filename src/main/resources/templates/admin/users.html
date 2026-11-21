@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quản lý tài khoản | BlueMoon</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <script defer th:src="@{/js/app.js}"></script>
+</head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/layout :: sidebar}"></aside>
+
+    <div class="main-panel">
+        <header th:replace="~{fragments/layout :: header}"></header>
+
+        <main class="content">
+            <div th:replace="~{fragments/flash-messages :: messages}"></div>
+
+            <div class="page-heading">
+                <div>
+                    <p class="eyebrow">BAN QUẢN TRỊ · NGƯỜI DÙNG</p>
+                    <h2>Quản lý tài khoản BQT</h2>
+                    <p class="muted">Danh sách và trạng thái tài khoản cán bộ quản trị.</p>
+                </div>
+                <a class="button button-primary" th:href="@{/admin/users/new}">
+                    <span aria-hidden="true">＋</span> Thêm tài khoản
+                </a>
+            </div>
+
+            <section class="users-summary" aria-label="Tổng quan tài khoản">
+                <article class="users-summary-card">
+                    <div>
+                        <span class="users-summary-label">Tổng tài khoản hiển thị</span>
+                        <strong th:text="${users != null ? #lists.size(users) : 0}">0</strong>
+                    </div>
+                </article>
+            </section>
+
+            <section class="panel users-panel">
+                <div class="panel-heading users-panel-heading">
+                    <div>
+                        <h3>Danh sách cán bộ</h3>
+                        <p class="muted">Tìm kiếm theo họ tên, tên đăng nhập hoặc email.</p>
+                    </div>
+                    <label class="users-search">
+                        <span aria-hidden="true">🔎︎</span>
+                        <input type="search" placeholder="Tìm tài khoản..." data-user-search>
+                    </label>
+                </div>
+
+                <div class="table-wrap" th:if="${users != null and !#lists.isEmpty(users)}">
+                    <table class="data-table users-table">
+                        <thead>
+                        <tr>
+                            <th>Cán bộ</th>
+                            <th>Tên đăng nhập</th>
+                            <th>Email</th>
+                            <th>Số điện thoại</th>
+                            <th>Vai trò</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                        </thead>
+                        <tbody data-user-table>
+                        <tr th:each="user : ${users}" data-user-row>
+                            <td>
+                                <div class="user-table-person">
+                                    <span class="user-table-avatar"
+                                          th:text="${#strings.isEmpty(user.fullName) ? 'BM' : #strings.substring(user.fullName, 0, 1)}">A</span>
+                                    <strong th:text="${user.fullName}">Họ tên cán bộ</strong>
+                                </div>
+                            </td>
+                            <td th:text="${user.username}">username</td>
+                            <td th:text="${user.email}">email@example.test</td>
+                            <td th:text="${user.phone}">0900000000</td>
+                            <td>
+                                <span class="role-badge"
+                                      th:classappend="${user.role.toString() == 'ROLE_ADMIN'} ? ' role-admin' :
+                                                       (${user.role.toString() == 'ROLE_ACCOUNTANT'} ? ' role-accountant' :
+                                                       (${user.role.toString() == 'ROLE_CASHIER'} ? ' role-cashier' : ' role-resident'))"
+                                      th:text="${user.role.toString() == 'ROLE_ADMIN'} ? 'Quản trị viên' :
+                                               (${user.role.toString() == 'ROLE_ACCOUNTANT'} ? 'Kế toán' :
+                                               (${user.role.toString() == 'ROLE_CASHIER'} ? 'Thủ quỹ' : 'Cư dân'))">
+                                    Kế toán
+                                </span>
+                            </td>
+                            <td>
+                                <span class="account-status"
+                                      th:classappend="${user.active} ? ' account-active' : ' account-inactive'"
+                                      th:text="${user.active} ? 'Đang hoạt động' : 'Đã vô hiệu hóa'">
+                                    Đang hoạt động
+                                </span>
+                            </td>
+                            <td>
+                                <div class="users-actions">
+                                    <form method="post"
+                                          th:action="@{/admin/users/{id}/status(id=${user.id})}"
+                                          class="inline-form"
+                                          data-confirm="Bạn có chắc muốn đổi trạng thái tài khoản này?">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                        <input type="hidden" name="active" th:value="${!user.active}">
+                                        <button type="submit"
+                                                class="button button-small"
+                                                th:classappend="${user.active} ? ' button-danger' : ' button-success'"
+                                                th:text="${user.active} ? 'Vô hiệu hóa' : 'Kích hoạt'">
+                                            Vô hiệu hóa
+                                        </button>
+                                    </form>
+
+                                    <a class="text-link"
+                                       th:href="@{/admin/users/{id}/edit(id=${user.id})}">
+                                        Chỉnh sửa
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="users-no-results" hidden data-user-no-results>
+                        Không tìm thấy tài khoản phù hợp.
+                    </div>
+                </div>
+
+                <div class="empty-state" th:if="${users == null or #lists.isEmpty(users)}">
+                    <h3>Chưa có tài khoản để hiển thị</h3>
+                    <p>Khi backend cung cấp danh sách tài khoản, dữ liệu sẽ xuất hiện tại đây.</p>
+                    <a class="button button-primary" th:href="@{/admin/users/new}">
+                        Tạo tài khoản đầu tiên
+                    </a>
+                </div>
+            </section>
+
+            <footer th:replace="~{fragments/layout :: footer}"></footer>
+        </main>
+    </div>
+</div>
+</body>
+</html>

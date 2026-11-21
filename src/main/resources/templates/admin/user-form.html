@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tài khoản BQT | BlueMoon</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <script defer th:src="@{/js/app.js}"></script>
+</head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/layout :: sidebar}"></aside>
+
+    <div class="main-panel">
+        <header th:replace="~{fragments/layout :: header}"></header>
+
+        <main class="content">
+            <div th:replace="~{fragments/flash-messages :: messages}"></div>
+
+            <div class="page-heading">
+                <div>
+                    <p class="eyebrow">BAN QUẢN TRỊ · NGƯỜI DÙNG</p>
+                    <h2 th:text="${userId != null ? 'Chỉnh sửa tài khoản' : 'Tạo tài khoản BQT'}">
+                        Tạo tài khoản BQT
+                    </h2>
+                    <p class="muted">Nhập thông tin hồ sơ và phân quyền cho tài khoản.</p>
+                </div>
+                <a class="button button-quiet" th:href="@{/admin/users}">Quay lại danh sách</a>
+            </div>
+
+            <section class="form-panel">
+                <form method="post"
+                      th:action="${userId != null} ? @{/admin/users/{id}(id=${userId})} : @{/admin/users}"
+                      class="account-form"
+                      data-account-form>
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                    <div class="form-section-heading">
+                        <h3>Thông tin cán bộ</h3>
+                        <p class="muted">Các trường có dấu * là bắt buộc.</p>
+                    </div>
+
+                    <div class="account-form-grid">
+                        <div class="form-field">
+                            <label for="username">Tên đăng nhập <span>*</span></label>
+                            <input id="username" name="username" type="text"
+                                   required minlength="1" maxlength="50"
+                                   autocomplete="username"
+                                   th:value="${userForm != null ? userForm.username : ''}">
+                            <small>Tối đa 50 ký tự. Hệ thống chuẩn hóa thành chữ thường.</small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="fullName">Họ và tên <span>*</span></label>
+                            <input id="fullName" name="fullName" type="text"
+                                   required maxlength="100" autocomplete="name"
+                                   th:value="${userForm != null ? userForm.fullName : ''}">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="email">Email <span>*</span></label>
+                            <input id="email" name="email" type="email"
+                                   required maxlength="255" autocomplete="email"
+                                   th:value="${userForm != null ? userForm.email : ''}">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="phone">Số điện thoại <span>*</span></label>
+                            <input id="phone" name="phone" type="tel"
+                                   required inputmode="numeric" pattern="[0-9]{10}"
+                                   maxlength="10" autocomplete="tel"
+                                   placeholder="10 chữ số"
+                                   th:value="${userForm != null ? userForm.phone : ''}">
+                            <small>Nhập đủ 10 chữ số, bao gồm số 0 ở đầu nếu có.</small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="role">Vai trò <span>*</span></label>
+                            <select id="role" name="role" required>
+                                <option value="">Chọn vai trò</option>
+                                <option value="ROLE_ADMIN"
+                                        th:selected="${userForm != null and userForm.role != null and userForm.role.toString() == 'ROLE_ADMIN'}">
+                                    Quản trị viên
+                                </option>
+                                <option value="ROLE_ACCOUNTANT"
+                                        th:selected="${userForm != null and userForm.role != null and userForm.role.toString() == 'ROLE_ACCOUNTANT'}">
+                                    Kế toán
+                                </option>
+                                <option value="ROLE_CASHIER"
+                                        th:selected="${userForm != null and userForm.role != null and userForm.role.toString() == 'ROLE_CASHIER'}">
+                                    Thủ quỹ
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="form-field" th:if="${userId == null}">
+                            <label for="password">Mật khẩu khởi tạo <span>*</span></label>
+                            <input id="password" name="password" type="password"
+                                   required minlength="8" maxlength="72"
+                                   autocomplete="new-password"
+                                   data-password-input>
+                            <small>Tối thiểu 8 ký tự. Không dùng lại mật khẩu cá nhân.</small>
+                        </div>
+
+                        <div class="form-field" th:if="${userId == null}">
+                            <label for="confirmPassword">Nhập lại mật khẩu <span>*</span></label>
+                            <input id="confirmPassword" name="confirmPassword" type="password"
+                                   required minlength="8" maxlength="72"
+                                   autocomplete="new-password"
+                                   data-password-confirm>
+                            <small class="field-error" data-password-error hidden>
+                                Hai mật khẩu chưa khớp.
+                            </small>
+                        </div>
+
+                        <div class="form-field form-field-full" th:if="${userId != null}">
+                            <label class="checkbox-field">
+                                <input type="checkbox" name="active" value="true"
+                                       th:checked="${userForm != null and userForm.active}">
+                                <span>Tài khoản đang được kích hoạt</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <a class="button button-quiet" th:href="@{/admin/users}">Hủy</a>
+                        <button class="button button-primary" type="submit"
+                                th:text="${userId != null ? 'Lưu thay đổi' : 'Tạo tài khoản'}">
+                            Tạo tài khoản
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <footer th:replace="~{fragments/layout :: footer}"></footer>
+        </main>
+    </div>
+</div>
+</body>
+</html>
