@@ -168,7 +168,7 @@ class ApartmentControllerTest {
         Long id = apartments.findByRoomNumber("EDIT-SIX").orElseThrow().getId();
         mvc.perform(get("/admin/apartments/{id}/edit", id))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Edit apartment")));
+                .andExpect(content().string(containsString("Chỉnh sửa căn hộ")));
         mvc.perform(post("/admin/apartments/{id}", id).with(csrf())
                         .param("roomNumber", "EDIT-SIX").param("floorNumber", "6")
                         .param("areaSqm", "80.00").param("apartmentType", "KIOT")
