@@ -21,4 +21,21 @@ public class ApartmentActorRepository {
                   AND role IN ('ROLE_ADMIN', 'ROLE_ACCOUNTANT')
                 """, (row, index) -> row.getLong("id"), username).stream().findFirst();
     }
+
+    /** Tìm ID tài khoản Admin đang hoạt động cho route quản trị tài khoản. */
+    public Optional<Long> findActiveAdminId(String username) {
+        return jdbcTemplate.query("""
+                SELECT id FROM users
+                WHERE username = ? AND is_active = TRUE
+                  AND role = 'ROLE_ADMIN'
+                """, (row, index) -> row.getLong("id"), username).stream().findFirst();
+    }
+
+    /** Tìm ID tài khoản đang hoạt động không phụ thuộc role. */
+    public Optional<Long> findActiveAccountId(String username) {
+        return jdbcTemplate.query("""
+                SELECT id FROM users
+                WHERE username = ? AND is_active = TRUE
+                """, (row, index) -> row.getLong("id"), username).stream().findFirst();
+    }
 }

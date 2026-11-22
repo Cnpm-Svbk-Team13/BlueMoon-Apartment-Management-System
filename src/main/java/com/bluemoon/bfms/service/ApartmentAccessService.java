@@ -33,4 +33,18 @@ public class ApartmentAccessService {
         return actorRepository.findActiveEditorId(username)
                 .orElseThrow(() -> new AccessDeniedException("Apartment editor access is required."));
     }
+
+    /** Tìm ID tài khoản Admin đang hoạt động cho Controller quản trị tài khoản. */
+    @Transactional(readOnly = true)
+    public Long requireAdminId(String username) {
+        return actorRepository.findActiveAdminId(username)
+                .orElseThrow(() -> new AccessDeniedException("Administrator access is required."));
+    }
+
+    /** Tìm tài khoản đang hoạt động cho thao tác đổi mật khẩu cá nhân. */
+    @Transactional(readOnly = true)
+    public Long requireActiveAccountId(String username) {
+        return actorRepository.findActiveAccountId(username)
+                .orElseThrow(() -> new AccessDeniedException("An active account is required."));
+    }
 }
