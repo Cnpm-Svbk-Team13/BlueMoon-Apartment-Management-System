@@ -1,6 +1,7 @@
 package com.bluemoon.bfms.config;
 
 import com.bluemoon.bfms.service.AuthService;
+import com.bluemoon.bfms.security.AuthenticatedPrincipal;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,7 +26,9 @@ import java.util.List;
  * Cấu hình xác thực và phân quyền phía server cho BlueMoon.
  *
  * <p>Không tin vai trò do request gửi lên: Spring Security lấy role từ
- * {@link AuthService.AuthenticationResult} sau khi Service xác thực tài khoản.</p>
+ * {@link AuthService.AuthenticationResult} sau khi Service xác thực tài khoản.
+ * Principal của phiên giữ cả ID ổn định và username; các Controller dùng ID
+ * để yêu cầu Service kiểm tra lại trạng thái và role hiện tại trong database.</p>
  */
 @Configuration
 @EnableWebSecurity
@@ -57,7 +60,8 @@ public class SecurityConfig {
                 }
 
                 return new UsernamePasswordAuthenticationToken(
-                        result.username(),
+                        // Lưu userId trong principal để đổi username không đổi danh tính actor của phiên.
+                        new AuthenticatedPrincipal(result.userId(), result.username()),
                         null,
                         List.of(new SimpleGrantedAuthority(result.role().name())));
             }

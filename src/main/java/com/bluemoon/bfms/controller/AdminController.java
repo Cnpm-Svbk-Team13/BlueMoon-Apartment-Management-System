@@ -3,11 +3,13 @@ package com.bluemoon.bfms.controller;
 import com.bluemoon.bfms.dto.ResetPasswordForm;
 import com.bluemoon.bfms.dto.UserForm;
 import com.bluemoon.bfms.model.UserRole;
+import com.bluemoon.bfms.security.AuthenticatedPrincipal;
 import com.bluemoon.bfms.service.ApartmentAccessService;
 import com.bluemoon.bfms.service.UserService;
 import com.bluemoon.bfms.service.UserService.UserSummary;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,9 +21,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.Principal;
-
-/** Routes quản trị tài khoản US-SEC-01 / NFR-02. */
+/**
+ * Tiếp nhận các request quản trị tài khoản theo US-SEC-01 / NFR-02.
+ *
+ * <p>{@code @AuthenticationPrincipal} lấy {@link AuthenticatedPrincipal} từ
+ * phiên hiện tại. Controller chuyển {@code userId} ổn định cho
+ * {@link ApartmentAccessService} để kiểm tra quyền trong database, thay vì tra
+ * lại actor theo username có thể đã thay đổi.</p>
+ */
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
@@ -35,20 +42,20 @@ public class AdminController {
     }
 
     @GetMapping
-    public String dashboard(Principal principal, Model model) {
+    public String dashboard(@AuthenticationPrincipal AuthenticatedPrincipal principal, Model model) {
         Long actorId = requireAdmin(principal);
         model.addAttribute("users", userService.getAllUsers(actorId));
         return "admin/dashboard";
     }
 
     @GetMapping("/users")
-    public String users(Principal principal, Model model) {
+    public String users(@AuthenticationPrincipal AuthenticatedPrincipal principal, Model model) {
         model.addAttribute("users", userService.getAllUsers(requireAdmin(principal)));
         return "admin/users";
     }
 
     @GetMapping("/users/new")
-    public String newUser(Principal principal, Model model) {
+    public String newUser(@AuthenticationPrincipal AuthenticatedPrincipal principal, Model model) {
         requireAdmin(principal);
         model.addAttribute("userForm", new UserForm());
         model.addAttribute("roles", UserRole.values());
@@ -58,7 +65,8 @@ public class AdminController {
     @PostMapping("/users")
     public String createUser(
             @Valid @ModelAttribute("userForm") UserForm form,
-            BindingResult errors, Principal principal, HttpServletRequest request,
+            BindingResult errors, @AuthenticationPrincipal AuthenticatedPrincipal principal,
+            HttpServletRequest request,
             RedirectAttributes redirect, Model model) {
         Long actorId = requireAdmin(principal);
         if (errors.hasErrors()) {
@@ -87,7 +95,8 @@ public class AdminController {
     }
 
     @GetMapping("/users/{id}/edit")
-    public String editUser(@PathVariable Long id, Principal principal, Model model) {
+    public String editUser(@PathVariable Long id,
+            @AuthenticationPrincipal AuthenticatedPrincipal principal, Model model) {
         Long actorId = requireAdmin(principal);
         UserSummary summary = userService.getUserById(id, actorId);
 
@@ -110,7 +119,7 @@ public class AdminController {
             @PathVariable Long id,
             @Valid @ModelAttribute("userForm") UserForm form,
             BindingResult errors,
-            Principal principal,
+            @AuthenticationPrincipal AuthenticatedPrincipal principal,
             HttpServletRequest request,
             RedirectAttributes redirect,
             Model model) {
@@ -147,26 +156,29 @@ public class AdminController {
     public String updateUserStatus(
             @PathVariable Long id,
             @RequestParam boolean active,
-            Principal principal,
+            @AuthenticationPrincipal AuthenticatedPrincipal principal,
             HttpServletRequest request,
             RedirectAttributes redirect) {
         return setUserStatus(id, active, principal, request, redirect);
     }
 
     @PostMapping("/users/{id}/activate")
-    public String activateUser(@PathVariable Long id, Principal principal,
+    public String activateUser(@PathVariable Long id,
+            @AuthenticationPrincipal AuthenticatedPrincipal principal,
             HttpServletRequest request, RedirectAttributes redirect) {
         return setUserStatus(id, true, principal, request, redirect);
     }
 
     @PostMapping("/users/{id}/deactivate")
-    public String deactivateUser(@PathVariable Long id, Principal principal,
+    public String deactivateUser(@PathVariable Long id,
+            @AuthenticationPrincipal AuthenticatedPrincipal principal,
             HttpServletRequest request, RedirectAttributes redirect) {
         return setUserStatus(id, false, principal, request, redirect);
     }
 
     @GetMapping("/users/{id}/reset-password")
-    public String resetPasswordPage(@PathVariable Long id, Principal principal, Model model) {
+    public String resetPasswordPage(@PathVariable Long id,
+            @AuthenticationPrincipal AuthenticatedPrincipal principal, Model model) {
         requireAdmin(principal);
         model.addAttribute("resetPasswordForm", new ResetPasswordForm());
         model.addAttribute("accountId", id);
@@ -176,9 +188,10 @@ public class AdminController {
     @PostMapping("/users/{id}/reset-password")
     public String resetPassword(
             @PathVariable Long id, @Valid @ModelAttribute("resetPasswordForm") ResetPasswordForm form,
-            BindingResult errors, Principal principal, HttpServletRequest request,
-            RedirectAttributes redirect) {
+            BindingResult errors, @AuthenticationPrincipal AuthenticatedPrincipal principal,
+            HttpServletRequest request, RedirectAttributes redirect, Model model) {
         Long actorId = requireAdmin(principal);
+        model.addAttribute("accountId", id);
         if (errors.hasErrors()) {
             return "admin/reset-password";
         }
@@ -192,8 +205,8 @@ public class AdminController {
         return "redirect:/admin/users";
     }
 
-    private Long requireAdmin(Principal principal) {
-        return accessService.requireAdminId(principal == null ? null : principal.getName());
+    private Long requireAdmin(AuthenticatedPrincipal principal) {
+        return accessService.requireAdminId(principal == null ? null : principal.userId());
     }
 
     private boolean passwordsMatch(UserForm form) {
@@ -201,7 +214,7 @@ public class AdminController {
                 && form.getPassword().equals(form.getConfirmPassword());
     }
 
-    private String setUserStatus(Long id, boolean active, Principal principal,
+    private String setUserStatus(Long id, boolean active, AuthenticatedPrincipal principal,
             HttpServletRequest request, RedirectAttributes redirect) {
         userService.toggleUserStatus(
                 id, active, requireAdmin(principal), request.getRemoteAddr());
