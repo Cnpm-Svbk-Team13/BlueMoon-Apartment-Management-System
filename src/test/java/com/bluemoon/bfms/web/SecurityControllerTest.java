@@ -1,5 +1,6 @@
 package com.bluemoon.bfms.web;
 
+import com.bluemoon.bfms.repository.AuditLogRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,8 +9,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
@@ -42,6 +45,9 @@ class SecurityControllerTest {
 
     @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+    private AuditLogRepository auditLogs;
 
     @BeforeEach
     void seedAccounts() {
@@ -88,14 +94,14 @@ class SecurityControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "accountant_test", roles = "ACCOUNTANT")
+    @WithAuthenticatedAccount(userId = 502, username = "accountant_test", authorities = "ROLE_ACCOUNTANT")
     void accountantCannotAccessAdminUserRoutes() throws Exception {
         mvc.perform(get("/admin/users"))
                 .andExpect(status().isForbidden());
     }
 
     @Test
-    @WithMockUser(username = "admin_test", roles = "ADMIN")
+    @WithAuthenticatedAccount(userId = 501, username = "admin_test", authorities = "ROLE_ADMIN")
     void adminCanAccessAdminDashboard() throws Exception {
         mvc.perform(get("/admin"))
                 .andExpect(status().isOk());
@@ -111,6 +117,54 @@ class SecurityControllerTest {
     }
 
     @Test
+    void loggedInActorKeepsOriginalIdWhenOldUsernameIsReused() throws Exception {
+        var login = mvc.perform(post("/login").with(csrf())
+                        .param("username", "admin_test")
+                        .param("password", "Password@123"))
+                .andExpect(status().is3xxRedirection())
+                .andReturn();
+        MockHttpSession session = (MockHttpSession) login.getRequest().getSession(false);
+        assertNotNull(session);
+
+        mvc.perform(post("/admin/users/501").session(session).with(csrf())
+                        .param("username", "renamed_admin")
+                        .param("fullName", "Test admin_test")
+                        .param("email", "admin_test@example.test")
+                        .param("phone", "0900000000")
+                        .param("role", "ROLE_ADMIN")
+                        .param("active", "true"))
+                .andExpect(status().is3xxRedirection());
+
+        mvc.perform(post("/admin/users/502").session(session).with(csrf())
+                        .param("username", "admin_test")
+                        .param("fullName", "Test accountant_test")
+                        .param("email", "accountant_test@example.test")
+                        .param("phone", "0900000000")
+                        .param("role", "ROLE_ADMIN")
+                        .param("active", "true"))
+                .andExpect(status().is3xxRedirection());
+
+        mvc.perform(post("/admin/users").session(session).with(csrf())
+                        .param("username", "audit_probe")
+                        .param("fullName", "Audit Probe")
+                        .param("email", "audit_probe@example.test")
+                        .param("phone", "0901234567")
+                        .param("role", "ROLE_ACCOUNTANT")
+                        .param("password", "Password@123")
+                        .param("confirmPassword", "Password@123"))
+                .andExpect(status().is3xxRedirection());
+
+        Long createdUserId = jdbc.queryForObject(
+                "SELECT id FROM users WHERE username = 'audit_probe'", Long.class);
+        var creationAudit = auditLogs.findAllByEntityNameAndEntityIdOrderByCreatedAtDescIdDesc(
+                        "User", createdUserId).stream()
+                .filter(audit -> "CREATE_USER".equals(audit.getAction()))
+                .findFirst()
+                .orElseThrow();
+        assertEquals(501L, creationAudit.getUserId());
+    }
+
+    @Test
     void invalidLoginUsesGenericFailureRedirect() throws Exception {
         mvc.perform(post("/login").with(csrf())
                         .param("username", "unknown_test")
@@ -120,14 +174,14 @@ class SecurityControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "cashier_test", roles = "CASHIER")
+    @WithAuthenticatedAccount(userId = 503, username = "cashier_test", authorities = "ROLE_CASHIER")
     void cashierCanAccessPortal() throws Exception {
         mvc.perform(get("/portal"))
                 .andExpect(status().isOk());
     }
 
     @Test
-    @WithMockUser(username = "admin_test", roles = "ADMIN")
+    @WithAuthenticatedAccount(userId = 501, username = "admin_test", authorities = "ROLE_ADMIN")
     void adminCanCreateAccountAndRedirect() throws Exception {
         mvc.perform(post("/admin/users").with(csrf())
                         .param("username", "new_account")
@@ -142,7 +196,7 @@ class SecurityControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin_test", roles = "ADMIN")
+    @WithAuthenticatedAccount(userId = 501, username = "admin_test", authorities = "ROLE_ADMIN")
     void adminCanSetAccountStatusUsingFrontendContract() throws Exception {
         mvc.perform(post("/admin/users/502/deactivate").with(csrf()))
                 .andExpect(status().is3xxRedirection())
@@ -164,7 +218,7 @@ class SecurityControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin_test", roles = "ADMIN")
+    @WithAuthenticatedAccount(userId = 501, username = "admin_test", authorities = "ROLE_ADMIN")
     void adminCanUpdateAccount() throws Exception {
         mvc.perform(post("/admin/users/502").with(csrf())
                         .param("username", "accountant_test")
@@ -178,7 +232,7 @@ class SecurityControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin_test", roles = "ADMIN")
+    @WithAuthenticatedAccount(userId = 501, username = "admin_test", authorities = "ROLE_ADMIN")
     void editingWithUncheckedActiveCheckboxDisablesAccount() throws Exception {
         mvc.perform(post("/admin/users/502").with(csrf())
                         .param("username", "accountant_test")
@@ -195,7 +249,7 @@ class SecurityControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin_test", roles = "ADMIN")
+    @WithAuthenticatedAccount(userId = 501, username = "admin_test", authorities = "ROLE_ADMIN")
     void adminCanLoadEditFormUsingFrontendModelAttribute() throws Exception {
         mvc.perform(get("/admin/users/502/edit"))
                 .andExpect(status().isOk())
@@ -204,7 +258,7 @@ class SecurityControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin_test", roles = "ADMIN")
+    @WithAuthenticatedAccount(userId = 501, username = "admin_test", authorities = "ROLE_ADMIN")
     void accountCreationRejectsMismatchedPasswords() throws Exception {
         mvc.perform(post("/admin/users").with(csrf())
                         .param("username", "new_account")
@@ -220,7 +274,7 @@ class SecurityControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin_test", roles = "ADMIN")
+    @WithAuthenticatedAccount(userId = 501, username = "admin_test", authorities = "ROLE_ADMIN")
     void adminCanResetAccountPassword() throws Exception {
         mvc.perform(post("/admin/users/502/reset-password").with(csrf())
                         .param("newPassword", "Replacement@123"))
@@ -229,7 +283,7 @@ class SecurityControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "admin_test", roles = "ADMIN")
+    @WithAuthenticatedAccount(userId = 501, username = "admin_test", authorities = "ROLE_ADMIN")
     void authenticatedUserCanChangeOwnPassword() throws Exception {
         mvc.perform(post("/admin/users/change-password").with(csrf())
                         .param("currentPassword", "Password@123")
@@ -240,7 +294,7 @@ class SecurityControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "cashier_test", roles = "CASHIER")
+    @WithAuthenticatedAccount(userId = 503, username = "cashier_test", authorities = "ROLE_CASHIER")
     void cashierCanOpenPasswordChangeRouteFromFrontend() throws Exception {
         mvc.perform(get("/admin/users/change-password"))
                 .andExpect(status().isOk())
@@ -254,7 +308,7 @@ class SecurityControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "cashier_test", roles = "CASHIER")
+    @WithAuthenticatedAccount(userId = 503, username = "cashier_test", authorities = "ROLE_CASHIER")
     void logoutUsesFrontendSuccessParameter() throws Exception {
         mvc.perform(post("/logout").with(csrf()))
                 .andExpect(status().is3xxRedirection())

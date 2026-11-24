@@ -42,7 +42,9 @@ class Sprint1PostgresTest {
 
     @Test
     void concurrentApartmentCreatesKeepExactlyOneRoom() throws Exception {
-        Long actorId = access.requireEditorId("admin");
+        Long adminId = jdbc.queryForObject(
+                "SELECT id FROM users WHERE username = 'admin'", Long.class);
+        Long actorId = access.requireEditorId(adminId);
         String roomNumber = roomNumber();
         List<RuntimeException> failures = race(
                 () -> apartments.createApartment(apartmentForm(roomNumber), actorId, null),
@@ -55,7 +57,9 @@ class Sprint1PostgresTest {
 
     @Test
     void concurrentAssignmentsAndReplacementsKeepOneActiveHouseholdAndValidHistory() throws Exception {
-        Long actorId = access.requireEditorId("admin");
+        Long adminId = jdbc.queryForObject(
+                "SELECT id FROM users WHERE username = 'admin'", Long.class);
+        Long actorId = access.requireEditorId(adminId);
         Long id = apartments.createApartment(apartmentForm(roomNumber()), actorId, null).getId();
         var assigned = race(() -> heads.assignOrReplace(id, headForm(null), actorId, null),
                 () -> heads.assignOrReplace(id, headForm(null), actorId, null));
