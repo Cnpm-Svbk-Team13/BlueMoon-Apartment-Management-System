@@ -255,4 +255,51 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    // FE-05: validation email chủ hộ.
+    const householdForm = document.querySelector("[data-household-form]");
+    if (householdForm) {
+        const nationalId = householdForm.querySelector("#nationalId");
+        const phone = householdForm.querySelector("#phone");
+        const email = householdForm.querySelector("#email");
+        const movedInDate = householdForm.querySelector("#movedInDate");
+
+        householdForm.addEventListener("submit", (event) => {
+            let valid = true;
+
+            if (nationalId && !/^[0-9]{12}$/.test(nationalId.value.trim())) {
+                nationalId.setCustomValidity("Số CCCD phải gồm đúng 12 chữ số.");
+                valid = false;
+            } else if (nationalId) {
+                nationalId.setCustomValidity("");
+            }
+
+            if (phone && !/^[0-9]{10}$/.test(phone.value.trim())) {
+                phone.setCustomValidity("Số điện thoại phải gồm đúng 10 chữ số.");
+                valid = false;
+            } else if (phone) {
+                phone.setCustomValidity("");
+            }
+
+            if (email && email.value.trim() !== "" &&
+                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
+                email.setCustomValidity("Vui lòng nhập email hợp lệ.");
+                valid = false;
+            } else if (email) {
+                email.setCustomValidity("");
+            }
+
+            if (movedInDate && movedInDate.required && movedInDate.value === "") {
+                movedInDate.setCustomValidity("Vui lòng chọn ngày chuyển vào.");
+                valid = false;
+            } else if (movedInDate) {
+                movedInDate.setCustomValidity("");
+            }
+
+            if (!valid) {
+                event.preventDefault();
+                householdForm.reportValidity();
+            }
+        });
+    }
 });

@@ -76,7 +76,7 @@ class HouseholdHeadWebTest {
     @Test
     void assignsReplacesAndUpdatesProfileWithoutOverwritingSnapshots() throws Exception {
         mvc.perform(get(url)).andExpect(status().isOk())
-                .andExpect(content().string(containsString("Assign first head")));
+                .andExpect(content().string(containsString("Gán chủ hộ lần đầu")));
         assignFirst();
         Long firstId = persons.findByNationalId("000000000001").orElseThrow().getId();
 
@@ -103,7 +103,7 @@ class HouseholdHeadWebTest {
                         .orElseThrow().getEventType());
         assertEquals("First Head", persons.findById(firstId).orElseThrow().getFullName());
         mvc.perform(get(url)).andExpect(status().isOk())
-                .andExpect(content().string(containsString("PROFILE_UPDATED")))
+                .andExpect(content().string(containsString("Cập nhật hồ sơ")))
                 .andExpect(content().string(containsString("First Head")));
     }
 
@@ -113,7 +113,7 @@ class HouseholdHeadWebTest {
         mvc.perform(post(url + "/lookup").with(csrf())
                         .param("headPerson.nationalId", "000000000003"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Confirm use of the existing profile")));
+                .andExpect(content().string(containsString("Xác nhận sử dụng hồ sơ đã tồn tại")));
         mvc.perform(headPost(url, "000000000003", "Different Submitted Name")
                         .param("movedInDate", "2026-11-01")
                         .param("confirmedPersonId", existing.getId().toString()))
