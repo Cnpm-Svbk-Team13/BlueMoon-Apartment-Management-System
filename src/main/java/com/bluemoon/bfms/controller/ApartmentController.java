@@ -4,6 +4,7 @@ import com.bluemoon.bfms.dto.ApartmentForm;
 import com.bluemoon.bfms.exception.DuplicateRoomNumberException;
 import com.bluemoon.bfms.model.ApartmentType;
 import com.bluemoon.bfms.model.ApartmentStatus;
+import com.bluemoon.bfms.security.AuthenticatedPrincipal;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,6 +14,7 @@ import com.bluemoon.bfms.service.ApartmentService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.dao.DataAccessException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,9 +24,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.Principal;
-
-/** Handles apartment creation for BE-02, US-001 AC 1-2 and NFR-02. */
+/**
+ * Điều phối các form danh sách, tạo và chỉnh sửa căn hộ theo BE-02, US-001
+ * AC 1-2 và NFR-02.
+ *
+ * <p>{@code @AuthenticationPrincipal} cung cấp principal đã được Spring
+ * Security xác thực. Controller chỉ lấy ID từ principal; việc xác nhận tài
+ * khoản còn hoạt động và có quyền sửa căn hộ do {@link ApartmentAccessService}
+ * truy vấn trong database.</p>
+ */
 @Controller
 @RequestMapping("/admin/apartments")
 public class ApartmentController {
@@ -42,8 +50,9 @@ public class ApartmentController {
     }
 
     @GetMapping
-    public String list(@RequestParam(required = false) Integer floor, Principal principal, Model model) {
-        accessService.requireEditorId(principal == null ? null : principal.getName());
+    public String list(@RequestParam(required = false) Integer floor,
+            @AuthenticationPrincipal AuthenticatedPrincipal principal, Model model) {
+        accessService.requireEditorId(principal == null ? null : principal.userId());
         try {
             model.addAttribute("apartments", apartmentService.listApartments(floor));
         } catch (IllegalArgumentException exception) {
@@ -54,8 +63,9 @@ public class ApartmentController {
     }
 
     @GetMapping("/{id}/edit")
-    public String showEditForm(@PathVariable Long id, Principal principal, Model model) {
-        accessService.requireEditorId(principal == null ? null : principal.getName());
+    public String showEditForm(@PathVariable Long id,
+            @AuthenticationPrincipal AuthenticatedPrincipal principal, Model model) {
+        accessService.requireEditorId(principal == null ? null : principal.userId());
         model.addAttribute("apartmentForm", apartmentService.getApartmentForEdit(id));
         model.addAttribute("apartmentId", id);
         model.addAttribute("apartmentStatuses", ApartmentStatus.values());
@@ -63,8 +73,8 @@ public class ApartmentController {
     }
 
     @GetMapping("/new")
-    public String showCreateForm(Principal principal, Model model) {
-        accessService.requireEditorId(principal == null ? null : principal.getName());
+    public String showCreateForm(@AuthenticationPrincipal AuthenticatedPrincipal principal, Model model) {
+        accessService.requireEditorId(principal == null ? null : principal.userId());
         model.addAttribute("apartmentForm", new ApartmentForm());
         return "admin/apartment-form";
     }
@@ -72,9 +82,10 @@ public class ApartmentController {
     @PostMapping
     public String createApartment(
             @Valid @ModelAttribute("apartmentForm") ApartmentForm form,
-            BindingResult errors, Principal principal, HttpServletRequest request,
+            BindingResult errors, @AuthenticationPrincipal AuthenticatedPrincipal principal,
+            HttpServletRequest request,
             RedirectAttributes redirectAttributes) {
-        Long actorId = accessService.requireEditorId(principal == null ? null : principal.getName());
+        Long actorId = accessService.requireEditorId(principal == null ? null : principal.userId());
         return save(errors, redirectAttributes, "Apartment created successfully.",
                 () -> apartmentService.createApartment(form, actorId, request.getRemoteAddr()));
     }
@@ -82,9 +93,10 @@ public class ApartmentController {
     @PostMapping("/{id}")
     public String updateApartment(@PathVariable Long id,
             @Valid @ModelAttribute("apartmentForm") ApartmentForm form, BindingResult errors,
-            Principal principal, HttpServletRequest request, Model model,
+            @AuthenticationPrincipal AuthenticatedPrincipal principal,
+            HttpServletRequest request, Model model,
             RedirectAttributes redirectAttributes) {
-        Long actorId = accessService.requireEditorId(principal == null ? null : principal.getName());
+        Long actorId = accessService.requireEditorId(principal == null ? null : principal.userId());
         model.addAttribute("apartmentId", id);
         model.addAttribute("apartmentStatuses", ApartmentStatus.values());
         return save(errors, redirectAttributes, "Apartment updated successfully.",

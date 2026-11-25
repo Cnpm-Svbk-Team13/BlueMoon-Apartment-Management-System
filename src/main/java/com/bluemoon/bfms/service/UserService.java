@@ -178,6 +178,20 @@ public class UserService {
     }
 
     /**
+     * Trả thông tin tài khoản để Admin mở form cập nhật.
+     *
+     * @param userId ID tài khoản cần xem
+     * @param actorId ID Admin lấy từ principal phía server
+     * @return bản tóm tắt tài khoản, không chứa password hash
+     * @throws IllegalArgumentException nếu người thực hiện hoặc tài khoản đích không hợp lệ
+     */
+    @Transactional(readOnly = true)
+    public UserSummary getUserById(Long userId, Long actorId) {
+        requireAdministrator(actorId);
+        return toSummary(findUser(userId));
+    }
+
+    /**
      * Cấp lại mật khẩu, lưu hash BCrypt mới và xóa trạng thái khóa đăng nhập cũ.
      *
      * @param userId ID tài khoản cần cấp lại mật khẩu

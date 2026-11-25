@@ -14,11 +14,28 @@ public class ApartmentActorRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Optional<Long> findActiveEditorId(String username) {
+    public Optional<Long> findActiveEditorId(Long userId) {
         return jdbcTemplate.query("""
                 SELECT id FROM users
-                WHERE username = ? AND is_active = TRUE
+                WHERE id = ? AND is_active = TRUE
                   AND role IN ('ROLE_ADMIN', 'ROLE_ACCOUNTANT')
-                """, (row, index) -> row.getLong("id"), username).stream().findFirst();
+                """, (row, index) -> row.getLong("id"), userId).stream().findFirst();
+    }
+
+    /** Tìm ID tài khoản Admin đang hoạt động cho route quản trị tài khoản. */
+    public Optional<Long> findActiveAdminId(Long userId) {
+        return jdbcTemplate.query("""
+                SELECT id FROM users
+                WHERE id = ? AND is_active = TRUE
+                  AND role = 'ROLE_ADMIN'
+                """, (row, index) -> row.getLong("id"), userId).stream().findFirst();
+    }
+
+    /** Tìm ID tài khoản đang hoạt động không phụ thuộc role. */
+    public Optional<Long> findActiveAccountId(Long userId) {
+        return jdbcTemplate.query("""
+                SELECT id FROM users
+                WHERE id = ? AND is_active = TRUE
+                """, (row, index) -> row.getLong("id"), userId).stream().findFirst();
     }
 }
