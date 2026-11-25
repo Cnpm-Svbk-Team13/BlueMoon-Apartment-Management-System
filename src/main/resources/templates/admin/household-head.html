@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Household head | BlueMoon</title>
+    <title>Chủ hộ và lịch sử | BlueMoon</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
     <script defer th:src="@{/js/app.js}"></script>
 </head>
@@ -15,89 +15,308 @@
         <header th:replace="~{fragments/layout :: header}"></header>
 
         <main class="content">
-            <a th:href="@{/admin/apartments}">Back to apartments</a>
-            <h1 th:text="|Household for ${apartment.roomNumber}|"></h1>
             <div th:replace="~{fragments/flash-messages :: messages}"></div>
-            <section th:if="${apartment.currentHead != null}">
-                <h2>Current head</h2>
-                <p th:text="${apartment.currentHead.fullName}"></p>
-                <a th:if="${!editing}" th:href="@{/admin/apartments/{id}/household(id=${apartment.apartmentId},editProfile=true)}">Edit current profile</a>
-                <a th:if="${editing}" th:href="@{/admin/apartments/{id}/household(id=${apartment.apartmentId})}">Cancel profile edit</a>
-            </section>
-            <h2 th:text="${editing ? 'Edit current profile' : (apartment.headPersonId == null ? 'Assign first head' : 'Replace head')}"></h2>
-            <form method="post" th:object="${headForm}"
-                  th:action="${editing} ? @{/admin/apartments/{id}/household/profile(id=${apartment.apartmentId})} : @{/admin/apartments/{id}/household(id=${apartment.apartmentId})}">
-                <input type="hidden" th:field="*{expectedHeadPersonId}">
-                <div class="error" role="alert" th:if="${#fields.hasGlobalErrors()}">
-                    <p th:each="error : ${#fields.globalErrors()}" th:text="${error}"></p>
+
+            <div class="page-heading">
+                <div>
+                    <p class="eyebrow">QUẢN LÝ CĂN HỘ · CHỦ HỘ</p>
+                    <h2 th:text="|Hộ cư trú căn ${apartment.roomNumber}|">Hộ cư trú</h2>
+                    <p class="muted">Quản lý chủ hộ, phân công cư trú và lịch sử thay đổi.</p>
                 </div>
-                <label for="nationalId">National ID</label>
-                <input id="nationalId" th:field="*{headPerson.nationalId}" required inputmode="numeric" pattern="[0-9]{12}">
-                <button th:if="${!editing}" type="submit" formnovalidate
-                        th:formaction="@{/admin/apartments/{id}/household/lookup(id=${apartment.apartmentId})}">
-                    Look up existing person
-                </button>
-                <p class="error" th:errors="*{headPerson.nationalId}"></p>
-                <p th:if="${lookupMessage}" th:text="${lookupMessage}"></p>
-                <label th:if="${existingPerson != null}">
-                    <input type="checkbox" name="confirmedPersonId" th:value="${existingPerson.id}" required>
-                    Confirm use of the existing profile shown below
-                </label>
-                <label for="fullName">Full name</label>
-                <input id="fullName" th:field="*{headPerson.fullName}" required maxlength="100">
-                <p class="error" th:errors="*{headPerson.fullName}"></p>
-                <label for="phone">Phone number</label>
-                <input id="phone" th:field="*{headPerson.phone}" required inputmode="numeric" pattern="[0-9]{10}">
-                <p class="error" th:errors="*{headPerson.phone}"></p>
-                <label for="email">Email</label>
-                <input id="email" type="email" th:field="*{headPerson.email}" maxlength="255">
-                <p class="error" th:errors="*{headPerson.email}"></p>
-                <div th:if="${!editing and apartment.headPersonId == null}">
-                    <label for="movedInDate">Move-in date</label>
-                    <input type="date" th:field="*{movedInDate}" required>
-                    <p class="error" th:errors="*{movedInDate}"></p>
-                </div>
-                <div th:if="${!editing and apartment.previousHeadResidence}">
-                    <label for="previousHeadRelationship">Previous head's new relationship</label>
-                    <select th:field="*{previousHeadRelationship}" required>
-                        <option value="">Select a relationship</option>
-                        <option th:each="relationship : ${relationships}"
-                                th:value="${relationship}" th:text="${relationship}"></option>
-                    </select>
-                    <p class="error" th:errors="*{previousHeadRelationship}"></p>
-                </div>
-                <button type="submit">Save</button>
-            </form>
-            <section>
-                <h2>Head history</h2>
-                <p th:if="${#lists.isEmpty(apartment.history)}">No history recorded.</p>
-                <table th:unless="${#lists.isEmpty(apartment.history)}">
-                    <thead><tr><th>Change</th><th>Previous profile</th><th>New profile</th><th>Changed at</th><th>User ID</th></tr></thead>
-                    <tbody>
-                    <tr th:each="entry : ${apartment.history}">
-                        <td th:text="${entry.eventType}"></td>
-                        <td th:if="${entry.previousSnapshot != null}"
-                            th:with="profile=${entry.previousSnapshot}" th:insert="~{:: snapshot}"></td>
-                        <td th:if="${entry.previousSnapshot == null}">—</td>
-                        <td th:with="profile=${entry.newSnapshot}" th:insert="~{:: snapshot}"></td>
-                        <td th:text="${entry.changedAt}"></td>
-                        <td th:text="${entry.changedByUserId}"></td>
-                    </tr>
-                    </tbody>
-                </table>
+                <a class="button button-quiet" th:href="@{/admin/apartments}">
+                    Quay lại danh sách
+                </a>
+            </div>
+
+            <section class="household-panel">
+                <article class="household-card" th:if="${apartment.currentHead != null}">
+                    <p class="eyebrow">CHỦ HỘ HIỆN TẠI</p>
+                    <h3 th:text="${apartment.currentHead.fullName}">Chủ hộ</h3>
+                    <p>
+                        CCCD:
+                        <strong th:text="${apartment.currentHead.nationalId}">—</strong>
+                    </p>
+                    <p>
+                        Số điện thoại:
+                        <strong th:text="${apartment.currentHead.phone}">—</strong>
+                    </p>
+                    <p>
+                        Email:
+                        <strong th:text="${apartment.currentHead.email ?: 'Chưa cập nhật'}">—</strong>
+                    </p>
+
+                    <a class="button button-quiet"
+                       th:if="${!editing}"
+                       th:href="@{/admin/apartments/{id}/household(id=${apartment.apartmentId},editProfile=true)}">
+                        Sửa hồ sơ chủ hộ
+                    </a>
+                    <a class="button button-quiet"
+                       th:if="${editing}"
+                       th:href="@{/admin/apartments/{id}/household(id=${apartment.apartmentId})}">
+                        Hủy sửa hồ sơ
+                    </a>
+                </article>
+
+                <article class="household-card" th:if="${apartment.currentHead == null}">
+                    <p class="eyebrow">CHỦ HỘ HIỆN TẠI</p>
+                    <h3>Chưa có chủ hộ</h3>
+                    <p>Căn hộ này chưa được gán chủ hộ. Hãy nhập hồ sơ bên dưới để hoàn tất gán chủ hộ lần đầu.</p>
+                </article>
+
+                <section class="household-form-panel">
+                    <h3 th:text="${editing ? 'Sửa hồ sơ chủ hộ' :
+                        (apartment.headPersonId == null ? 'Gán chủ hộ lần đầu' : 'Thay chủ hộ')}">
+                        Thông tin chủ hộ
+                    </h3>
+
+                    <form method="post"
+                          th:object="${headForm}"
+                          th:action="${editing}
+                              ? @{/admin/apartments/{id}/household/profile(id=${apartment.apartmentId})}
+                              : @{/admin/apartments/{id}/household(id=${apartment.apartmentId})}"
+                          class="household-form"
+                          novalidate
+                          data-household-form>
+
+                        <input type="hidden"
+                               th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}">
+                        <input type="hidden" th:field="*{expectedHeadPersonId}">
+
+                        <div class="alert alert-error"
+                             role="alert"
+                             th:if="${#fields.hasGlobalErrors()}">
+                            <p th:each="error : ${#fields.globalErrors()}"
+                               th:text="${error}"></p>
+                        </div>
+
+                        <div class="household-form-grid">
+                            <div class="form-field">
+                                <label for="nationalId">Số CCCD <span>*</span></label>
+                                <input id="nationalId"
+                                       th:field="*{headPerson.nationalId}"
+                                       type="text"
+                                       required
+                                       maxlength="12"
+                                       inputmode="numeric"
+                                       pattern="[0-9]{12}"
+                                       placeholder="12 chữ số"
+                                       aria-describedby="nationalIdError"
+                                       th:attr="aria-invalid=${#fields.hasErrors('headPerson.nationalId')}">
+                                <small id="nationalIdError"
+                                       class="field-error"
+                                       th:errors="*{headPerson.nationalId}">
+                                </small>
+                            </div>
+
+                            <div class="lookup-action" th:if="${!editing}">
+                                <button type="submit"
+                                        class="button button-quiet"
+                                        formnovalidate
+                                        th:formaction="@{/admin/apartments/{id}/household/lookup(id=${apartment.apartmentId})}">
+                                    Tra cứu CCCD
+                                </button>
+                            </div>
+
+                            <div class="lookup-confirmation"
+                                 th:if="${existingPerson != null}">
+                                <label>
+                                    <input type="checkbox"
+                                           name="confirmedPersonId"
+                                           th:value="${existingPerson.id}"
+                                           required>
+                                    <span>
+                                        Xác nhận sử dụng hồ sơ đã tồn tại:
+                                        <strong th:text="${existingPerson.profile.fullName}">Họ tên</strong>
+                                        —
+                                        <span th:text="${existingPerson.profile.nationalId}">CCCD</span>
+                                    </span>
+                                </label>
+                            </div>
+
+                            <p class="lookup-message" th:if="${lookupMessage}"
+                               th:text="${lookupMessage}"></p>
+
+                            <div class="form-field">
+                                <label for="fullName">Họ và tên <span>*</span></label>
+                                <input id="fullName"
+                                       th:field="*{headPerson.fullName}"
+                                       type="text"
+                                       required
+                                       maxlength="100"
+                                       autocomplete="name"
+                                       aria-describedby="fullNameError"
+                                       th:attr="aria-invalid=${#fields.hasErrors('headPerson.fullName')}">
+                                <small id="fullNameError"
+                                       class="field-error"
+                                       th:errors="*{headPerson.fullName}">
+                                </small>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="phone">Số điện thoại <span>*</span></label>
+                                <input id="phone"
+                                       th:field="*{headPerson.phone}"
+                                       type="tel"
+                                       required
+                                       maxlength="10"
+                                       inputmode="numeric"
+                                       pattern="[0-9]{10}"
+                                       placeholder="10 chữ số"
+                                       autocomplete="tel"
+                                       aria-describedby="phoneError"
+                                       th:attr="aria-invalid=${#fields.hasErrors('headPerson.phone')}">
+                                <small id="phoneError"
+                                       class="field-error"
+                                       th:errors="*{headPerson.phone}">
+                                </small>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="email">Email</label>
+                                <input id="email"
+                                       th:field="*{headPerson.email}"
+                                       type="email"
+                                       maxlength="255"
+                                       autocomplete="email"
+                                       aria-describedby="emailError"
+                                       th:attr="aria-invalid=${#fields.hasErrors('headPerson.email')}">
+                                <small id="emailError"
+                                       class="field-error"
+                                       th:errors="*{headPerson.email}">
+                                </small>
+                            </div>
+
+                            <div class="form-field"
+                                 th:if="${!editing and apartment.headPersonId == null}">
+                                <label for="movedInDate">Ngày chuyển vào <span>*</span></label>
+                                <input id="movedInDate"
+                                       th:field="*{movedInDate}"
+                                       type="date"
+                                       required
+                                       aria-describedby="movedInDateError"
+                                       th:attr="aria-invalid=${#fields.hasErrors('movedInDate')}">
+                                <small id="movedInDateError"
+                                       class="field-error"
+                                       th:errors="*{movedInDate}">
+                                </small>
+                            </div>
+
+                            <div class="form-field"
+                                 th:if="${!editing and apartment.previousHeadResidence}">
+                                <label for="previousHeadRelationship">
+                                    Quan hệ mới của chủ hộ cũ <span>*</span>
+                                </label>
+                                <select id="previousHeadRelationship"
+                                        th:field="*{previousHeadRelationship}"
+                                        required
+                                        aria-describedby="previousHeadRelationshipError"
+                                        th:attr="aria-invalid=${#fields.hasErrors('previousHeadRelationship')}">
+                                    <option value="">Chọn quan hệ</option>
+                                    <option th:each="relationship : ${relationships}"
+                                            th:value="${relationship}"
+                                            th:text="${relationship == T(com.bluemoon.bfms.model.RelationshipWithHead).SPOUSE} ? 'Vợ/chồng' :
+                                                     (${relationship == T(com.bluemoon.bfms.model.RelationshipWithHead).CHILD} ? 'Con' :
+                                                     (${relationship == T(com.bluemoon.bfms.model.RelationshipWithHead).PARENT} ? 'Cha/mẹ' :
+                                                     (${relationship == T(com.bluemoon.bfms.model.RelationshipWithHead).TENANT} ? 'Người thuê' : 'Khác')))">
+                                    </option>
+                                </select>
+                                <small id="previousHeadRelationshipError"
+                                       class="field-error"
+                                       th:errors="*{previousHeadRelationship}">
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="household-form-actions">
+                            <a class="button button-quiet"
+                               th:href="@{/admin/apartments}">
+                                Hủy
+                            </a>
+                            <button type="submit" class="button button-primary">
+                                Lưu thông tin
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+                <section class="household-history-panel">
+                    <div class="household-history-heading">
+                        <div>
+                            <p class="eyebrow">NHẬT KÝ THAY ĐỔI</p>
+                            <h3>Lịch sử chủ hộ</h3>
+                        </div>
+                    </div>
+
+                    <p class="history-empty"
+                       th:if="${#lists.isEmpty(apartment.history)}">
+                        Chưa có lịch sử thay đổi chủ hộ.
+                    </p>
+
+                    <div class="table-wrap"
+                         th:unless="${#lists.isEmpty(apartment.history)}">
+                        <table class="data-table history-table">
+                            <thead>
+                            <tr>
+                                <th>Loại thay đổi</th>
+                                <th>Chủ hộ trước</th>
+                                <th>Chủ hộ mới</th>
+                                <th>Thời gian</th>
+                                <th>Người thực hiện</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="entry : ${apartment.history}">
+                                <td>
+                                    <span class="history-event-badge"
+                                          th:text="${entry.eventType == 'ASSIGNED'} ? 'Gán chủ hộ lần đầu' :
+                                                   (${entry.eventType == 'REPLACED'} ? 'Thay chủ hộ' : 'Cập nhật hồ sơ')">
+                                        Cập nhật hồ sơ
+                                    </span>
+                                </td>
+
+                                <td th:if="${entry.previousSnapshot != null}">
+                                    <div class="history-profile"
+                                         th:with="profile=${entry.previousSnapshot}">
+                                        <strong th:text="${profile.path('full_name').asText('Chưa có')}"></strong>
+                                        <span th:text="${profile.path('national_id').asText('')}"></span>
+                                        <span th:text="${profile.path('phone').asText('')}"></span>
+                                        <span th:text="${profile.path('email').asText('')}"></span>
+                                    </div>
+                                </td>
+                                <td th:if="${entry.previousSnapshot == null}">
+                                    <span class="history-muted">Chưa có chủ hộ trước</span>
+                                </td>
+
+                                <td>
+                                    <div class="history-profile"
+                                         th:with="profile=${entry.newSnapshot}">
+                                        <strong th:text="${profile.path('full_name').asText('Chưa có')}"></strong>
+                                        <span th:text="${profile.path('national_id').asText('')}"></span>
+                                        <span th:text="${profile.path('phone').asText('')}"></span>
+                                        <span th:text="${profile.path('email').asText('')}"></span>
+                                    </div>
+                                </td>
+
+                                <td th:text="${#temporals.format(entry.changedAt, 'dd/MM/yyyy HH:mm')}">
+                                    22/11/2026 10:30
+                                </td>
+                                <td>
+                                    <span class="history-user-id"
+                                          th:text="${entry.changedByUserId}">
+                                        1
+                                    </span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
             </section>
 
             <footer th:replace="~{fragments/layout :: footer}"></footer>
         </main>
     </div>
 </div>
-<template th:remove="all">
-    <div th:fragment="snapshot">
-        <div th:text="${profile.path('full_name').asText('')}"></div>
-        <div th:text="${profile.path('national_id').asText('')}"></div>
-        <div th:text="${profile.path('phone').asText('')}"></div>
-        <div th:text="${profile.path('email').asText('')}"></div>
-    </div>
-</template>
 </body>
 </html>
