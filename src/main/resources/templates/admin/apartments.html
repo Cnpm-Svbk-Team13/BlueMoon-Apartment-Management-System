@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Apartments | BlueMoon</title>
+    <title>Quản lý căn hộ | BlueMoon</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
     <script defer th:src="@{/js/app.js}"></script>
 </head>
@@ -15,32 +15,107 @@
         <header th:replace="~{fragments/layout :: header}"></header>
 
         <main class="content">
-            <h1>Apartments</h1>
+            <div class="page-heading">
+                <div>
+                    <p class="eyebrow">DANH MỤC · CĂN HỘ</p>
+                    <h2>Quản lý căn hộ</h2>
+                    <p class="muted">Theo dõi danh sách và thông tin mặt bằng trong tòa nhà.</p>
+                </div>
+                <a class="button button-primary" th:href="@{/admin/apartments/new}">
+                    <span aria-hidden="true">＋</span> Thêm căn hộ
+                </a>
+            </div>
+
             <div th:replace="~{fragments/flash-messages :: messages}"></div>
-            <a th:href="@{/admin/apartments/new}">Create apartment</a>
-            <form method="get" th:action="@{/admin/apartments}">
-                <label for="floor">Floor</label>
-                <input id="floor" name="floor" type="number" min="1" max="30" th:value="${floor}">
-                <button type="submit">Filter</button>
-                <a th:href="@{/admin/apartments}">Clear filter</a>
-            </form>
-            <p th:if="${#lists.isEmpty(apartments)}">No apartments found.</p>
-            <table th:unless="${#lists.isEmpty(apartments)}">
-                <thead><tr><th>Room</th><th>Floor</th><th>Area (m²)</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead>
-                <tbody>
-                <tr th:each="apartment : ${apartments}">
-                    <td th:text="${apartment.roomNumber}"></td>
-                    <td th:text="${apartment.floorNumber}"></td>
-                    <td th:text="${apartment.areaSqm}"></td>
-                    <td th:text="${apartment.apartmentType}"></td>
-                    <td th:text="${apartment.status}"></td>
-                    <td>
-                        <a th:href="@{/admin/apartments/{id}/edit(id=${apartment.id})}">Edit</a>
-                        <a th:href="@{/admin/apartments/{id}/household(id=${apartment.id})}">Household</a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+
+            <section class="summary-row" aria-label="Thông tin danh mục">
+                <div class="summary-card">
+                    <span class="summary-icon icon-blue">▦</span>
+                    <div>
+                        <span class="summary-label">Danh mục</span>
+                        <strong>Căn hộ</strong>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <span class="summary-icon icon-purple">🔎︎</span>
+                    <div>
+                        <span class="summary-label">Bộ lọc tầng</span>
+                        <strong th:text="${floor != null ? 'Tầng ' + floor : 'Tất cả tầng'}">Tất cả tầng</strong>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-heading">
+                    <div>
+                        <h3>Danh sách căn hộ</h3>
+                        <p class="muted">Tìm theo tầng hoặc chọn một căn hộ để xem chi tiết.</p>
+                    </div>
+                </div>
+
+                <form class="filter-form" method="get" th:action="@{/admin/apartments}">
+                    <label class="sr-only" for="floor">Lọc theo tầng</label>
+                    <div class="filter-input-wrap">
+                        <span aria-hidden="true">🔎︎</span>
+                        <input id="floor" name="floor" type="number" min="1" max="30"
+                               placeholder="Nhập số tầng (1–30)" th:value="${floor}">
+                    </div>
+                    <button class="button button-primary" type="submit">Lọc danh sách</button>
+                    <a class="button button-quiet" th:href="@{/admin/apartments}">Xóa bộ lọc</a>
+                </form>
+
+                <div class="table-wrap" th:if="${!#lists.isEmpty(apartments)}">
+                    <table class="data-table">
+                        <thead>
+                        <tr>
+                            <th>Mã căn hộ</th>
+                            <th>Tầng</th>
+                            <th>Diện tích</th>
+                            <th>Loại mặt bằng</th>
+                            <th>Trạng thái</th>
+                            <th class="actions-heading">Thao tác</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="apartment : ${apartments}">
+                            <td>
+                                <span class="room-cell">
+                                    <span class="room-icon">⌂</span>
+                                    <strong th:text="${apartment.roomNumber}">P.601</strong>
+                                </span>
+                            </td>
+                            <td th:text="|Tầng ${apartment.floorNumber}|">Tầng 6</td>
+                            <td th:text="|${apartment.areaSqm} m²|">75.50 m²</td>
+                            <td>
+                                <span class="type-badge" th:text="${apartment.apartmentType}">RESIDENTIAL</span>
+                            </td>
+                            <td>
+                                <span class="status-badge"
+                                      th:classappend="${apartment.status.name() == 'OCCUPIED'} ? ' status-occupied' : ' status-vacant'"
+                                      th:text="${apartment.status.name() == 'OCCUPIED'} ? 'Đang sử dụng' : 'Còn trống'">
+                                    Còn trống
+                                </span>
+                            </td>
+                            <td>
+                                <div class="table-actions">
+                                    <a class="text-link"
+                                       th:href="@{/admin/apartments/{id}/edit(id=${apartment.id})}">Chỉnh sửa</a>
+                                    <a class="text-link"
+                                       th:href="@{/admin/apartments/{id}/household(id=${apartment.id})}">Hộ cư dân</a>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="empty-state" th:if="${#lists.isEmpty(apartments)}">
+                    <span class="empty-icon">⌂</span>
+                    <h3>Chưa tìm thấy căn hộ</h3>
+                    <p>Thử xóa bộ lọc tầng hoặc thêm căn hộ mới vào danh mục.</p>
+                    <a class="button button-primary" th:href="@{/admin/apartments}">Xem tất cả căn hộ</a>
+                </div>
+            </section>
 
             <footer th:replace="~{fragments/layout :: footer}"></footer>
         </main>

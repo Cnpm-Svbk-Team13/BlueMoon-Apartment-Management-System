@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Apartment form | BlueMoon</title>
+    <title th:text="${apartmentId == null ? 'Thêm căn hộ' : 'Sửa căn hộ'} + ' | BlueMoon'">
+        Căn hộ | BlueMoon
+    </title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
     <script defer th:src="@{/js/app.js}"></script>
 </head>
@@ -15,46 +17,171 @@
         <header th:replace="~{fragments/layout :: header}"></header>
 
         <main class="content">
-            <h1 th:text="${apartmentId == null ? 'Create apartment' : 'Edit apartment'}"></h1>
-            <a th:href="@{/admin/apartments}">Back to apartments</a>
             <div th:replace="~{fragments/flash-messages :: messages}"></div>
-            <form method="post" th:action="${apartmentId == null} ? @{/admin/apartments} : @{/admin/apartments/{id}(id=${apartmentId})}" th:object="${apartmentForm}">
-                <div class="error" role="alert" th:if="${#fields.hasGlobalErrors()}">
-                    <p th:each="error : ${#fields.globalErrors()}" th:text="${error}"></p>
+
+            <div class="page-heading">
+                <div>
+                    <p class="eyebrow">QUẢN LÝ CĂN HỘ · THÔNG TIN MẶT BẰNG</p>
+                    <h2 th:text="${apartmentId == null ? 'Thêm căn hộ mới' : 'Chỉnh sửa căn hộ'}">
+                        Căn hộ
+                    </h2>
+                    <p class="muted">Nhập thông tin căn hộ theo quy ước 30 tầng của tòa nhà.</p>
                 </div>
-                <label for="roomNumber">Room number</label>
-                <input th:field="*{roomNumber}" required maxlength="20"
-                       aria-describedby="roomNumberError" th:attr="aria-invalid=${#fields.hasErrors('roomNumber')}">
-                <p id="roomNumberError" class="error" th:errors="*{roomNumber}"></p>
 
-                <label for="floorNumber">Floor number</label>
-                <input type="number" th:field="*{floorNumber}" required min="1" max="30"
-                       aria-describedby="floorNumberError" th:attr="aria-invalid=${#fields.hasErrors('floorNumber')}">
-                <p id="floorNumberError" class="error" th:errors="*{floorNumber}"></p>
+                <a class="button button-quiet" th:href="@{/admin/apartments}">
+                    Quay lại danh sách
+                </a>
+            </div>
 
-                <label for="areaSqm">Usable area (m²)</label>
-                <input type="number" th:field="*{areaSqm}" required min="0.01" max="9999999999.99" step="0.01"
-                       aria-describedby="areaSqmError" th:attr="aria-invalid=${#fields.hasErrors('areaSqm')}">
-                <p id="areaSqmError" class="error" th:errors="*{areaSqm}"></p>
+            <section class="form-panel apartment-form-panel">
+                <form method="post"
+                      th:action="${apartmentId == null}
+                          ? @{/admin/apartments}
+                          : @{/admin/apartments/{id}(id=${apartmentId})}"
+                      th:object="${apartmentForm}"
+                      class="account-form apartment-form"
+                      novalidate
+                      data-apartment-form>
 
-                <label for="apartmentType">Apartment type</label>
-                <select th:field="*{apartmentType}" required aria-describedby="apartmentTypeError"
-                        th:attr="aria-invalid=${#fields.hasErrors('apartmentType')}">
-                    <option value="">Select an apartment type</option>
-                    <option th:each="type : ${apartmentTypes}" th:value="${type}" th:text="${type}"></option>
-                </select>
-                <p id="apartmentTypeError" class="error" th:errors="*{apartmentType}"></p>
-                <div th:if="${apartmentId != null}">
-                    <label for="status">Status</label>
-                    <select th:field="*{status}" required>
-                        <option th:each="status : ${apartmentStatuses}" th:value="${status}" th:text="${status}"></option>
-                    </select>
-                    <p class="error" th:errors="*{status}"></p>
-                </div>
-                <label for="description">Description</label>
-                <textarea th:field="*{description}"></textarea>
-                <button type="submit">Save</button>
-            </form>
+                    <input type="hidden"
+                           th:name="${_csrf.parameterName}"
+                           th:value="${_csrf.token}">
+
+                    <div class="form-section-heading">
+                        <h3>Thông tin căn hộ</h3>
+                        <p class="muted">Các trường có dấu * là bắt buộc.</p>
+                    </div>
+
+                    <div class="account-form-grid">
+                        <div class="form-field">
+                            <label for="roomNumber">Mã căn hộ <span>*</span></label>
+                            <input id="roomNumber"
+                                   th:field="*{roomNumber}"
+                                   type="text"
+                                   placeholder="Ví dụ: A0605"
+                                   th:classappend="${#fields.hasErrors('roomNumber')} ? ' field-invalid' : ''"
+                                   aria-describedby="roomNumberError"
+                                   th:attr="aria-invalid=${#fields.hasErrors('roomNumber')}">
+                            <small id="roomNumberError"
+                                   class="field-error"
+                                   th:errors="*{roomNumber}"
+                                   th:if="${#fields.hasErrors('roomNumber')}">
+                                Mã căn hộ không hợp lệ.
+                            </small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="floorNumber">Tầng <span>*</span></label>
+                            <input id="floorNumber"
+                                   th:field="*{floorNumber}"
+                                   type="text"
+                                   inputmode="numeric"
+                                   th:classappend="${#fields.hasErrors('floorNumber')} ? ' field-invalid' : ''"
+                                   aria-describedby="floorNumberError"
+                                   th:attr="aria-invalid=${#fields.hasErrors('floorNumber')}">
+                            <small>Chỉ cho phép tầng từ 1 đến 30.</small>
+                            <small id="floorNumberError"
+                                   class="field-error"
+                                   th:errors="*{floorNumber}"
+                                   th:if="${#fields.hasErrors('floorNumber')}">
+                                Số tầng không hợp lệ.
+                            </small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="areaSqm">Diện tích thông thủy (m²) <span>*</span></label>
+                            <input id="areaSqm"
+                                   th:field="*{areaSqm}"
+                                   type="text"
+                                   inputmode="decimal"
+                                   th:classappend="${#fields.hasErrors('areaSqm')} ? ' field-invalid' : ''"
+                                   aria-describedby="areaSqmError"
+                                   th:attr="aria-invalid=${#fields.hasErrors('areaSqm')}">
+                            <small>Diện tích phải lớn hơn 0, tối thiểu 0.01 m².</small>
+                            <small id="areaSqmError"
+                                   class="field-error"
+                                   th:errors="*{areaSqm}"
+                                   th:if="${#fields.hasErrors('areaSqm')}">
+                                Diện tích không hợp lệ.
+                            </small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="apartmentType">Loại mặt bằng <span>*</span></label>
+                            <select id="apartmentType"
+                                    th:field="*{apartmentType}"
+                                    th:classappend="${#fields.hasErrors('apartmentType')} ? ' field-invalid' : ''"
+                                    aria-describedby="apartmentTypeError"
+                                    th:attr="aria-invalid=${#fields.hasErrors('apartmentType')}">
+                                <option value="">Chọn loại mặt bằng</option>
+                                <option th:each="type : ${apartmentTypes}"
+                                        th:value="${type}"
+                                        th:text="${type == T(com.bluemoon.bfms.model.ApartmentType).KIOT} ? 'Kiot' :
+                                                 (${type == T(com.bluemoon.bfms.model.ApartmentType).COMMERCIAL} ? 'Thương mại' :
+                                                 (${type == T(com.bluemoon.bfms.model.ApartmentType).RESIDENTIAL} ? 'Căn hộ ở' : 'Penthouse'))">
+                                    Căn hộ ở
+                                </option>
+                            </select>
+                            <small id="apartmentTypeError"
+                                   class="field-error"
+                                   th:errors="*{apartmentType}"
+                                   th:if="${#fields.hasErrors('apartmentType')}">
+                                Loại mặt bằng không hợp lệ.
+                            </small>
+                        </div>
+
+                        <div class="form-field" th:if="${apartmentId != null}">
+                            <label for="status">Trạng thái <span>*</span></label>
+                            <select id="status"
+                                    th:field="*{status}"
+                                    th:classappend="${#fields.hasErrors('status')} ? ' field-invalid' : ''">
+                                <option th:each="status : ${apartmentStatuses}"
+                                        th:value="${status}"
+                                        th:text="${status == T(com.bluemoon.bfms.model.ApartmentStatus).OCCUPIED}
+                                            ? 'Đang sử dụng'
+                                            : 'Còn trống'">
+                                    Còn trống
+                                </option>
+                            </select>
+                            <small class="field-error"
+                                   th:errors="*{status}"
+                                   th:if="${#fields.hasErrors('status')}">
+                                Trạng thái không hợp lệ.
+                            </small>
+                        </div>
+
+                        <div class="form-field form-field-full">
+                            <label for="description">Mô tả</label>
+                            <textarea id="description"
+                                      th:field="*{description}"
+                                      rows="4"
+                                      placeholder="Ghi chú thêm về mặt bằng, vị trí hoặc tình trạng..."
+                                      th:classappend="${#fields.hasErrors('description')} ? ' field-invalid' : ''"></textarea>
+                            <small class="field-error"
+                                   th:errors="*{description}"
+                                   th:if="${#fields.hasErrors('description')}">
+                                Mô tả không hợp lệ.
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-error"
+                         role="alert"
+                         th:if="${#fields.hasGlobalErrors()}">
+                        <p th:each="error : ${#fields.globalErrors()}" th:text="${error}"></p>
+                    </div>
+
+                    <div class="form-actions">
+                        <a class="button button-quiet" th:href="@{/admin/apartments}">
+                            Hủy
+                        </a>
+                        <button class="button button-primary" type="submit"
+                                th:text="${apartmentId == null ? 'Tạo căn hộ' : 'Lưu thay đổi'}">
+                            Lưu
+                        </button>
+                    </div>
+                </form>
+            </section>
 
             <footer th:replace="~{fragments/layout :: footer}"></footer>
         </main>

@@ -3,12 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Quản trị BlueMoon</title>
+    <title>Dashboard | BlueMoon</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <script defer th:src="@{/js/app.js}"></script>
 </head>
 <body>
-    <!-- TODO: Build the administrator dashboard and link it to admin workflows. -->
-    <main>
-        <h1>Trang quản trị</h1>
-    </main>
+<div class="app-shell">
+    <aside th:replace="~{fragments/layout :: sidebar}"></aside>
+
+    <div class="main-panel">
+        <header th:replace="~{fragments/layout :: header}"></header>
+
+        <main class="content">
+            <div th:replace="~{fragments/flash-messages :: messages}"></div>
+
+            <div class="page-heading">
+                <div>
+                    <p class="eyebrow">BLUE MOON · TỔNG QUAN</p>
+                    <h2>Dashboard</h2>
+                    <p class="muted">Tổng quan tình trạng căn hộ trong hệ thống.</p>
+                </div>
+                <a class="button button-primary" th:href="@{/admin/apartments}">
+                    Xem danh sách căn hộ
+                </a>
+            </div>
+
+            <section class="summary-row dashboard-summary-row"
+                     aria-label="Thống kê căn hộ">
+
+                <article class="summary-card dashboard-stat-card">
+                    <span class="summary-icon icon-blue" aria-hidden="true">▦</span>
+                    <div>
+                        <span class="summary-label">Tổng số căn hộ</span>
+                        <strong class="dashboard-stat-value"
+                                th:text="${totalApartments != null ? totalApartments : '—'}">—</strong>
+                        <small class="dashboard-stat-caption">Toàn bộ căn hộ trong hệ thống</small>
+                    </div>
+                </article>
+
+                <article class="summary-card dashboard-stat-card">
+                    <span class="summary-icon dashboard-icon-green" aria-hidden="true">✓</span>
+                    <div>
+                        <span class="summary-label">Đang sử dụng</span>
+                        <strong class="dashboard-stat-value"
+                                th:text="${occupiedApartments != null ? occupiedApartments : '—'}">—</strong>
+                        <small class="dashboard-stat-caption">Căn hộ có trạng thái đang sử dụng</small>
+                    </div>
+                </article>
+
+                <article class="summary-card dashboard-stat-card">
+                    <span class="summary-icon dashboard-icon-orange" aria-hidden="true">⌂</span>
+                    <div>
+                        <span class="summary-label">Còn trống</span>
+                        <strong class="dashboard-stat-value"
+                                th:text="${vacantApartments != null ? vacantApartments : '—'}">—</strong>
+                        <small class="dashboard-stat-caption">Căn hộ có trạng thái còn trống</small>
+                    </div>
+                </article>
+            </section>
+
+            <section class="panel dashboard-panel">
+                <div class="panel-heading">
+                    <h3>Quản lý căn hộ</h3>
+                    <p class="muted">
+                        Mở danh sách để lọc theo tầng, xem thông tin hoặc thêm căn hộ.
+                    </p>
+                </div>
+                <div class="dashboard-panel-actions">
+                    <a class="button button-primary" th:href="@{/admin/apartments}">
+                        Đến danh sách căn hộ
+                    </a>
+                    <a class="button button-quiet" th:href="@{/admin/apartments/new}">
+                        Thêm căn hộ
+                    </a>
+                </div>
+            </section>
+
+            <footer th:replace="~{fragments/layout :: footer}"></footer>
+        </main>
+    </div>
+</div>
 </body>
 </html>
