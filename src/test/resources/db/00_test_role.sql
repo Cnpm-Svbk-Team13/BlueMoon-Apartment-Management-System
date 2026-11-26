@@ -1,0 +1,1 @@
+CREATE ROLE bluemoon_app LOGIN PASSWORD 'bluemoon_test_pw';

@@ -7,5 +7,19 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create-drop #Only in working
+    open-in-view: false     #Lazy loading
     show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  sql:
+    init:
+      mode: never           # KHÔNG chạy schema.sql/seed của PostgreSQL (có trigger, H2 không hiểu)
+  thymeleaf:
+    cache: false
+logging:
+  level:
+    root: WARN
+    com.bluemoon: INFO
+    org.hibernate.SQL: WARN
